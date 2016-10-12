@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Common
+Bundle-SymbolicName: com.unnsvc.ide.common
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: UNNSVC
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

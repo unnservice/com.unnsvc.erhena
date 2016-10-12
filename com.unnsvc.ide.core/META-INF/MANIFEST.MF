@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Core
+Bundle-SymbolicName: com.unnsvc.ide.core
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: com.unnsvc.ide.core.Activator
+Bundle-Vendor: UNNSVC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ com.unnsvc.ide.common
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
