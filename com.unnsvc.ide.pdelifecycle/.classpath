@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/main/framework"/>
-	<classpathentry kind="src" path="src/main/resources"/>
+	<classpathentry kind="src" path="src/framework/java"/>
+	<classpathentry kind="src" path="src/framework/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/com.unnsvc.rhena.common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/com.unnsvc.rhena.lifecycle"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

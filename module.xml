@@ -4,7 +4,7 @@
 
 	<meta component="com.unnsvc" version="0.0.1">
 		<lifecycle name="pde">
-			<configurator module="com.unnsvc.ide:pdelifecycle:0.0.1" class="com.unnsvc.ide.pdelifecycle.PdeConfigurator" />
+			<context module="com.unnsvc.ide:pdelifecycle:0.0.1" class="com.unnsvc.ide.pdelifecycle.PdeContext" />
 			<processor module="com.unnsvc.ide:pdelifecycle:0.0.1" class="com.unnsvc.ide.pdelifecycle.PdeProcessor" />
 			<generator module="com.unnsvc.ide:pdelifecycle:0.0.1" class="com.unnsvc.ide.pdelifecycle.PdeGenerator" />
 		</lifecycle>

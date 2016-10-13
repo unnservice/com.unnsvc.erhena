@@ -6,5 +6,7 @@
 
 	</meta>
 
+	<dependency:framework module="com.unnsvc.rhena:common:0.0.1" />
+	<dependency:framework module="com.unnsvc.rhena:lifecycle:0.0.1" />
 
 </module>
