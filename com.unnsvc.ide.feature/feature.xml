@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="com.unnsvc.ide.feature"
+      id="com.unnsvc.erhena.feature"
       label="Feature"
       version="1.0.0.qualifier"
       provider-name="UNNSVC">

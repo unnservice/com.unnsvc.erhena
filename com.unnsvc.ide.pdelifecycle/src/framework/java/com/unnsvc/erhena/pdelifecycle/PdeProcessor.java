@@ -1,5 +1,5 @@
 
-package com.unnsvc.ide.pdelifecycle;
+package com.unnsvc.erhena.pdelifecycle;
 
 import com.unnsvc.rhena.common.IResolutionContext;
 import com.unnsvc.rhena.lifecycle.DefaultProcessor;

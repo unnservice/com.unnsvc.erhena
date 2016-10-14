@@ -1,4 +1,4 @@
-package com.unnsvc.ide.core;
+package com.unnsvc.erhena.core;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -9,7 +9,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "com.unnsvc.ide.core"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "com.unnsvc.erhena.core"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;
