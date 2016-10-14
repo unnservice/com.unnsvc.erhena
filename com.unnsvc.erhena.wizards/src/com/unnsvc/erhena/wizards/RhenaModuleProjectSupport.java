@@ -1,9 +1,15 @@
 
 package com.unnsvc.erhena.wizards;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -15,6 +21,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -24,6 +31,11 @@ import org.eclipse.jdt.launching.JavaRuntime;
 
 import com.unnsvc.erhena.core.nature.RhenaNature;
 
+/**
+ * @TODO generate lifecycle project too?
+ * @author noname
+ *
+ */
 public class RhenaModuleProjectSupport {
 
 	/**
@@ -37,11 +49,11 @@ public class RhenaModuleProjectSupport {
 	 * @throws CoreException
 	 */
 
-	public static IProject createProject(String projectName, URI location) throws CoreException {
+	public static IProject createProject(String componentName, String projectName, URI location) throws CoreException {
 
 		// create
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject(projectName);
+		IProject project = root.getProject(componentName + "." + projectName);
 		project.create(null);
 		project.open(null);
 
@@ -91,51 +103,31 @@ public class RhenaModuleProjectSupport {
 			javaProject.setRawClasspath(newEntries, null);
 		}
 
-		return project;
-	}
-
-	public static IProject createProject2(String projectName, URI location) {
-
-		IProject project = createBaseProject(projectName, location);
-		try {
-
-			IProjectDescription desc = project.getDescription();
-
-			// addNature(project, JavaCore.NATURE_ID);
-			// IJavaProject javaProject = JavaCore.create(project);
-
-			// addNature(project, RhenaNature.NATURE_ID);
-
-			String[] natures = desc.getNatureIds();
-			String[] newNatures = new String[natures.length + 1];
-			System.arraycopy(natures, 0, newNatures, 0, natures.length);
-			newNatures[newNatures.length - 1] = RhenaNature.NATURE_ID;
-
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IStatus status = workspace.validateNatureSet(newNatures);
-
-			// only apply new nature, if the status is ok
-			if (status.getCode() == IStatus.OK) {
-				desc.setNatureIds(newNatures);
-				project.setDescription(desc, null);
-			}
-
-			IJavaProject javaProject = JavaCore.create(project);
-
-			// out
-			IFolder binFolder = project.getFolder("target");
-			binFolder.create(false, true, null);
-			javaProject.setOutputLocation(binFolder.getFullPath(), null);
-
-			String[] paths = { "src/main/java", "src/test/java" }; //$NON-NLS-1$ //$NON-NLS-2$
-			addToProjectStructure(project, paths);
-
-		} catch (CoreException e) {
-			e.printStackTrace();
-			project = null;
+		// create default descriptor
+		IFile moduleDescriptor = project.getFile("module.xml");
+		if (!moduleDescriptor.exists()) {
+			moduleDescriptor.create(getModuleTemplate(componentName, projectName), false, null);
 		}
 
 		return project;
+	}
+
+	private static InputStream getModuleTemplate(String componentName, String projectName) throws CoreException {
+
+		URL moduleTemplate = Activator.class.getResource("/templates/module.xml.tpl");
+		try (InputStream is = moduleTemplate.openStream()) {
+
+			StringBuilder sb = new StringBuilder();
+			int buff = -1;
+			while ((buff = is.read()) != -1) {
+				sb.append((char) buff);
+			}
+			String template = sb.toString().replaceAll(Pattern.quote("##COMPONENTID##"), componentName);
+			ByteArrayInputStream bais = new ByteArrayInputStream(template.getBytes());
+			return bais;
+		} catch (IOException ioe) {
+			throw new CoreException(new Status(Status.ERROR, Activator.PLUGIN_ID, ioe.getMessage(), ioe));
+		}
 	}
 
 	/**
@@ -198,20 +190,4 @@ public class RhenaModuleProjectSupport {
 			createFolder(etcFolders);
 		}
 	}
-
-	private static void addNature(IProject project, String natureId) throws CoreException {
-
-		if (!project.hasNature(natureId)) {
-			IProjectDescription description = project.getDescription();
-			String[] prevNatures = description.getNatureIds();
-			String[] newNatures = new String[prevNatures.length + 1];
-			System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-			newNatures[prevNatures.length] = natureId;
-			description.setNatureIds(newNatures);
-
-			IProgressMonitor monitor = null;
-			project.setDescription(description, monitor);
-		}
-	}
-
 }

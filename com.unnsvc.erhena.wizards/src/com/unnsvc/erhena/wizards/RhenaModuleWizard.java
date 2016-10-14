@@ -35,11 +35,12 @@ public class RhenaModuleWizard extends Wizard implements INewWizard {
 	@Override
 	public boolean performFinish() {
 
+		String componentName = page.getGroupName();
 		String projectName = page.getProjectName();
 		URI location = page.getProjectLocationURI();
 
 		try {
-			RhenaModuleProjectSupport.createProject(projectName, location);
+			RhenaModuleProjectSupport.createProject(componentName, projectName, location);
 
 			return true;
 		} catch (CoreException ce) {

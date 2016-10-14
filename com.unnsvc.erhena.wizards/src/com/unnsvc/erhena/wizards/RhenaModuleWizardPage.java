@@ -267,6 +267,11 @@ public class RhenaModuleWizardPage extends WizardPage {
 		return fWorkingSetGroup.createControl(composite);
 	}
 
+	public String getGroupName() {
+
+		return fNameGroup.getGroup();
+	}
+
 	public String getProjectName() {
 
 		return fNameGroup.getName();
@@ -306,10 +311,16 @@ public class RhenaModuleWizardPage extends WizardPage {
 
 	private class NameGroup extends Observable implements IDialogFieldListener {
 
-		protected final StringDialogField fNameField;
+		private StringDialogField fGroupField;
+		private StringDialogField fNameField;
 
 		public NameGroup() {
 			// text field for project name
+
+			fGroupField = new StringDialogField();
+			fGroupField.setLabelText("Component name");
+			fGroupField.setDialogFieldListener(this);
+
 			fNameField = new StringDialogField();
 			fNameField.setLabelText(NewWizardMessages.NewJavaProjectWizardPageOne_NameGroup_label_text);
 			fNameField.setDialogFieldListener(this);
@@ -320,6 +331,9 @@ public class RhenaModuleWizardPage extends WizardPage {
 			Composite nameComposite = new Composite(composite, SWT.NONE);
 			nameComposite.setFont(composite.getFont());
 			nameComposite.setLayout(new GridLayout(2, false));
+
+			fGroupField.doFillIntoGrid(nameComposite, 2);
+			LayoutUtil.setHorizontalGrabbing(fGroupField.getTextControl(null));
 
 			fNameField.doFillIntoGrid(nameComposite, 2);
 			LayoutUtil.setHorizontalGrabbing(fNameField.getTextControl(null));
@@ -338,6 +352,11 @@ public class RhenaModuleWizardPage extends WizardPage {
 			return fNameField.getText().trim();
 		}
 
+		public String getGroup() {
+
+			return fGroupField.getText().trim();
+		}
+
 		public void postSetFocus() {
 
 			fNameField.postSetFocusOnDialogField(getShell().getDisplay());
@@ -346,6 +365,11 @@ public class RhenaModuleWizardPage extends WizardPage {
 		public void setName(String name) {
 
 			fNameField.setText(name);
+		}
+
+		public void setGroup(String group) {
+
+			fGroupField.setText(group);
 		}
 
 		@Override
