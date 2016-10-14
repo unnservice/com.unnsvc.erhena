@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="com.unnsvc.erhena.core.nature"
+         name="Rhena Project Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="com.unnsvc.erhena.core.nature.RhenaNature">
+         </run>
+      </runtime>
+      <builder
+            id="com.unnsvc.erhena.builder.RhenaBuilder">
+      </builder>
+      <requires-nature
+            id="org.eclipse.jdt.core.javanature">
+      </requires-nature>
+   </extension>
+    <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="Rhena project nature commands"
+            id="com.unnsvc.erhena.core.nature.category">
+      </category>
+      <command
+            name="Add/Remove Rhena Nature"
+            defaultHandler="com.unnsvc.erhena.core.builder.AddRemoveRhenaNatureHandler"
+            categoryId="com.unnsvc.erhena.core.nature.category"
+            id="com.unnsvc.erhena.core.nature.addRemoveRhenaNature">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.projectConfigure?after=additions">
+         <command
+               commandId="com.unnsvc.erhena.core.nature.addRemoveRhenaNature"
+               label="Disable Rhena builder"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <adapt
+                           type="org.eclipse.core.resources.IProject">
+                        <test
+                              value="com.unnsvc.erhena.core.nature"
+                              property="org.eclipse.core.resources.projectNature">
+                        </test>
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="com.unnsvc.erhena.core.nature.addRemoveRhenaNature"
+               label="Enable Sample builder"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <adapt
+                           type="org.eclipse.core.resources.IProject">
+                        <not>
+                           <test
+                                 value="com.unnsvc.erhena.core.nature"
+                                 property="org.eclipse.core.resources.projectNature">
+                           </test>
+                        </not>
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         id="com.unnsvc.erhena.core.builder"
+         name="Rhena Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="com.unnsvc.erhena.core.builder.RhenaBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.projectNatureImages">
+      <image
+            icon="icons/rhena_nature_decorator.gif"
+            id="com.unnsvc.erhena.core.nature.decorator"
+            natureId="com.unnsvc.erhena.core.nature">
+      </image>
+   </extension>
+
+</plugin>

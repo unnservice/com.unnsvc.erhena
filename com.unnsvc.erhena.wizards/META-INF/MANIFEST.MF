@@ -7,6 +7,17 @@ Bundle-Activator: com.unnsvc.erhena.wizards.Activator
 Bundle-Vendor: UNNSVC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- com.unnsvc.erhena.common
+ org.eclipse.jface.text,
+ org.eclipse.core.resources,
+ org.eclipse.ui.editors,
+ org.eclipse.ui.ide,
+ com.unnsvc.erhena.common,
+ com.unnsvc.erhena.core,
+ org.eclipse.jdt,
+ org.eclipse.jdt.core,
+ org.eclipse.jdt.ui,
+ org.eclipse.equinox.bidi,
+ org.eclipse.core.filesystem,
+ org.eclipse.jdt.launching
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

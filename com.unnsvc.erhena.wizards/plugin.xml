@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="ERhena"
+            id="com.unnsvc.erhena.category">
+      </category>
+      <wizard
+            category="com.unnsvc.erhena.category"
+            class="com.unnsvc.erhena.wizards.RhenaModuleWizard"
+            descriptionImage="icons/larger.gif"
+            hasPages="true"
+            icon="icons/rhena.gif"
+            id="com.unnsvc.erhena.wizards.RhenaModuleWizard"
+            name="Rhena Module"
+            project="true">
+      </wizard>
+   </extension>
 </plugin>
