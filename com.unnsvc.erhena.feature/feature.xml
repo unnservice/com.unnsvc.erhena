@@ -18,14 +18,14 @@
    </license>
 
    <plugin
-         id="com.unnsvc.ide.core"
+         id="com.unnsvc.erhena.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="com.unnsvc.ide.wizards"
+         id="com.unnsvc.erhena.wizards"
          download-size="0"
          install-size="0"
          version="0.0.0"
