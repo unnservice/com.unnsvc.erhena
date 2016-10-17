@@ -1,4 +1,5 @@
-package com.unnsvc.erhena.platform;
+
+package com.unnsvc.erhena.platform.service;
 
 import java.io.File;
 
@@ -10,6 +11,8 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.unnsvc.erhena.common.ErhenaConstants;
 import com.unnsvc.rhena.common.IRhenaContext;
@@ -27,15 +30,23 @@ import ch.qos.logback.core.AppenderBase;
 @Creatable
 public class RhenaPlatformService implements IRhenaPlatformService {
 
-
+	private Logger log = LoggerFactory.getLogger(getClass());
+	
 	@Inject
 	private IEventBroker eventBroker;
 
 	private IRhenaContext context;
-	
+
+	public RhenaPlatformService() {
+
+	}
+
 	@PostConstruct
 	public void postConstruct() throws Exception {
 
+		System.err.print("Constructing IRhenaPlatformService");
+		log.info("test");
+		
 		RhenaConfiguration config = new RhenaConfiguration();
 		configureLogging(config);
 
@@ -45,18 +56,18 @@ public class RhenaPlatformService implements IRhenaPlatformService {
 		File workspacePath = new File(workspaceRoot.getLocationURI());
 		context.getRepositories().add(new WorkspaceRepository(context, workspacePath));
 	}
-	
+
 	private void configureLogging(RhenaConfiguration config) {
 
-//		config.configureLoggingAppender(new ILoggingListener() {
-//
-//			@Override
-//			public void append(LogEvent event) {
-//
-//				System.err.println("Posting event on topic");
-//				eventBroker.post(ErhenaConstants.TOPIC_LOGEVENT, event);
-//			}
-//		});
+		// config.configureLoggingAppender(new ILoggingListener() {
+		//
+		// @Override
+		// public void append(LogEvent event) {
+		//
+		// System.err.println("Posting event on topic");
+		// eventBroker.post(ErhenaConstants.TOPIC_LOGEVENT, event);
+		// }
+		// });
 
 		config.configureLoggingAppender(new AppenderBase<ILoggingEvent>() {
 

@@ -15,11 +15,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.osgi.framework.BundleContext;
 
 import com.unnsvc.erhena.core.Activator;
 import com.unnsvc.erhena.core.builder.RhenaBuilder;
-import com.unnsvc.erhena.platform.RhenaPlatformService;
+import com.unnsvc.erhena.platform.service.RhenaPlatformService;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.model.IRhenaModule;
 
@@ -29,13 +30,26 @@ public class RhenaNature implements IProjectNature {
 	private IProject project;
 
 	@Inject
-	private RhenaPlatformService rhenaService;
+	private IEventBroker eventBroker;
+
+	@Inject
+	private IEclipseContext eclipseContext;
+
+	@Inject
+	private RhenaPlatformService rhenaPlatformService;
+
+	// @Inject
+	// private RhenaPlatformService rhenaService;
 
 	public RhenaNature() {
 
 		BundleContext bundleContext = Activator.getContext();
 		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
 		ContextInjectionFactory.inject(this, eclipseContext);
+		// IRhenaPlatformService instance =
+		// ContextInjectionFactory.make(IRhenaPlatformService.class,
+		// eclipseContext);
+		System.err.println("Created: " + eclipseContext + " and injected? " + eventBroker + " platform service " + rhenaPlatformService);
 	}
 
 	@Override
@@ -46,17 +60,15 @@ public class RhenaNature implements IProjectNature {
 		// IRhenaService service =
 		// ContextInjectionFactory.make(RhenaService.class, rootContext);
 
-		System.err.println("Configuring, rhena service? " + rhenaService);
-
+		// System.err.println("Configuring, rhena service? " + rhenaService);
+		//
 		WorkspaceJob wj = new WorkspaceJob("Test") {
 
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 
 				try {
-					System.err.println("Materialising");
-					IRhenaModule module = rhenaService.materialiseModel("com.test", "com.test2", "0.0.1");
-					System.err.println("Materialised " + module);
+					IRhenaModule module = rhenaPlatformService.materialiseModel("com.test", "com.test2", "0.0.1");
 
 				} catch (RhenaException re) {
 					throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
@@ -65,14 +77,6 @@ public class RhenaNature implements IProjectNature {
 			}
 		};
 		wj.schedule();
-		
-		
-		
-		
-		
-		
-		
-		
 
 		IProjectDescription desc = project.getDescription();
 		ICommand[] commands = desc.getBuildSpec();

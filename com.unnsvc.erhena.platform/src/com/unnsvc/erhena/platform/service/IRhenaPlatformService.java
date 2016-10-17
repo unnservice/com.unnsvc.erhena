@@ -1,4 +1,4 @@
-package com.unnsvc.erhena.platform;
+package com.unnsvc.erhena.platform.service;
 
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.model.IRhenaModule;

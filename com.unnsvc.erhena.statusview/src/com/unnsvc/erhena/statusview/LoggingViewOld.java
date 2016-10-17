@@ -1,8 +1,6 @@
 
 package com.unnsvc.erhena.statusview;
 
-import javax.inject.Inject;
-
 //import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 //import org.eclipse.e4.core.contexts.EclipseContextFactory;
 //import org.eclipse.e4.core.contexts.IEclipseContext;

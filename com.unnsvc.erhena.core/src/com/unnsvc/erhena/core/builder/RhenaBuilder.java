@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import com.unnsvc.erhena.core.Activator;
-import com.unnsvc.erhena.platform.RhenaPlatformService;
+import com.unnsvc.erhena.platform.service.RhenaPlatformService;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.model.IRhenaModule;
 
@@ -39,7 +39,7 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 
-		System.err.println("Building");
+		System.err.println("Building " + rhenaService);
 
 		// eventBroker.post(ErhenaConstants.TOPIC_LOGEVENT, data)
 

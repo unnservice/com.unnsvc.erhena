@@ -3,7 +3,6 @@ package com.unnsvc.erhena.wizards;
 
 import java.net.URI;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;

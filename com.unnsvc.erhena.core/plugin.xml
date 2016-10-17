@@ -11,7 +11,7 @@
          </run>
       </runtime>
       <builder
-            id="com.unnsvc.erhena.builder.RhenaBuilder">
+            id="com.unnsvc.erhena.core.builder.RhenaBuilder">
       </builder>
       <requires-nature
             id="org.eclipse.jdt.core.javanature">
@@ -24,7 +24,7 @@
             id="com.unnsvc.erhena.core.nature.category">
       </category>
       <command
-            name="Add/Remove Rhena Nature"
+            name="Add/Remove eRhena Nature"
             defaultHandler="com.unnsvc.erhena.core.builder.AddRemoveRhenaNatureHandler"
             categoryId="com.unnsvc.erhena.core.nature.category"
             id="com.unnsvc.erhena.core.nature.addRemoveRhenaNature">
@@ -85,8 +85,8 @@
       </menuContribution>
    </extension>
    <extension
-         id="com.unnsvc.erhena.core.builder"
-         name="Rhena Builder"
+         id="com.unnsvc.erhena.core.builder.RhenaBuilder"
+         name="eRhena Builder"
          point="org.eclipse.core.resources.builders">
       <builder
             hasNature="true">

@@ -39,6 +39,10 @@ public class Activator extends AbstractUIPlugin {
 		this.context = context;
 		// listener = new RhenaModuleChangeListener();
 		// workspace.addResourceChangeListener(listener);
+		
+		
+		System.err.println("Activating platform...");
+		
 	}
 
 	/*
