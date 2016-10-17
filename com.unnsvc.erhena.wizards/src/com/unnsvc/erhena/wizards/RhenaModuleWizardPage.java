@@ -115,6 +115,7 @@ public class RhenaModuleWizardPage extends WizardPage {
 
 	private static final IWorkingSet[] EMPTY_WORKING_SET_ARRAY = new IWorkingSet[0];
 
+	@SuppressWarnings("restriction")
 	private IWorkingSet[] getSelectedWorkingSet(IStructuredSelection selection, IWorkbenchPart activePart) {
 
 		IWorkingSet[] selected = getSelectedWorkingSet(selection);
@@ -309,6 +310,7 @@ public class RhenaModuleWizardPage extends WizardPage {
 		fLocationGroup.setLocation(path);
 	}
 
+	@SuppressWarnings("restriction")
 	private class NameGroup extends Observable implements IDialogFieldListener {
 
 		private StringDialogField fGroupField;
@@ -359,7 +361,7 @@ public class RhenaModuleWizardPage extends WizardPage {
 
 		public void postSetFocus() {
 
-			fNameField.postSetFocusOnDialogField(getShell().getDisplay());
+			fGroupField.postSetFocusOnDialogField(getShell().getDisplay());
 		}
 
 		public void setName(String name) {
@@ -434,7 +436,7 @@ public class RhenaModuleWizardPage extends WizardPage {
 		public void update(Observable o, Object arg) {
 
 			if (isUseDefaultSelected()) {
-				fLocation.setText(getDefaultPath(fNameGroup.getName()));
+				fLocation.setText(getDefaultPath(fNameGroup.getGroup() + "." + fNameGroup.getName()));
 			}
 			fireEvent();
 		}
@@ -458,7 +460,7 @@ public class RhenaModuleWizardPage extends WizardPage {
 			if (path != null) {
 				fLocation.setText(path.toOSString());
 			} else {
-				fLocation.setText(getDefaultPath(fNameGroup.getName()));
+				fLocation.setText(getDefaultPath(fNameGroup.getGroup() + "." + fNameGroup.getName()));
 			}
 			fireEvent();
 		}
@@ -553,6 +555,14 @@ public class RhenaModuleWizardPage extends WizardPage {
 
 			final String name = fNameGroup.getName();
 
+			String group = fNameGroup.getGroup();
+			if (group.length() == 0) {
+				setErrorMessage(null);
+				setMessage("Please enter a component name");
+				setPageComplete(false);
+				return;
+			}
+			
 			// check whether the project name field is empty
 			if (name.length() == 0) {
 				setErrorMessage(null);
@@ -560,9 +570,12 @@ public class RhenaModuleWizardPage extends WizardPage {
 				setPageComplete(false);
 				return;
 			}
+			
+			
+			String projectName = group + "." + name;
 
 			// check whether the project name is valid
-			final IStatus nameStatus = workspace.validateName(name, IResource.PROJECT);
+			final IStatus nameStatus = workspace.validateName(projectName, IResource.PROJECT);
 			if (!nameStatus.isOK()) {
 				setErrorMessage(nameStatus.getMessage());
 				setPageComplete(false);
@@ -570,14 +583,14 @@ public class RhenaModuleWizardPage extends WizardPage {
 			}
 
 			// check whether project already exists
-			final IProject handle = workspace.getRoot().getProject(name);
+			final IProject handle = workspace.getRoot().getProject(projectName);
 			if (handle.exists()) {
 				setErrorMessage(NewWizardMessages.NewJavaProjectWizardPageOne_Message_projectAlreadyExists);
 				setPageComplete(false);
 				return;
 			}
 
-			IPath projectLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().append(name);
+			IPath projectLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().append(projectName);
 			if (projectLocation.toFile().exists()) {
 				try {
 					// correct casing
@@ -588,7 +601,7 @@ public class RhenaModuleWizardPage extends WizardPage {
 				}
 
 				String existingName = projectLocation.lastSegment();
-				if (!existingName.equals(fNameGroup.getName())) {
+				if (!existingName.equals(fNameGroup.getGroup() + "." + fNameGroup.getName())) {
 					setErrorMessage(Messages.format(NewWizardMessages.NewJavaProjectWizardPageOne_Message_invalidProjectNameForWorkspaceRoot,
 							BasicElementLabels.getResourceName(existingName)));
 					setPageComplete(false);

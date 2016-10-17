@@ -1,21 +1,78 @@
 
 package com.unnsvc.erhena.core.nature;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.osgi.framework.BundleContext;
 
+import com.unnsvc.erhena.core.Activator;
 import com.unnsvc.erhena.core.builder.RhenaBuilder;
+import com.unnsvc.erhena.platform.RhenaPlatformService;
+import com.unnsvc.rhena.common.exceptions.RhenaException;
+import com.unnsvc.rhena.common.model.IRhenaModule;
 
 public class RhenaNature implements IProjectNature {
 
 	public static final String NATURE_ID = "com.unnsvc.erhena.core.nature";
 	private IProject project;
 
+	@Inject
+	private RhenaPlatformService rhenaService;
+
+	public RhenaNature() {
+
+		BundleContext bundleContext = Activator.getContext();
+		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
+		ContextInjectionFactory.inject(this, eclipseContext);
+	}
+
 	@Override
 	public void configure() throws CoreException {
+
+		// IEclipseContext rootContext =
+		// EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(RhenaService.class).getBundleContext());
+		// IRhenaService service =
+		// ContextInjectionFactory.make(RhenaService.class, rootContext);
+
+		System.err.println("Configuring, rhena service? " + rhenaService);
+
+		WorkspaceJob wj = new WorkspaceJob("Test") {
+
+			@Override
+			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+
+				try {
+					System.err.println("Materialising");
+					IRhenaModule module = rhenaService.materialiseModel("com.test", "com.test2", "0.0.1");
+					System.err.println("Materialised " + module);
+
+				} catch (RhenaException re) {
+					throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		wj.schedule();
+		
+		
+		
+		
+		
+		
+		
+		
 
 		IProjectDescription desc = project.getDescription();
 		ICommand[] commands = desc.getBuildSpec();
@@ -37,6 +94,8 @@ public class RhenaNature implements IProjectNature {
 
 	@Override
 	public void deconfigure() throws CoreException {
+
+		System.err.println("Deconfiguring");
 
 		IProjectDescription description = getProject().getDescription();
 		ICommand[] commands = description.getBuildSpec();

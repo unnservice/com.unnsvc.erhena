@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="com.unnsvc.erhena.category"
+            name="eRhena Views">
+      </category>
+      <e4view
+            allowMultiple="false"
+            category="com.unnsvc.erhena.category"
+            class="com.unnsvc.erhena.statusview.LoggingView"
+            icon="platform:/plugin/com.unnsvc.erhena.branding/icons/rhena.gif"
+            id="com.unnsvc.erhena.statusview.loggingView"
+            name="eRhena Logger"
+            restorable="false">
+      </e4view>
+   </extension>
+</plugin>  

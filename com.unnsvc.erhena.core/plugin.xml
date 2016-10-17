@@ -36,7 +36,7 @@
             locationURI="popup:org.eclipse.ui.projectConfigure?after=additions">
          <command
                commandId="com.unnsvc.erhena.core.nature.addRemoveRhenaNature"
-               label="Disable Rhena builder"
+               label="Disable eRhena builder"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -59,7 +59,7 @@
          </command>
          <command
                commandId="com.unnsvc.erhena.core.nature.addRemoveRhenaNature"
-               label="Enable Sample builder"
+               label="Enable eRhena builder"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -98,7 +98,7 @@
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
-            icon="icons/rhena_nature_decorator.gif"
+            icon="platform:/plugin/com.unnsvc.erhena.branding/icons/rhena_nature_decorator.gif"
             id="com.unnsvc.erhena.core.nature.decorator"
             natureId="com.unnsvc.erhena.core.nature">
       </image>

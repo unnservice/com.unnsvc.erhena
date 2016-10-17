@@ -3,14 +3,13 @@ package com.unnsvc.erhena.wizards;
 
 import java.net.URI;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
@@ -41,10 +40,9 @@ public class RhenaModuleWizard extends Wizard implements INewWizard {
 
 	@Override
 	public boolean performFinish() {
-
+		
 		try {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			final IProject project = workspace.getRoot().getProject("My Project");
 			IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 
 				public void run(IProgressMonitor monitor) throws CoreException {
@@ -53,10 +51,10 @@ public class RhenaModuleWizard extends Wizard implements INewWizard {
 					String projectName = page.getProjectName();
 					URI location = page.getProjectLocationURI();
 
-					RhenaModuleProjectSupport.createProject(componentName, projectName, location);
+					RhenaModuleProjectSupport.createProject(componentName, projectName, location, monitor);
 				}
 			};
-			workspace.run(operation, null);
+			workspace.run(operation, new NullProgressMonitor());
 
 			return true;
 		} catch (CoreException ce) {

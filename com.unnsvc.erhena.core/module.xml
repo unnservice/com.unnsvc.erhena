@@ -4,5 +4,6 @@
 
 	<meta component="com.unnsvc.erhena" version="0.0.1" lifecycle="pde" />
 
-
+	<dependency:test module="com.unnsvc.erhena:common:0.0.1" />
+	
 </module>

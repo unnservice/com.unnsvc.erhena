@@ -1,14 +1,9 @@
 
 package com.unnsvc.erhena.core;
 
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-
-import com.unnsvc.erhena.core.nature.RhenaModuleChangeListener;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -20,8 +15,10 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-	private IWorkspace workspace = ResourcesPlugin.getWorkspace();
-	private IResourceChangeListener listener;
+
+	private static BundleContext context;
+	// private IWorkspace workspace = ResourcesPlugin.getWorkspace();
+	// private IResourceChangeListener listener;
 
 	/**
 	 * The constructor
@@ -39,8 +36,9 @@ public class Activator extends AbstractUIPlugin {
 
 		super.start(context);
 		plugin = this;
-		listener = new RhenaModuleChangeListener();
-		workspace.addResourceChangeListener(listener);
+		this.context = context;
+		// listener = new RhenaModuleChangeListener();
+		// workspace.addResourceChangeListener(listener);
 	}
 
 	/*
@@ -53,10 +51,11 @@ public class Activator extends AbstractUIPlugin {
 
 		plugin = null;
 		super.stop(context);
+		this.context = context;
 
-		if (workspace != null) {
-			workspace.removeResourceChangeListener(listener);
-		}
+		// if (workspace != null) {
+		// workspace.removeResourceChangeListener(listener);
+		// }
 	}
 
 	/**
@@ -67,6 +66,11 @@ public class Activator extends AbstractUIPlugin {
 	public static Activator getDefault() {
 
 		return plugin;
+	}
+
+	public static BundleContext getContext() {
+
+		return context;
 	}
 
 	public static ImageDescriptor getImageDescriptor(String path) {

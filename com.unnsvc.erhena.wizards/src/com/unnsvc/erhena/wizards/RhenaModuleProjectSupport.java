@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -27,6 +28,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 
 import com.unnsvc.erhena.core.nature.RhenaNature;
+import com.unnsvc.rhena.common.RhenaConstants;
 
 /**
  * @TODO generate lifecycle project too?
@@ -46,25 +48,44 @@ public class RhenaModuleProjectSupport {
 	 * @throws CoreException
 	 */
 
-	public static IProject createProject(String componentName, String projectName, URI location) throws CoreException {
+	public static IProject createProject(String componentName, String projectName, URI location, IProgressMonitor monitor) throws CoreException {
+
+		// URIUtil.toPath(location).
 
 		// create
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject(componentName + "." + projectName);
-		project.create(null);
-		project.open(null);
+		// IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		// IProject project = root.getProject(componentName + "." +
+		// projectName);
+		//
+		// if (!project.exists()) {
+		// IProjectDescription desc =
+		// ResourcesPlugin.getWorkspace().newProjectDescription(project.getName());
+		// if
+		// (!ResourcesPlugin.getWorkspace().getRoot().getLocationURI().equals(location))
+		// {
+		// desc.setLocationURI(location);
+		// }
+		// project.create(monitor);
+		// if (!project.isOpen()) {
+		// project.open(monitor);
+		// }
+		// }
+
+		IProject project = createBaseProject(componentName + "." + projectName, location, monitor);
 
 		// add nature
 		IProjectDescription description = project.getDescription();
 		description.setNatureIds(new String[] { JavaCore.NATURE_ID, RhenaNature.NATURE_ID });
-		project.setDescription(description, null);
+		project.setDescription(description, monitor);
 
 		IJavaProject javaProject = JavaCore.create(project);
 
 		// out
-		IFolder binFolder = project.getFolder("target");
-		binFolder.create(false, true, null);
-		javaProject.setOutputLocation(binFolder.getFullPath(), null);
+		IFolder targetFolder = project.getFolder("target");
+		targetFolder.create(false, true, monitor);
+		IFolder outFolder = project.getFolder("target/eclipse");
+		outFolder.create(false, true, monitor);
+		javaProject.setOutputLocation(outFolder.getFullPath(), null);
 
 		// add jre?
 		// List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
@@ -81,14 +102,17 @@ public class RhenaModuleProjectSupport {
 		IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
 		IPath vmPath = containerPath.append(vmInstall.getVMInstallType().getId()).append(vmInstall.getName());
 		IClasspathEntry jreEntry = JavaCore.newContainerEntry(vmPath);
-		javaProject.setRawClasspath(new IClasspathEntry[] { jreEntry }, null);
+		javaProject.setRawClasspath(new IClasspathEntry[] { jreEntry }, monitor);
 
 		// create source folders
-		String[] paths = { "src/main/java", "src/test/java" };
+		String[] srcPaths = { "src/main/java", "src/main/resources", "src/test/java" };
+		String[] outPath = { "target/eclipse" };
 		// addToProjectStructure(project, paths);
 
-		addToProjectStructure(project, paths);
-		for (String path : paths) {
+		addToProjectStructure(project, srcPaths);
+		addToProjectStructure(project, outPath);
+
+		for (String path : srcPaths) {
 
 			IFolder sourceFolder = project.getFolder(path);
 
@@ -97,13 +121,13 @@ public class RhenaModuleProjectSupport {
 			IClasspathEntry[] newEntries = new IClasspathEntry[oldEntries.length + 1];
 			System.arraycopy(oldEntries, 0, newEntries, 0, oldEntries.length);
 			newEntries[oldEntries.length] = JavaCore.newSourceEntry(fragmentRoot.getPath());
-			javaProject.setRawClasspath(newEntries, null);
+			javaProject.setRawClasspath(newEntries, monitor);
 		}
 
 		// create default descriptor
-		IFile moduleDescriptor = project.getFile("module.xml");
+		IFile moduleDescriptor = project.getFile(RhenaConstants.MODULE_DESCRIPTOR_FILENAME);
 		if (!moduleDescriptor.exists()) {
-			moduleDescriptor.create(getModuleTemplate(componentName, projectName), false, null);
+			moduleDescriptor.create(getModuleTemplate(componentName, projectName), false, monitor);
 		}
 
 		return project;
@@ -134,7 +158,7 @@ public class RhenaModuleProjectSupport {
 	 * @param projectName
 	 * @throws CoreException
 	 */
-	private static IProject createBaseProject(String projectName, URI location) {
+	private static IProject createBaseProject(String projectName, URI location, IProgressMonitor monitor) {
 
 		// it is acceptable to use the ResourcesPlugin class
 		IProject newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
@@ -149,9 +173,9 @@ public class RhenaModuleProjectSupport {
 			desc.setLocationURI(projectLocation);
 			try {
 
-				newProject.create(desc, null);
+				newProject.create(desc, monitor);
 				if (!newProject.isOpen()) {
-					newProject.open(null);
+					newProject.open(monitor);
 				}
 			} catch (CoreException e) {
 				e.printStackTrace();

@@ -5,3 +5,10 @@ Bundle-SymbolicName: com.unnsvc.erhena.common
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: UNNSVC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: com.unnsvc.erhena.common
+Require-Bundle: org.eclipse.e4.core.di,
+ org.eclipse.e4.core.services,
+ org.eclipse.core.resources,
+ org.eclipse.e4.ui.di,
+ org.eclipse.ui,
+ org.eclipse.core.runtime
