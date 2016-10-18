@@ -17,5 +17,5 @@ Require-Bundle: com.unnsvc.erhena.platform,
  org.eclipse.e4.core.contexts
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Export-Package: com.unnsvc.erhena.core.nature
 Bundle-Activator: com.unnsvc.erhena.core.Activator
+Export-Package: com.unnsvc.erhena.core.nature

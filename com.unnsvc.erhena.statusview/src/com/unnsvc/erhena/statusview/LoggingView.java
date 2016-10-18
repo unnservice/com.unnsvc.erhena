@@ -1,7 +1,6 @@
 
 package com.unnsvc.erhena.statusview;
 
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -22,35 +21,29 @@ public class LoggingView {
 
 	public LoggingView() {
 
-		System.err.println("Created");
 	}
 
 	@PostConstruct
 	public void postConstruct(Composite parent) {
 
-		System.err.println("post construct");
-
 		Composite composite = new Composite(parent, SWT.NONE);
 		tableViewerExample = new LoggingViewTable(composite);
 
-		
-//		broker.subscribe(ErhenaConstants.TOPIC_LOGEVENT, new EventHandler() {
-//
-//			@Override
-//			public void handleEvent(Event event) {
-//
-//				System.err.println("on event");
-//
-//			}
-//			
-//		});
+		// broker.subscribe(ErhenaConstants.TOPIC_LOGEVENT, new EventHandler() {
+		//
+		// @Override
+		// public void handleEvent(Event event) {
+		//
+		// System.err.println("on event");
+		//
+		// }
+		//
+		// });
 	}
 
 	@Inject
 	@Optional
 	private void subscribeTopicTodoUpdated(@UIEventTopic(ErhenaConstants.TOPIC_LOGEVENT) LogEvent logEvent) {
-
-		System.err.println("on event");
 
 		tableViewerExample.onLogEvent(logEvent);
 	}

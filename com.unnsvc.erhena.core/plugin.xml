@@ -3,7 +3,7 @@
 <plugin>
    <extension
          id="com.unnsvc.erhena.core.nature"
-         name="Rhena Project Nature"
+         name="eRhena Project Nature"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run

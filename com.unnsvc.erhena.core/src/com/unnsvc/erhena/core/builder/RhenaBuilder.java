@@ -11,6 +11,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.core.Activator;
 import com.unnsvc.erhena.platform.service.RhenaPlatformService;
@@ -19,7 +24,7 @@ import com.unnsvc.rhena.common.model.IRhenaModule;
 
 public class RhenaBuilder extends IncrementalProjectBuilder {
 
-	public static final String BUILDER_ID = "com.unnsvc.erhena.core.builder";
+	public static final String BUILDER_ID = "com.unnsvc.erhena.core.builder.RhenaBuilder";
 
 	// @Inject
 	// private IEventBroker eventBroker;
@@ -30,17 +35,16 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 
 	public RhenaBuilder() {
 
-		// IEclipseContext rootContext =
-		// EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(IRhenaService.class).getBundleContext());
-		// rhenaService = ContextInjectionFactory.make(IRhenaService.class,
-		// rootContext);
+		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
+		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
+		ContextInjectionFactory.inject(this, eclipseContext);
 	}
 
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 
-		System.err.println("Building " + rhenaService);
-
+		System.err.println("Running build");
+		
 		// eventBroker.post(ErhenaConstants.TOPIC_LOGEVENT, data)
 
 		// try {
@@ -53,6 +57,7 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 		try {
 			IRhenaModule module = rhenaService.materialiseModel("com.test", "com.test2", "0.0.1");
 		} catch (RhenaException re) {
+			re.printStackTrace();
 			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
 		}
 

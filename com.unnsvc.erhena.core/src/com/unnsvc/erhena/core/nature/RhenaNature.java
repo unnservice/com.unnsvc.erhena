@@ -42,10 +42,6 @@ public class RhenaNature implements IProjectNature {
 		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
 		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
 		ContextInjectionFactory.inject(this, eclipseContext);
-		// IRhenaPlatformService instance =
-		// ContextInjectionFactory.make(IRhenaPlatformService.class,
-		// eclipseContext);
-		System.err.println("Created: " + eclipseContext + " and injected? " + eventBroker + " platform service " + rhenaPlatformService);		
 	}
 
 	@Override
@@ -58,7 +54,6 @@ public class RhenaNature implements IProjectNature {
 		} catch (RhenaException re) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
 		}
-		
 
 		IProjectDescription desc = project.getDescription();
 		ICommand[] commands = desc.getBuildSpec();
@@ -80,8 +75,6 @@ public class RhenaNature implements IProjectNature {
 
 	@Override
 	public void deconfigure() throws CoreException {
-
-		System.err.println("Deconfiguring");
 
 		IProjectDescription description = getProject().getDescription();
 		ICommand[] commands = description.getBuildSpec();
