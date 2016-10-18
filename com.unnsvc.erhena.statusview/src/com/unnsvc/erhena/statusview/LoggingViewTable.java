@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import ch.qos.logback.classic.spi.ILoggingEvent;
+import com.unnsvc.rhena.core.logging.LogEvent;
 
 public class LoggingViewTable {
 
@@ -73,12 +73,12 @@ public class LoggingViewTable {
 		}
 	}
 
-	public void onLogEvent(ILoggingEvent logEvent) {
+	public void onLogEvent(LogEvent logEvent) {
 		
 		TableItem item = new TableItem(table, SWT.NONE);
-		item.setText(0, logEvent.getTimeStamp() + "");
+		item.setText(0, logEvent.getTimestamp() + "");
 		item.setText(1, logEvent.getLevel().toString());
-		item.setText(2, logEvent.getLoggerName());
+		item.setText(2, logEvent.getSource());
 		item.setText(3, logEvent.getMessage());
 
 		for (int i = 0; i < table.getColumns().length; i++) {

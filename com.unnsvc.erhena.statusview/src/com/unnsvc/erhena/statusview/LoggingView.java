@@ -12,8 +12,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 import com.unnsvc.erhena.common.ErhenaConstants;
-
-import ch.qos.logback.classic.spi.ILoggingEvent;
+import com.unnsvc.rhena.core.logging.LogEvent;
 
 public class LoggingView {
 
@@ -49,7 +48,7 @@ public class LoggingView {
 
 	@Inject
 	@Optional
-	private void subscribeTopicTodoUpdated(@UIEventTopic(ErhenaConstants.TOPIC_LOGEVENT) ILoggingEvent logEvent) {
+	private void subscribeTopicTodoUpdated(@UIEventTopic(ErhenaConstants.TOPIC_LOGEVENT) LogEvent logEvent) {
 
 		System.err.println("on event");
 

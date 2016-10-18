@@ -3,10 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Platform
 Bundle-SymbolicName: com.unnsvc.erhena.platform;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-ClassPath: embedded/com.unnsvc.rhena.common-0.0.1-SNAPSHOT.jar,
+Bundle-ClassPath: .,
+ embedded/com.unnsvc.rhena.common-0.0.1-SNAPSHOT.jar,
  embedded/com.unnsvc.rhena.core-0.0.1-SNAPSHOT.jar,
- embedded/com.unnsvc.rhena.lifecycle-0.0.1-SNAPSHOT.jar,
- .
+ embedded/com.unnsvc.rhena.lifecycle-0.0.1-SNAPSHOT.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: com.unnsvc.erhena.common,
  org.eclipse.core.resources,
@@ -17,15 +17,14 @@ Require-Bundle: com.unnsvc.erhena.common,
  org.eclipse.e4.core.contexts,
  org.eclipse.e4.ui.di,
  org.eclipse.jface,
- org.eclipse.ui,
- org.slf4j.api,
- ch.qos.logback.core;visibility:=reexport,
- ch.qos.logback.classic
+ org.eclipse.ui
 Export-Package: com.unnsvc.erhena.platform.service,
  com.unnsvc.rhena.common,
  com.unnsvc.rhena.common.exceptions,
  com.unnsvc.rhena.common.listener,
- com.unnsvc.rhena.common.model
+ com.unnsvc.rhena.common.logging,
+ com.unnsvc.rhena.common.model,
+ com.unnsvc.rhena.core.logging
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: com.unnsvc.erhena.platform.Activator
 Bundle-Vendor: UNNSVC

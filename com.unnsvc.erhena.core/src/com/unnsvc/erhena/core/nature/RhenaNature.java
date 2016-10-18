@@ -15,6 +15,7 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.core.Activator;
 import com.unnsvc.erhena.core.builder.RhenaBuilder;
@@ -38,7 +39,7 @@ public class RhenaNature implements IProjectNature {
 
 	public RhenaNature() {
 
-		BundleContext bundleContext = Activator.getContext();
+		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
 		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
 		ContextInjectionFactory.inject(this, eclipseContext);
 		// IRhenaPlatformService instance =
@@ -50,15 +51,8 @@ public class RhenaNature implements IProjectNature {
 	@Override
 	public void configure() throws CoreException {
 
-//		eventBroker.send(ErhenaConstants.TOPIC_LOGEVENT, new ILoggingEvent() {});
-
 		try {
-			
-			rhenaPlatformService.testLog();
 
-			System.err.println("Running nature configure() to materialise");
-			System.err.println("Attempting to materialise rhenaPlatformService from classloader: " + rhenaPlatformService.getClass().getClassLoader());
-			System.err.println("Source classloader for rhenaPlatformService: " + rhenaPlatformService.getClass().getClassLoader());
 			IRhenaModule module = rhenaPlatformService.materialiseModel("com.test", "com.test2", "0.0.1");
 
 		} catch (RhenaException re) {

@@ -17,7 +17,6 @@ Require-Bundle: javax.inject,
  org.eclipse.ui,
  com.unnsvc.erhena.common,
  org.eclipse.e4.core.services,
- org.eclipse.osgi.services,
- ch.qos.logback.classic
+ org.eclipse.osgi.services
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

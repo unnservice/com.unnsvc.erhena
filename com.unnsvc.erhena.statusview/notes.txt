@@ -1,0 +1,7 @@
+Have a dynamic list of modules to the left which lists active workspace module projects, 
+the project name can be bold to indicate activity or red to indicate error when the log is 
+not selected.
+
+Module identifiers are displayed in their qualified name
+
+The right side of the view displays a table with time, level, and message
