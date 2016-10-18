@@ -12,10 +12,10 @@ public class LoggingViewFilter extends ViewerFilter {
 
 	private ModuleIdentifier filterOn;
 	private ELogLevel level;
-	
+
 	public LoggingViewFilter() {
 
-		this.level = ELogLevel.DEBUG;
+		this.level = ELogLevel.INFO;
 	}
 
 	public void setFilterOn(ModuleIdentifier filterOn) {
@@ -23,22 +23,27 @@ public class LoggingViewFilter extends ViewerFilter {
 		this.filterOn = filterOn;
 	}
 
+	public void setLevel(ELogLevel level) {
+
+		this.level = level;
+	}
+
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 
 		LogEvent log = (LogEvent) element;
-		
+
 		// filter out those with a lower priority
-		if(log.getLevel().compareTo(level) == -1) {
+		if (log.getLevel().compareTo(level) == -1) {
 			return false;
 		}
-		
-		if(filterOn == null) {
-			if(log.getIdentifier() == null) {
+
+		if (filterOn == null) {
+			if (log.getIdentifier() == null) {
 				return true;
 			}
 		} else if (log.getIdentifier() != null) {
-			if(log.getIdentifier().equals(filterOn)) {
+			if (log.getIdentifier().equals(filterOn)) {
 				return true;
 			}
 		}

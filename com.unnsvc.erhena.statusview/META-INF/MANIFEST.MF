@@ -19,6 +19,7 @@ Require-Bundle: javax.inject,
  org.eclipse.e4.core.services,
  org.eclipse.osgi.services,
  org.eclipse.e4.core.contexts,
- org.eclipse.e4.core.di
+ org.eclipse.e4.core.di,
+ org.eclipse.ui.workbench.texteditor
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

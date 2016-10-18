@@ -8,13 +8,18 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.part.ViewPart;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -27,6 +32,7 @@ import com.unnsvc.erhena.statusview.modules.CoreEntry;
 import com.unnsvc.erhena.statusview.modules.ModuleEntry;
 import com.unnsvc.erhena.statusview.modules.ModuleViewContentProvider;
 import com.unnsvc.erhena.statusview.modules.ModuleViewTable;
+import com.unnsvc.rhena.common.logging.ELogLevel;
 import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent;
 import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent.EAddRemove;
 import com.unnsvc.rhena.core.logging.LogEvent;
@@ -54,12 +60,45 @@ public class LoggingView extends ViewPart {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new FillLayout());
 
-		System.err.println("Creating view");
-
 		createMain(new Composite(container, SWT.NONE));
 	}
 
 	private void createMain(Composite parent) {
+
+		// getViewSite().getActionBars().getToolBarManager().add(new
+		// GroupMarker("additions")); //$NON-NLS-1$
+		// getViewSite().getActionBars().getToolBarManager().prependToGroup("additions",
+		// new Something("someid")); //$NON-NLS-1$
+		getViewSite().getActionBars().getToolBarManager().add(new ControlContribution("something") {
+
+			@Override
+			protected Control createControl(Composite parent) {
+
+				Combo combo = new Combo(parent, SWT.READ_ONLY);
+				combo.setItems("TRACE", "DEBUG", "INFO", "WARN", "ERROR");
+
+				combo.addSelectionListener(new SelectionAdapter() {
+
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
+
+						super.widgetSelected(e);
+					}
+
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+
+						ELogLevel level = ELogLevel.valueOf(combo.getText());
+						viewFilter.setLevel(level);
+						logViewTable.getTableViewer().setFilters(viewFilter);
+					}
+				});
+
+				combo.select(2);
+				return combo;
+			}
+		});
+		getViewSite().getActionBars().updateActionBars();
 
 		parent.setLayout(new FillLayout());
 
@@ -77,6 +116,7 @@ public class LoggingView extends ViewPart {
 		 */
 		createModuleLog(tableContainer);
 
+		// We don't want events until the entire UI is created..
 		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
 		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
 		ContextInjectionFactory.inject(this, eclipseContext);
