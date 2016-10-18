@@ -6,9 +6,6 @@ Bundle-Version: 1.0.0
 Bundle-ClassPath: embedded/com.unnsvc.rhena.common-0.0.1-SNAPSHOT.jar,
  embedded/com.unnsvc.rhena.core-0.0.1-SNAPSHOT.jar,
  embedded/com.unnsvc.rhena.lifecycle-0.0.1-SNAPSHOT.jar,
- embedded/logback-classic-1.1.7.jar,
- embedded/logback-core-1.1.7.jar,
- embedded/slf4j-api-1.7.21.jar,
  .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: com.unnsvc.erhena.common,
@@ -20,7 +17,10 @@ Require-Bundle: com.unnsvc.erhena.common,
  org.eclipse.e4.core.contexts,
  org.eclipse.e4.ui.di,
  org.eclipse.jface,
- org.eclipse.ui
+ org.eclipse.ui,
+ org.slf4j.api,
+ ch.qos.logback.core;visibility:=reexport,
+ ch.qos.logback.classic
 Export-Package: com.unnsvc.erhena.platform.service,
  com.unnsvc.rhena.common,
  com.unnsvc.rhena.common.exceptions,

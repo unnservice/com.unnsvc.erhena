@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import com.unnsvc.rhena.common.listener.LogEvent;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 
 public class LoggingViewTable {
 
@@ -73,13 +73,13 @@ public class LoggingViewTable {
 		}
 	}
 
-	public void onLogEvent(LogEvent logEvent) {
-
+	public void onLogEvent(ILoggingEvent logEvent) {
+		
 		TableItem item = new TableItem(table, SWT.NONE);
-		item.setText(0, "x");
-		item.setText(1, "y");
-		item.setText(2, "!");
-		item.setText(3, "this stuff behaves the way I expect");
+		item.setText(0, logEvent.getTimeStamp() + "");
+		item.setText(1, logEvent.getLevel().toString());
+		item.setText(2, logEvent.getLoggerName());
+		item.setText(3, logEvent.getMessage());
 
 		for (int i = 0; i < table.getColumns().length; i++) {
 			table.getColumn(i).pack();

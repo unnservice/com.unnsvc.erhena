@@ -1,0 +1,22 @@
+<configuration>
+
+	<appender name="ECLIPSE" class="com.unnsvc.erhena.logging.RhenaLoggingViewAppender">
+		<encoder>
+			<pattern>%d{ss.SSS} %-5level %40.40logger - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- <logger name="com.unnsvc.rhena.core.resolution.LocalCacheRepository" level="INFO" /> -->
+	<!-- <logger name="com.unnsvc.rhena.common.Utils" level="INFO" /> -->
+	<!-- <logger name="com.unnsvc.rhena.core.visitors.ModelMergeVisitor" level="INFO" /> -->
+	<!-- <logger name="com.unnsvc.rhena.core.resolution.RhenaModuleParser" level="INFO" /> -->
+	<!-- <logger name="com.unnsvc.rhena.core.resolution.RhenaResolutionContext" level="INFO" /> -->
+	<!-- <logger name="com.unnsvc.rhena.core" level="TRACE" /> -->
+
+	<logger name="com.unnsvc.rhena.core.execution" level="INFO" />
+
+	<root level="INFO">
+		<appender-ref ref="ECLIPSE" />
+	</root>
+
+</configuration>

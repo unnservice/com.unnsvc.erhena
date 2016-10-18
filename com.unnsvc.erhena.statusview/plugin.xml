@@ -15,7 +15,7 @@
             icon="platform:/plugin/com.unnsvc.erhena.branding/icons/rhena.gif"
             id="com.unnsvc.erhena.statusview.loggingView"
             name="eRhena Logger"
-            restorable="false">
+            restorable="true">
       </e4view>
    </extension>
 </plugin>  

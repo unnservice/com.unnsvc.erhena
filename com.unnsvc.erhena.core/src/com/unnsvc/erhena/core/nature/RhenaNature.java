@@ -7,9 +7,7 @@ import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
-import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -38,9 +36,6 @@ public class RhenaNature implements IProjectNature {
 	@Inject
 	private RhenaPlatformService rhenaPlatformService;
 
-	// @Inject
-	// private RhenaPlatformService rhenaService;
-
 	public RhenaNature() {
 
 		BundleContext bundleContext = Activator.getContext();
@@ -49,34 +44,27 @@ public class RhenaNature implements IProjectNature {
 		// IRhenaPlatformService instance =
 		// ContextInjectionFactory.make(IRhenaPlatformService.class,
 		// eclipseContext);
-		System.err.println("Created: " + eclipseContext + " and injected? " + eventBroker + " platform service " + rhenaPlatformService);
+		System.err.println("Created: " + eclipseContext + " and injected? " + eventBroker + " platform service " + rhenaPlatformService);		
 	}
 
 	@Override
 	public void configure() throws CoreException {
 
-		// IEclipseContext rootContext =
-		// EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(RhenaService.class).getBundleContext());
-		// IRhenaService service =
-		// ContextInjectionFactory.make(RhenaService.class, rootContext);
+//		eventBroker.send(ErhenaConstants.TOPIC_LOGEVENT, new ILoggingEvent() {});
 
-		// System.err.println("Configuring, rhena service? " + rhenaService);
-		//
-		WorkspaceJob wj = new WorkspaceJob("Test") {
+		try {
+			
+			rhenaPlatformService.testLog();
 
-			@Override
-			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+			System.err.println("Running nature configure() to materialise");
+			System.err.println("Attempting to materialise rhenaPlatformService from classloader: " + rhenaPlatformService.getClass().getClassLoader());
+			System.err.println("Source classloader for rhenaPlatformService: " + rhenaPlatformService.getClass().getClassLoader());
+			IRhenaModule module = rhenaPlatformService.materialiseModel("com.test", "com.test2", "0.0.1");
 
-				try {
-					IRhenaModule module = rhenaPlatformService.materialiseModel("com.test", "com.test2", "0.0.1");
-
-				} catch (RhenaException re) {
-					throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		wj.schedule();
+		} catch (RhenaException re) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
+		}
+		
 
 		IProjectDescription desc = project.getDescription();
 		ICommand[] commands = desc.getBuildSpec();

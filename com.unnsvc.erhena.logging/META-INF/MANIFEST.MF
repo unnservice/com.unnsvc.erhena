@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Logging
+Bundle-SymbolicName: com.unnsvc.erhena.logging
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: UNNSVC
+Fragment-Host: ch.qos.logback.classic;bundle-version="1.0.7"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.e4.core.di,
+ org.eclipse.e4.core.contexts,
+ org.eclipse.osgi,
+ com.unnsvc.erhena.platform,
+ org.eclipse.e4.core.services,
+ javax.inject
