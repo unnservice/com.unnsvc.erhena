@@ -5,47 +5,115 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import com.unnsvc.erhena.common.ErhenaConstants;
+import com.unnsvc.erhena.statusview.log.LogContentProvider;
+import com.unnsvc.erhena.statusview.log.LoggingViewTable;
+import com.unnsvc.erhena.statusview.modules.AllEntry;
+import com.unnsvc.erhena.statusview.modules.CoreEntry;
+import com.unnsvc.erhena.statusview.modules.ModuleEntry;
+import com.unnsvc.erhena.statusview.modules.ModuleViewContentProvider;
+import com.unnsvc.erhena.statusview.modules.ModuleViewTable;
+import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent;
+import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent.EAddRemove;
 import com.unnsvc.rhena.core.logging.LogEvent;
 
 public class LoggingView {
 
-	@Inject
-	private IEventBroker broker;
-	private LoggingViewTable tableViewerExample;
+	// @Inject
+	// private IEventBroker broker;
+	private ModuleViewTable moduleViewTable;
+	private ModuleViewContentProvider moduleViewContentProvider;
+	private LoggingViewTable logViewTable;
+	private LogContentProvider logViewContentProvider;
+	private LoggingViewFilter viewFilter;
 
 	public LoggingView() {
 
+		this.logViewContentProvider = new LogContentProvider();
+		this.moduleViewContentProvider = new ModuleViewContentProvider();
+		this.viewFilter = new LoggingViewFilter();
 	}
 
 	@PostConstruct
 	public void postConstruct(Composite parent) {
 
-		Composite composite = new Composite(parent, SWT.NONE);
-		tableViewerExample = new LoggingViewTable(composite);
+		parent.setLayout(new FillLayout());
 
-		// broker.subscribe(ErhenaConstants.TOPIC_LOGEVENT, new EventHandler() {
-		//
-		// @Override
-		// public void handleEvent(Event event) {
-		//
-		// System.err.println("on event");
-		//
-		// }
-		//
-		// });
+		SashForm sashForm = new SashForm(parent, SWT.HORIZONTAL);
+
+		createModuleList(sashForm);
+
+		Composite tableContainer = new Composite(sashForm, SWT.BORDER);
+		tableContainer.setLayout(new FillLayout());
+
+		sashForm.setWeights(new int[] { 1, 2 });
+
+		/**
+		 * Should be able to begin creating stuff here
+		 */
+		createModuleLog(tableContainer);
+	}
+
+	private void createModuleList(Composite composite) {
+
+		moduleViewTable = new ModuleViewTable(composite, moduleViewContentProvider);
+		moduleViewTable.getTableViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+
+				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+				ModuleEntry entry = (ModuleEntry) selection.getFirstElement();
+
+				if(entry instanceof AllEntry) {
+					logViewTable.getTableViewer().resetFilters();
+				} else if (entry instanceof CoreEntry) {
+					viewFilter.setFilterOn(null);
+					logViewTable.getTableViewer().setFilters(viewFilter);
+				} else {
+					viewFilter.setFilterOn(entry.getIdentifier());
+					logViewTable.getTableViewer().setFilters(viewFilter);
+				}
+			}
+		});
+
+		moduleViewTable.getTableViewer().setInput(moduleViewContentProvider.getActiveModules());
+	}
+
+	private void createModuleLog(Composite composite) {
+
+		logViewTable = new LoggingViewTable(composite, logViewContentProvider);
+		logViewTable.getTableViewer().setInput(logViewContentProvider.getLogEvents());
 	}
 
 	@Inject
 	@Optional
-	private void subscribeTopicTodoUpdated(@UIEventTopic(ErhenaConstants.TOPIC_LOGEVENT) LogEvent logEvent) {
+	private void subscribeLogEvent(@UIEventTopic(ErhenaConstants.TOPIC_LOGEVENT) LogEvent logEvent) {
 
-		tableViewerExample.onLogEvent(logEvent);
+		logViewContentProvider.addElement(logEvent);
+		logViewTable.refresh();
+	}
+
+	@Inject
+	@Optional
+	private void subscribeModuleAddRemoveEvent(@UIEventTopic(ErhenaConstants.TOPIC_MODULE_ADDREMOVE) ModuleAddRemoveEvent moduleAddRemove) {
+
+		if (moduleAddRemove.getAddRemove() == EAddRemove.ADDED) {
+			moduleViewContentProvider.addElement(moduleAddRemove.getIdentifier());
+		} else if (moduleAddRemove.getAddRemove() == EAddRemove.REMOVED) {
+			moduleViewContentProvider.removeElement(moduleAddRemove.getIdentifier());
+		}
+
+		moduleViewTable.refresh();
 	}
 
 }

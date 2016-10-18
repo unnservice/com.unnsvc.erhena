@@ -21,9 +21,11 @@ Require-Bundle: com.unnsvc.erhena.common,
 Export-Package: com.unnsvc.erhena.platform.service,
  com.unnsvc.rhena.common,
  com.unnsvc.rhena.common.exceptions,
+ com.unnsvc.rhena.common.identity,
  com.unnsvc.rhena.common.listener,
  com.unnsvc.rhena.common.logging,
  com.unnsvc.rhena.common.model,
+ com.unnsvc.rhena.core.events,
  com.unnsvc.rhena.core.logging
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: com.unnsvc.erhena.platform.Activator

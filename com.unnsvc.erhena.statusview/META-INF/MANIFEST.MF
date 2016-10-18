@@ -14,8 +14,8 @@ Require-Bundle: javax.inject,
  org.eclipse.e4.core.di.annotations,
  org.eclipse.core.runtime,
  com.unnsvc.erhena.platform,
- org.eclipse.ui,
  com.unnsvc.erhena.common,
+ org.eclipse.ui,
  org.eclipse.e4.core.services,
  org.eclipse.osgi.services
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

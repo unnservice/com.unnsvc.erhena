@@ -18,6 +18,7 @@ import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 import com.unnsvc.rhena.common.listener.IContextListener;
 import com.unnsvc.rhena.common.model.IRhenaModule;
 import com.unnsvc.rhena.core.configuration.RhenaConfiguration;
+import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent;
 import com.unnsvc.rhena.core.logging.LogEvent;
 import com.unnsvc.rhena.core.resolution.CachingResolutionContext;
 import com.unnsvc.rhena.core.resolution.WorkspaceRepository;
@@ -46,6 +47,22 @@ public class RhenaPlatformService implements IRhenaPlatformService {
 			public void onEvent(LogEvent evt) throws RhenaException {
 				
 				eventBorker.post(ErhenaConstants.TOPIC_LOGEVENT, evt);
+			}
+		});
+		
+		context.addListener(new IContextListener<ModuleAddRemoveEvent>() {
+
+			@Override
+			public Class<ModuleAddRemoveEvent> getType() {
+
+				
+				return ModuleAddRemoveEvent.class;
+			}
+
+			@Override
+			public void onEvent(ModuleAddRemoveEvent evt) throws RhenaException {
+				
+				eventBorker.post(ErhenaConstants.TOPIC_MODULE_ADDREMOVE, evt);
 			}
 		});
 
