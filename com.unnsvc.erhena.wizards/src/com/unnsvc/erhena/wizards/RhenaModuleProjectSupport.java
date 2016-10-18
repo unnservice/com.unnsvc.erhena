@@ -72,6 +72,12 @@ public class RhenaModuleProjectSupport {
 
 		IProject project = createBaseProject(componentName + "." + projectName, location, monitor);
 
+		// create default descriptor
+		IFile moduleDescriptor = project.getFile(RhenaConstants.MODULE_DESCRIPTOR_FILENAME);
+		if (!moduleDescriptor.exists()) {
+			moduleDescriptor.create(getModuleTemplate(componentName, projectName), false, monitor);
+		}
+		
 		// add nature
 		IProjectDescription description = project.getDescription();
 		description.setNatureIds(new String[] { JavaCore.NATURE_ID, RhenaNature.NATURE_ID });
@@ -121,12 +127,6 @@ public class RhenaModuleProjectSupport {
 			System.arraycopy(oldEntries, 0, newEntries, 0, oldEntries.length);
 			newEntries[oldEntries.length] = JavaCore.newSourceEntry(fragmentRoot.getPath());
 			javaProject.setRawClasspath(newEntries, monitor);
-		}
-
-		// create default descriptor
-		IFile moduleDescriptor = project.getFile(RhenaConstants.MODULE_DESCRIPTOR_FILENAME);
-		if (!moduleDescriptor.exists()) {
-			moduleDescriptor.create(getModuleTemplate(componentName, projectName), false, monitor);
 		}
 
 		return project;

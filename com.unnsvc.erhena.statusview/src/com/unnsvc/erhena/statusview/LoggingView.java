@@ -1,9 +1,11 @@
 
 package com.unnsvc.erhena.statusview;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -13,6 +15,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.part.ViewPart;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.common.ErhenaConstants;
 import com.unnsvc.erhena.statusview.log.LogContentProvider;
@@ -26,7 +31,7 @@ import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent;
 import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent.EAddRemove;
 import com.unnsvc.rhena.core.logging.LogEvent;
 
-public class LoggingView {
+public class LoggingView extends ViewPart {
 
 	// @Inject
 	// private IEventBroker broker;
@@ -43,8 +48,18 @@ public class LoggingView {
 		this.viewFilter = new LoggingViewFilter();
 	}
 
-	@PostConstruct
-	public void postConstruct(Composite parent) {
+	@Override
+	public void createPartControl(Composite parent) {
+
+		Composite container = new Composite(parent, SWT.NONE);
+		container.setLayout(new FillLayout());
+
+		System.err.println("Creating view");
+
+		createMain(new Composite(container, SWT.NONE));
+	}
+
+	private void createMain(Composite parent) {
 
 		parent.setLayout(new FillLayout());
 
@@ -61,6 +76,15 @@ public class LoggingView {
 		 * Should be able to begin creating stuff here
 		 */
 		createModuleLog(tableContainer);
+
+		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
+		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
+		ContextInjectionFactory.inject(this, eclipseContext);
+	}
+
+	@Override
+	public void setFocus() {
+
 	}
 
 	private void createModuleList(Composite composite) {
@@ -74,7 +98,7 @@ public class LoggingView {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				ModuleEntry entry = (ModuleEntry) selection.getFirstElement();
 
-				if(entry instanceof AllEntry) {
+				if (entry instanceof AllEntry) {
 					logViewTable.getTableViewer().resetFilters();
 				} else if (entry instanceof CoreEntry) {
 					viewFilter.setFilterOn(null);

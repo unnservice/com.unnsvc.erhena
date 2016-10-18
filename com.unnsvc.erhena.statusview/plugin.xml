@@ -8,14 +8,12 @@
             id="com.unnsvc.erhena.category"
             name="eRhena Views">
       </category>
-      <e4view
-            allowMultiple="false"
+      <view
             category="com.unnsvc.erhena.category"
             class="com.unnsvc.erhena.statusview.LoggingView"
-            icon="platform:/plugin/com.unnsvc.erhena.branding/icons/rhena.gif"
+                        icon="platform:/plugin/com.unnsvc.erhena.branding/icons/rhena_16x16.gif"
             id="com.unnsvc.erhena.statusview.loggingView"
-            name="eRhena Logger"
-            restorable="true">
-      </e4view>
+            name="eRhena Logger">
+      </view>
    </extension>
 </plugin>  

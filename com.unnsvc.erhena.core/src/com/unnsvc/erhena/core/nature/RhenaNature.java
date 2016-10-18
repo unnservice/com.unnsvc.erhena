@@ -54,7 +54,7 @@ public class RhenaNature implements IProjectNature {
 		} catch (RhenaException re) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
 		}
-
+		
 		IProjectDescription desc = project.getDescription();
 		ICommand[] commands = desc.getBuildSpec();
 
@@ -71,6 +71,7 @@ public class RhenaNature implements IProjectNature {
 		newCommands[newCommands.length - 1] = command;
 		desc.setBuildSpec(newCommands);
 		project.setDescription(desc, null);
+
 	}
 
 	@Override
