@@ -17,9 +17,12 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.part.ViewPart;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -57,10 +60,33 @@ public class LoggingView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 
-		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayout(new FillLayout());
+		GridLayout gl = new GridLayout();
+		gl.numColumns = 1;
+		parent.setLayout(gl);
 
-		createMain(new Composite(container, SWT.NONE));
+		Composite container = new Composite(parent, SWT.NONE);
+		GridData containerData = new GridData();
+		containerData.horizontalAlignment = SWT.FILL;
+		containerData.verticalAlignment = SWT.FILL;
+		containerData.grabExcessHorizontalSpace = true;
+		containerData.grabExcessVerticalSpace = true;
+		container.setLayoutData(containerData);
+		createMain(container);
+
+		Composite topBar = new Composite(parent, SWT.NONE);
+		GridData topBarData = new GridData();
+		topBarData.horizontalAlignment = SWT.FILL;
+		topBarData.grabExcessHorizontalSpace = true;
+		topBarData.grabExcessVerticalSpace = false;
+		topBar.setLayoutData(topBarData);
+		createTopbar(topBar);
+
+	}
+
+	private void createTopbar(Composite topBar) {
+
+		Label metrics = new Label(topBar, SWT.NONE);
+		metrics.setText("Average lifecycle execution time: 30ms");
 	}
 
 	private void createMain(Composite parent) {

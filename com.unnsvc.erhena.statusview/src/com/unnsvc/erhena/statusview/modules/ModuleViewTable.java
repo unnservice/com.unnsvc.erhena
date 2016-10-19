@@ -15,7 +15,7 @@ public class ModuleViewTable {
 
 		this.labelProvider = new ModuleLabelProvider();
 
-		tableViewer = new TableViewer(composite, SWT.MULTI | SWT.NONE | SWT.FULL_SELECTION);
+		tableViewer = new TableViewer(composite, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION);
 
 		tableViewer.setLabelProvider(labelProvider);
 		tableViewer.setContentProvider(contentProvider);
