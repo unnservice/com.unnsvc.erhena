@@ -1,7 +1,9 @@
 
 package com.unnsvc.erhena.statusview.log;
 
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -9,28 +11,60 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 
+import com.unnsvc.erhena.statusview.LogViewFilter;
+import com.unnsvc.erhena.statusview.modules.ModuleEntry;
+import com.unnsvc.rhena.common.logging.ELogLevel;
+import com.unnsvc.rhena.core.logging.LogEvent;
+
 public class LoggingViewTable {
 
 	private TableViewer tableViewer;
-	private LogLabelProvider labelProvider;
+	private LogViewFilter viewFilter;
 
-	public LoggingViewTable(Composite composite, LogContentProvider contentProvider) {
+	public LoggingViewTable(Composite parent, LogContentProvider contentProvider) {
 
-		labelProvider = new LogLabelProvider();
+		tableViewer = new TableViewer(parent, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
+		viewFilter = new LogViewFilter(ELogLevel.INFO);
+		tableViewer.setFilters(viewFilter);
 
-		tableViewer = new TableViewer(composite, SWT.MULTI | SWT.NONE | SWT.FULL_SELECTION);
+		TableViewerColumn levelColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		levelColumn.getColumn().setWidth(100);
+		levelColumn.getColumn().setText("Level");
+		levelColumn.setLabelProvider(new ColumnLabelProvider() {
 
-		tableViewer.setLabelProvider(labelProvider);
-		tableViewer.setContentProvider(contentProvider);
+			@Override
+			public String getText(Object element) {
+
+				return ((LogEvent) element).getLevel().toString().toLowerCase();
+			}
+		});
+		TableViewerColumn messageColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		messageColumn.getColumn().setWidth(300);
+		messageColumn.getColumn().setText("Message");
+		messageColumn.setLabelProvider(new ColumnLabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+
+				return ((LogEvent) element).getMessage();
+			}
+		});
 
 		Table table = tableViewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
+
+		tableViewer.setContentProvider(contentProvider);
 	}
 
 	public void refresh() {
 
 		tableViewer.refresh();
+	}
+
+	public TableViewer getTableViewer() {
+
+		return tableViewer;
 	}
 
 	private int getFontWidth(Font font) {
@@ -47,9 +81,15 @@ public class LoggingViewTable {
 		}
 	}
 
-	public TableViewer getTableViewer() {
+	public void setFilter(ELogLevel level) {
 
-		return tableViewer;
+		this.viewFilter.setLevel(level);
+		this.tableViewer.refresh();
 	}
 
+	public void setFilter(ModuleEntry entry) {
+
+		this.viewFilter.setType(entry);
+		this.tableViewer.refresh();
+	}
 }

@@ -29,7 +29,6 @@ public class ModuleViewTable {
 
 		tableViewer.refresh();
 	}
-	
 
 	public TableViewer getTableViewer() {
 

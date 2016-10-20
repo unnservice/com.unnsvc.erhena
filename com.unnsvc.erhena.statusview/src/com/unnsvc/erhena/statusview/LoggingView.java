@@ -30,8 +30,6 @@ import org.osgi.framework.FrameworkUtil;
 import com.unnsvc.erhena.common.ErhenaConstants;
 import com.unnsvc.erhena.statusview.log.LogContentProvider;
 import com.unnsvc.erhena.statusview.log.LoggingViewTable;
-import com.unnsvc.erhena.statusview.modules.AllEntry;
-import com.unnsvc.erhena.statusview.modules.CoreEntry;
 import com.unnsvc.erhena.statusview.modules.ModuleEntry;
 import com.unnsvc.erhena.statusview.modules.ModuleViewContentProvider;
 import com.unnsvc.erhena.statusview.modules.ModuleViewTable;
@@ -48,13 +46,11 @@ public class LoggingView extends ViewPart {
 	private ModuleViewContentProvider moduleViewContentProvider;
 	private LoggingViewTable logViewTable;
 	private LogContentProvider logViewContentProvider;
-	private LoggingViewFilter viewFilter;
 
 	public LoggingView() {
 
 		this.logViewContentProvider = new LogContentProvider();
 		this.moduleViewContentProvider = new ModuleViewContentProvider();
-		this.viewFilter = new LoggingViewFilter();
 	}
 
 	@Override
@@ -64,6 +60,8 @@ public class LoggingView extends ViewPart {
 		gl.numColumns = 1;
 		parent.setLayout(gl);
 
+		createActionBar();
+
 		Composite container = new Composite(parent, SWT.NONE);
 		GridData containerData = new GridData();
 		containerData.horizontalAlignment = SWT.FILL;
@@ -71,30 +69,29 @@ public class LoggingView extends ViewPart {
 		containerData.grabExcessHorizontalSpace = true;
 		containerData.grabExcessVerticalSpace = true;
 		container.setLayoutData(containerData);
-		createMain(container);
+		createLoggingtables(container);
 
-		Composite topBar = new Composite(parent, SWT.NONE);
-		GridData topBarData = new GridData();
-		topBarData.horizontalAlignment = SWT.FILL;
-		topBarData.grabExcessHorizontalSpace = true;
-		topBarData.grabExcessVerticalSpace = false;
-		topBar.setLayoutData(topBarData);
-		createTopbar(topBar);
+		Composite statusBar = new Composite(parent, SWT.NONE);
+		GridData statusBarData = new GridData();
+		statusBarData.horizontalAlignment = SWT.FILL;
+		statusBarData.grabExcessHorizontalSpace = true;
+		statusBarData.grabExcessVerticalSpace = false;
+		statusBar.setLayoutData(statusBarData);
+		createStatusbar(statusBar);
 
+		// We don't want events until the entire UI is created..
+		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
+		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
+		ContextInjectionFactory.inject(this, eclipseContext);
 	}
 
-	private void createTopbar(Composite topBar) {
-
-		Label metrics = new Label(topBar, SWT.NONE);
-		metrics.setText("Average lifecycle execution time: 30ms");
-	}
-
-	private void createMain(Composite parent) {
+	private void createActionBar() {
 
 		// getViewSite().getActionBars().getToolBarManager().add(new
 		// GroupMarker("additions")); //$NON-NLS-1$
 		// getViewSite().getActionBars().getToolBarManager().prependToGroup("additions",
 		// new Something("someid")); //$NON-NLS-1$
+
 		getViewSite().getActionBars().getToolBarManager().add(new ControlContribution("something") {
 
 			@Override
@@ -115,8 +112,7 @@ public class LoggingView extends ViewPart {
 					public void widgetSelected(SelectionEvent e) {
 
 						ELogLevel level = ELogLevel.valueOf(combo.getText());
-						viewFilter.setLevel(level);
-						logViewTable.getTableViewer().setFilters(viewFilter);
+						logViewTable.setFilter(level);
 					}
 				});
 
@@ -125,6 +121,15 @@ public class LoggingView extends ViewPart {
 			}
 		});
 		getViewSite().getActionBars().updateActionBars();
+	}
+
+	private void createStatusbar(Composite topBar) {
+
+		Label metrics = new Label(topBar, SWT.NONE);
+		metrics.setText("Average lifecycle execution time: 30ms");
+	}
+
+	private void createLoggingtables(Composite parent) {
 
 		parent.setLayout(new FillLayout());
 
@@ -132,20 +137,12 @@ public class LoggingView extends ViewPart {
 
 		createModuleList(sashForm);
 
-		Composite tableContainer = new Composite(sashForm, SWT.BORDER);
-		tableContainer.setLayout(new FillLayout());
-
-		sashForm.setWeights(new int[] { 1, 2 });
-
 		/**
 		 * Should be able to begin creating stuff here
 		 */
-		createModuleLog(tableContainer);
+		createModuleLog(sashForm);
 
-		// We don't want events until the entire UI is created..
-		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
-		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
-		ContextInjectionFactory.inject(this, eclipseContext);
+		sashForm.setWeights(new int[] { 1, 3 });
 	}
 
 	@Override
@@ -153,8 +150,10 @@ public class LoggingView extends ViewPart {
 
 	}
 
-	private void createModuleList(Composite composite) {
+	private void createModuleList(SashForm parent) {
 
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new FillLayout());
 		moduleViewTable = new ModuleViewTable(composite, moduleViewContentProvider);
 		moduleViewTable.getTableViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 
@@ -164,23 +163,17 @@ public class LoggingView extends ViewPart {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				ModuleEntry entry = (ModuleEntry) selection.getFirstElement();
 
-				if (entry instanceof AllEntry) {
-					logViewTable.getTableViewer().resetFilters();
-				} else if (entry instanceof CoreEntry) {
-					viewFilter.setFilterOn(null);
-					logViewTable.getTableViewer().setFilters(viewFilter);
-				} else {
-					viewFilter.setFilterOn(entry.getIdentifier());
-					logViewTable.getTableViewer().setFilters(viewFilter);
-				}
+				logViewTable.setFilter(entry);
 			}
 		});
 
 		moduleViewTable.getTableViewer().setInput(moduleViewContentProvider.getActiveModules());
 	}
 
-	private void createModuleLog(Composite composite) {
+	private void createModuleLog(SashForm parent) {
 
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new FillLayout());
 		logViewTable = new LoggingViewTable(composite, logViewContentProvider);
 		logViewTable.getTableViewer().setInput(logViewContentProvider.getLogEvents());
 	}

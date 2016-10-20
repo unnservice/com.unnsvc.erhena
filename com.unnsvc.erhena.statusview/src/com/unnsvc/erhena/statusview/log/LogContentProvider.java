@@ -1,34 +1,35 @@
 
 package com.unnsvc.erhena.statusview.log;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 
 import com.unnsvc.rhena.core.logging.LogEvent;
 
 public class LogContentProvider implements IStructuredContentProvider {
 
-	private List<LogEvent> logEvents;
+	private LogEvent[] logEvents;
 
 	public LogContentProvider() {
 
-		logEvents = new ArrayList<LogEvent>();
+		logEvents = new LogEvent[0];
 	}
 
 	@Override
 	public Object[] getElements(Object inputElement) {
 
-		return logEvents.toArray();
+		return logEvents;
 	}
 
 	public void addElement(LogEvent event) {
 
-		logEvents.add(event);
+		// logEvents.add(event);
+		LogEvent[] evts = new LogEvent[logEvents.length + 1];
+		System.arraycopy(logEvents, 0, evts, 0, logEvents.length);
+		evts[evts.length - 1] = event;
+		this.logEvents = evts;
 	}
 
-	public List<LogEvent> getLogEvents() {
+	public LogEvent[] getLogEvents() {
 
 		return logEvents;
 	}
