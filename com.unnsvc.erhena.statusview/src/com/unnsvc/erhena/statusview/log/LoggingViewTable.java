@@ -5,14 +5,11 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 
 import com.unnsvc.erhena.statusview.LogViewFilter;
-import com.unnsvc.erhena.statusview.modules.ModuleEntry;
+import com.unnsvc.erhena.statusview.modules.AbstractModuleEntry;
 import com.unnsvc.rhena.common.logging.ELogLevel;
 import com.unnsvc.rhena.core.logging.LogEvent;
 
@@ -20,12 +17,14 @@ public class LoggingViewTable {
 
 	private TableViewer tableViewer;
 	private LogViewFilter viewFilter;
+	private LogContentProvider contentProvider;
 
-	public LoggingViewTable(Composite parent, LogContentProvider contentProvider) {
+	public LoggingViewTable(Composite parent) {
 
 		tableViewer = new TableViewer(parent, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
 		viewFilter = new LogViewFilter(ELogLevel.INFO);
 		tableViewer.setFilters(viewFilter);
+		contentProvider = new LogContentProvider();
 
 		TableViewerColumn levelColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		levelColumn.getColumn().setWidth(100);
@@ -55,30 +54,17 @@ public class LoggingViewTable {
 		table.setLinesVisible(true);
 
 		tableViewer.setContentProvider(contentProvider);
+		tableViewer.setInput(contentProvider.getLogEvents());
 	}
 
-	public void refresh() {
-
-		tableViewer.refresh();
-	}
+//	public void refresh() {
+//
+//		tableViewer.refresh();
+//	}
 
 	public TableViewer getTableViewer() {
 
 		return tableViewer;
-	}
-
-	private int getFontWidth(Font font) {
-
-		GC gc = null;
-		try {
-			gc = new GC(font.getDevice());
-			FontMetrics fm = gc.getFontMetrics();
-			return fm.getAverageCharWidth();
-		} finally {
-			if (gc != null) {
-				gc.dispose();
-			}
-		}
 	}
 
 	public void setFilter(ELogLevel level) {
@@ -87,9 +73,15 @@ public class LoggingViewTable {
 		this.tableViewer.refresh();
 	}
 
-	public void setFilter(ModuleEntry entry) {
+	public void setFilter(AbstractModuleEntry entry) {
 
 		this.viewFilter.setType(entry);
 		this.tableViewer.refresh();
+	}
+
+	public void addLogEvent(LogEvent logEvent) {
+		
+		contentProvider.addElement(logEvent);
+		tableViewer.refresh();
 	}
 }

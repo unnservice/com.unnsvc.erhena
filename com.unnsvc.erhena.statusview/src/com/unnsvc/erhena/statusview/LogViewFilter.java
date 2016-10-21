@@ -4,6 +4,7 @@ package com.unnsvc.erhena.statusview;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
+import com.unnsvc.erhena.statusview.modules.AbstractModuleEntry;
 import com.unnsvc.erhena.statusview.modules.AllEntry;
 import com.unnsvc.erhena.statusview.modules.CoreEntry;
 import com.unnsvc.erhena.statusview.modules.ModuleEntry;
@@ -13,7 +14,7 @@ import com.unnsvc.rhena.core.logging.LogEvent;
 public class LogViewFilter extends ViewerFilter {
 
 	private ELogLevel level;
-	private ModuleEntry entryType;
+	private AbstractModuleEntry entryType;
 
 	public LogViewFilter(ELogLevel level) {
 
@@ -26,7 +27,7 @@ public class LogViewFilter extends ViewerFilter {
 		this.level = level;
 	}
 
-	public void setType(ModuleEntry entryType) {
+	public void setType(AbstractModuleEntry entryType) {
 
 		this.entryType = entryType;
 	}

@@ -3,7 +3,7 @@ package com.unnsvc.erhena.statusview.modules;
 
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 
-public class ModuleEntry {
+public class ModuleEntry extends AbstractModuleEntry {
 
 	private ModuleIdentifier identifier;
 	// @TODO have error states

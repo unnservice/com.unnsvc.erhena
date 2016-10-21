@@ -11,18 +11,18 @@ import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 
 public class ModuleViewContentProvider implements IStructuredContentProvider {
 
-	private List<ModuleEntry> activeModules;
+	private List<AbstractModuleEntry> activeModules;
 
 	public ModuleViewContentProvider() {
 
-		this.activeModules = new ArrayList<ModuleEntry>();
+		this.activeModules = new ArrayList<AbstractModuleEntry>();
 		this.activeModules.add(new AllEntry());
 		this.activeModules.add(new CoreEntry());
 	}
 
-	public void addElement(ModuleIdentifier moduleIdentifier) {
+	public void addElement(ModuleEntry entry) {
 
-		activeModules.add(new ModuleEntry(moduleIdentifier));
+		activeModules.add(entry);
 	}
 
 	@Override
@@ -31,19 +31,22 @@ public class ModuleViewContentProvider implements IStructuredContentProvider {
 		return activeModules.toArray();
 	}
 
-	public List<ModuleEntry> getActiveModules() {
+	public List<AbstractModuleEntry> getActiveModules() {
 
 		return activeModules;
 	}
 
 	public void removeElement(ModuleIdentifier identifier) {
 
-		Iterator<ModuleEntry> iter = activeModules.iterator();
+		Iterator<AbstractModuleEntry> iter = activeModules.iterator();
 		while (iter.hasNext()) {
 
-			ModuleEntry entry = iter.next();
-			if (entry.getIdentifier().equals(identifier)) {
-				iter.remove();
+			AbstractModuleEntry entry = iter.next();
+			if (entry instanceof ModuleEntry) {
+				ModuleEntry mo = (ModuleEntry) entry;
+				if (mo.getIdentifier().equals(identifier)) {
+					iter.remove();
+				}
 			}
 		}
 	}

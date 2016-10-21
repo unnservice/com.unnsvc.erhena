@@ -1,11 +1,10 @@
 
 package com.unnsvc.erhena.statusview.modules;
 
-public class CoreEntry extends ModuleEntry {
+public class CoreEntry extends AbstractModuleEntry {
 
 	public CoreEntry() {
 
-		super(null);
 	}
 
 }

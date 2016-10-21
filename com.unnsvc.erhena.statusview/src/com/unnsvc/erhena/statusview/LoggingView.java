@@ -28,14 +28,11 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.common.ErhenaConstants;
-import com.unnsvc.erhena.statusview.log.LogContentProvider;
 import com.unnsvc.erhena.statusview.log.LoggingViewTable;
-import com.unnsvc.erhena.statusview.modules.ModuleEntry;
-import com.unnsvc.erhena.statusview.modules.ModuleViewContentProvider;
+import com.unnsvc.erhena.statusview.modules.AbstractModuleEntry;
 import com.unnsvc.erhena.statusview.modules.ModuleViewTable;
 import com.unnsvc.rhena.common.logging.ELogLevel;
 import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent;
-import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent.EAddRemove;
 import com.unnsvc.rhena.core.logging.LogEvent;
 
 public class LoggingView extends ViewPart {
@@ -43,14 +40,10 @@ public class LoggingView extends ViewPart {
 	// @Inject
 	// private IEventBroker broker;
 	private ModuleViewTable moduleViewTable;
-	private ModuleViewContentProvider moduleViewContentProvider;
 	private LoggingViewTable logViewTable;
-	private LogContentProvider logViewContentProvider;
 
 	public LoggingView() {
 
-		this.logViewContentProvider = new LogContentProvider();
-		this.moduleViewContentProvider = new ModuleViewContentProvider();
 	}
 
 	@Override
@@ -117,16 +110,11 @@ public class LoggingView extends ViewPart {
 				});
 
 				combo.select(2);
+				
 				return combo;
 			}
 		});
 		getViewSite().getActionBars().updateActionBars();
-	}
-
-	private void createStatusbar(Composite topBar) {
-
-		Label metrics = new Label(topBar, SWT.NONE);
-		metrics.setText("Average lifecycle execution time: 30ms");
 	}
 
 	private void createLoggingtables(Composite parent) {
@@ -137,12 +125,15 @@ public class LoggingView extends ViewPart {
 
 		createModuleList(sashForm);
 
-		/**
-		 * Should be able to begin creating stuff here
-		 */
 		createModuleLog(sashForm);
 
 		sashForm.setWeights(new int[] { 1, 3 });
+	}
+
+	private void createStatusbar(Composite topBar) {
+
+		Label metrics = new Label(topBar, SWT.NONE);
+		metrics.setText("Average lifecycle execution time: 30ms");
 	}
 
 	@Override
@@ -154,49 +145,45 @@ public class LoggingView extends ViewPart {
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new FillLayout());
-		moduleViewTable = new ModuleViewTable(composite, moduleViewContentProvider);
+		moduleViewTable = new ModuleViewTable(composite);
 		moduleViewTable.getTableViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-				ModuleEntry entry = (ModuleEntry) selection.getFirstElement();
-
+				AbstractModuleEntry entry = (AbstractModuleEntry) selection.getFirstElement();
+				
+				entry.reset();
+				
 				logViewTable.setFilter(entry);
+				moduleViewTable.refresh();
 			}
 		});
 
-		moduleViewTable.getTableViewer().setInput(moduleViewContentProvider.getActiveModules());
+		moduleViewTable.refresh();
 	}
 
 	private void createModuleLog(SashForm parent) {
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new FillLayout());
-		logViewTable = new LoggingViewTable(composite, logViewContentProvider);
-		logViewTable.getTableViewer().setInput(logViewContentProvider.getLogEvents());
+		logViewTable = new LoggingViewTable(composite);
 	}
 
 	@Inject
 	@Optional
 	private void subscribeLogEvent(@UIEventTopic(ErhenaConstants.TOPIC_LOGEVENT) LogEvent logEvent) {
 
-		logViewContentProvider.addElement(logEvent);
-		logViewTable.refresh();
+		moduleViewTable.onLogEvent(logEvent);
+		logViewTable.addLogEvent(logEvent);
 	}
 
 	@Inject
 	@Optional
 	private void subscribeModuleAddRemoveEvent(@UIEventTopic(ErhenaConstants.TOPIC_MODULE_ADDREMOVE) ModuleAddRemoveEvent moduleAddRemove) {
 
-		if (moduleAddRemove.getAddRemove() == EAddRemove.ADDED) {
-			moduleViewContentProvider.addElement(moduleAddRemove.getIdentifier());
-		} else if (moduleAddRemove.getAddRemove() == EAddRemove.REMOVED) {
-			moduleViewContentProvider.removeElement(moduleAddRemove.getIdentifier());
-		}
-
-		moduleViewTable.refresh();
+		moduleViewTable.onModule(moduleAddRemove);
 	}
 
 }
