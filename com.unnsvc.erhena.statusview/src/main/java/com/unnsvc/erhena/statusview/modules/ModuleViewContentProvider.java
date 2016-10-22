@@ -16,7 +16,7 @@ public class ModuleViewContentProvider implements IStructuredContentProvider {
 	public ModuleViewContentProvider() {
 
 		this.activeModules = new ArrayList<AbstractModuleEntry>();
-		this.activeModules.add(new AllEntry());
+		// this.activeModules.add(new AllEntry());
 		this.activeModules.add(new CoreEntry());
 	}
 

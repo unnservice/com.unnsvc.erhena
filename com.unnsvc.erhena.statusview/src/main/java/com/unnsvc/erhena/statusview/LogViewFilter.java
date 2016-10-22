@@ -5,7 +5,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 import com.unnsvc.erhena.statusview.modules.AbstractModuleEntry;
-import com.unnsvc.erhena.statusview.modules.AllEntry;
 import com.unnsvc.erhena.statusview.modules.CoreEntry;
 import com.unnsvc.erhena.statusview.modules.ModuleEntry;
 import com.unnsvc.rhena.common.logging.ELogLevel;
@@ -19,7 +18,7 @@ public class LogViewFilter extends ViewerFilter {
 	public LogViewFilter(ELogLevel level) {
 
 		this.level = level;
-		this.entryType = new AllEntry();
+		this.entryType = new CoreEntry();
 	}
 
 	public void setLevel(ELogLevel level) {
@@ -37,9 +36,10 @@ public class LogViewFilter extends ViewerFilter {
 
 		LogEvent log = (LogEvent) element;
 
-		if (entryType instanceof AllEntry) {
-			return filterLevel(log);
-		} else if (entryType instanceof CoreEntry && log.getIdentifier() == null) {
+		// if (entryType instanceof AllEntry) {
+		// return filterLevel(log);
+		// } else
+		if (entryType instanceof CoreEntry && log.getIdentifier() == null) {
 			return filterLevel(log);
 		} else if (entryType instanceof ModuleEntry && log.getIdentifier() != null) {
 			return filterLevel(log);

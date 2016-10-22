@@ -64,13 +64,13 @@ public class LoggingView extends ViewPart {
 		container.setLayoutData(containerData);
 		createLoggingtables(container);
 
-//		Composite statusBar = new Composite(parent, SWT.NONE);
-//		GridData statusBarData = new GridData();
-//		statusBarData.horizontalAlignment = SWT.FILL;
-//		statusBarData.grabExcessHorizontalSpace = true;
-//		statusBarData.grabExcessVerticalSpace = false;
-//		statusBar.setLayoutData(statusBarData);
-//		createStatusbar(statusBar);
+		// Composite statusBar = new Composite(parent, SWT.NONE);
+		// GridData statusBarData = new GridData();
+		// statusBarData.horizontalAlignment = SWT.FILL;
+		// statusBarData.grabExcessHorizontalSpace = true;
+		// statusBarData.grabExcessVerticalSpace = false;
+		// statusBar.setLayoutData(statusBarData);
+		// createStatusbar(statusBar);
 
 		// We don't want events until the entire UI is created..
 		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
@@ -92,7 +92,6 @@ public class LoggingView extends ViewPart {
 
 				Combo combo = new Combo(parent, SWT.READ_ONLY);
 				combo.setItems("TRACE", "DEBUG", "INFO", "WARN", "ERROR");
-
 				combo.addSelectionListener(new SelectionAdapter() {
 
 					@Override
@@ -110,11 +109,14 @@ public class LoggingView extends ViewPart {
 				});
 
 				combo.select(2);
-				
+
+				// ComboViewer comboViewer = new ComboViewer(parent, SWT.NONE |
+				// SWT.READ_ONLY);
 				return combo;
 			}
 		});
-		getViewSite().getActionBars().updateActionBars();
+
+		// getViewSite().getActionBars().updateActionBars();
 	}
 
 	private void createLoggingtables(Composite parent) {
@@ -153,9 +155,9 @@ public class LoggingView extends ViewPart {
 
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				AbstractModuleEntry entry = (AbstractModuleEntry) selection.getFirstElement();
-				
+
 				entry.reset();
-				
+
 				logViewTable.setFilter(entry);
 				moduleViewTable.refresh();
 			}

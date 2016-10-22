@@ -69,10 +69,11 @@ public class ModuleLabelProvider implements ITableLabelProvider, IColorProvider,
 	public String getColumnText(Object element, int columnIndex) {
 
 		AbstractModuleEntry entry = (AbstractModuleEntry) element;
-		if (entry instanceof AllEntry) {
-
-			return "all";
-		} else if (entry instanceof CoreEntry) {
+		// if (entry instanceof AllEntry) {
+		//
+		// return "all";
+		// } else
+		if (entry instanceof CoreEntry) {
 
 			return "core";
 		} else if (entry instanceof ModuleEntry) {
