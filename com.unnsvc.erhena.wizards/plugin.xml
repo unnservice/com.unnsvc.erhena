@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <category
-            name="ERhena"
+            name="eRhena"
             id="com.unnsvc.erhena.category">
       </category>
       <wizard
