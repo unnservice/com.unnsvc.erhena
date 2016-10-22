@@ -2,6 +2,8 @@
 package com.unnsvc.erhena.platform.service;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -23,14 +25,26 @@ import com.unnsvc.rhena.core.logging.LogEvent;
 import com.unnsvc.rhena.core.resolution.CachingResolutionContext;
 import com.unnsvc.rhena.core.resolution.WorkspaceRepository;
 
+/**
+ * @TODO As the platform service handlest most eRhena oepartions, test it
+ * 
+ * @author noname
+ *
+ */
 @Singleton
 @Creatable
 public class RhenaPlatformService implements IRhenaPlatformService {
 
+	/**
+	 * Single context throughout the application
+	 */
 	private IRhenaContext context;
+	private Set<ModuleIdentifier> entryPoints;
 
 	@Inject
 	public RhenaPlatformService(IEventBroker eventBorker) {
+
+		entryPoints = new HashSet<ModuleIdentifier>();
 
 		RhenaConfiguration config = new RhenaConfiguration();
 		context = new CachingResolutionContext(config);
@@ -45,23 +59,22 @@ public class RhenaPlatformService implements IRhenaPlatformService {
 
 			@Override
 			public void onEvent(LogEvent evt) throws RhenaException {
-				
+
 				eventBorker.post(ErhenaConstants.TOPIC_LOGEVENT, evt);
 			}
 		});
-		
+
 		context.addListener(new IContextListener<ModuleAddRemoveEvent>() {
 
 			@Override
 			public Class<ModuleAddRemoveEvent> getType() {
 
-				
 				return ModuleAddRemoveEvent.class;
 			}
 
 			@Override
 			public void onEvent(ModuleAddRemoveEvent evt) throws RhenaException {
-				
+
 				eventBorker.post(ErhenaConstants.TOPIC_MODULE_ADDREMOVE, evt);
 			}
 		});
@@ -72,8 +85,17 @@ public class RhenaPlatformService implements IRhenaPlatformService {
 	}
 
 	@Override
-	public IRhenaModule materialiseModel(String component, String module, String version) throws RhenaException {
+	public IRhenaModule newWorkspaceEntryPoint(String projectName) throws RhenaException {
 
-		return context.materialiseModel(ModuleIdentifier.valueOf(component + ":" + module + ":" + version));
+		IRhenaModule entryPoint = context.materialiseWorkspaceModel(projectName);
+		if (!entryPoints.contains(entryPoint.getModuleIdentifier())) {
+			entryPoints.add(entryPoint.getModuleIdentifier());
+		}
+		return entryPoint;
+	}
+
+	@Override
+	public void destroyEntryPoint(ModuleIdentifier entryPoint) {
+
 	}
 }

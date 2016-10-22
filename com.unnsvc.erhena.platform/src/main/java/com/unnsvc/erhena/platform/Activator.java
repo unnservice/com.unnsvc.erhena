@@ -19,7 +19,7 @@ public class Activator extends AbstractUIPlugin {
 	private static BundleContext context;
 	// private IWorkspace workspace = ResourcesPlugin.getWorkspace();
 	// private IResourceChangeListener listener;
-
+ 
 	/**
 	 * The constructor
 	 */

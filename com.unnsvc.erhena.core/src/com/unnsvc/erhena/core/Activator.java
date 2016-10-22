@@ -1,55 +1,61 @@
 
 package com.unnsvc.erhena.core;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.core.nature.RhenaModuleChangeListener;
+import com.unnsvc.erhena.platform.service.RhenaPlatformService;
 
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends AbstractUIPlugin {
+public class Activator extends AbstractActivator {
 
-	public static final String PLUGIN_ID = "com.unnsvc.erhena.core";
-	private static Activator plugin;
-
-	private IWorkspace workspace = ResourcesPlugin.getWorkspace();
+	@Inject
+	private RhenaPlatformService platformService;
 	private IResourceChangeListener listener;
 
 	public Activator() {
-	}
-
-	public void start(BundleContext context) throws Exception {
-
-		super.start(context);
-		plugin = this;
-		listener = new RhenaModuleChangeListener();
-		workspace.addResourceChangeListener(listener);
-	}
-
-	public void stop(BundleContext context) throws Exception {
-
-		plugin = null;
-		super.stop(context);
-
-		if (workspace != null) {
-			workspace.removeResourceChangeListener(listener);
-		}
 
 	}
 
-	public static Activator getDefault() {
+	@Override
+	public void startBundle(BundleContext context) throws Exception {
+		System.err.println("Starting bundle " + context);
 
-		return plugin;
+		/**
+		 * Inject
+		 */
+		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
+		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
+		ContextInjectionFactory.inject(this, eclipseContext);
+
+//		/**
+//		 * All workspace projects become models on startup so we capture them
+//		 * all in a live context?
+//		 */
+//		for (IProject project : getWorkspace().getRoot().getProjects()) {
+//			if (project.hasNature(RhenaNature.NATURE_ID)) {
+//
+//				IRhenaModule module = platformService.newWorkspaceEntryPoint(project.getName());
+//				System.err.println("Created module context for: " + module.getModuleIdentifier());
+//			}
+//		}
+
+		listener = new RhenaModuleChangeListener(platformService);
+		getWorkspace().addResourceChangeListener(listener);
 	}
 
-	public static ImageDescriptor getImageDescriptor(String path) {
+	@Override
+	public void stopBundle(BundleContext context) throws Exception {
 
-		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+		getWorkspace().removeResourceChangeListener(listener);
 	}
 }

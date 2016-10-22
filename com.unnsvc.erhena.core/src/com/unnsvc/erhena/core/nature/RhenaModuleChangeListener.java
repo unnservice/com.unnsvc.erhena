@@ -25,10 +25,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 
+import com.unnsvc.erhena.platform.service.IRhenaPlatformService;
+
 public class RhenaModuleChangeListener implements IResourceChangeListener {
 
-	public RhenaModuleChangeListener() {
-
+	public RhenaModuleChangeListener(IRhenaPlatformService platformService) {
 	}
 
 	public void resourceChanged(IResourceChangeEvent event) {

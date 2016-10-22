@@ -9,8 +9,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -20,7 +18,6 @@ import org.osgi.framework.FrameworkUtil;
 import com.unnsvc.erhena.core.Activator;
 import com.unnsvc.erhena.platform.service.RhenaPlatformService;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
-import com.unnsvc.rhena.common.model.IRhenaModule;
 
 public class RhenaBuilder extends IncrementalProjectBuilder {
 
@@ -44,7 +41,7 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 
 		System.err.println("Running build");
-		
+
 		// eventBroker.post(ErhenaConstants.TOPIC_LOGEVENT, data)
 
 		// try {
@@ -54,12 +51,14 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 		// Activator.PLUGIN_ID, re.getMessage(), re));
 		// }
 
-		try {
-			IRhenaModule module = rhenaService.materialiseModel("com.test", "com.test2", "0.0.1");
-		} catch (RhenaException re) {
-			re.printStackTrace();
-			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
-		}
+		// try {
+		// IRhenaModule module = rhenaService.newEntryPoint("com.test",
+		// "com.test2", "0.0.1");
+		// } catch (RhenaException re) {
+		// re.printStackTrace();
+		// throw new CoreException(new Status(IStatus.ERROR,
+		// Activator.PLUGIN_ID, re.getMessage(), re));
+		// }
 
 		// IRhenaModule model =
 		// context.materialiseModel(ModuleIdentifier.valueOf("com.unnsvc.erhena:core:0.0.1"));

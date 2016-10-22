@@ -64,13 +64,13 @@ public class LoggingView extends ViewPart {
 		container.setLayoutData(containerData);
 		createLoggingtables(container);
 
-		Composite statusBar = new Composite(parent, SWT.NONE);
-		GridData statusBarData = new GridData();
-		statusBarData.horizontalAlignment = SWT.FILL;
-		statusBarData.grabExcessHorizontalSpace = true;
-		statusBarData.grabExcessVerticalSpace = false;
-		statusBar.setLayoutData(statusBarData);
-		createStatusbar(statusBar);
+//		Composite statusBar = new Composite(parent, SWT.NONE);
+//		GridData statusBarData = new GridData();
+//		statusBarData.horizontalAlignment = SWT.FILL;
+//		statusBarData.grabExcessHorizontalSpace = true;
+//		statusBarData.grabExcessVerticalSpace = false;
+//		statusBar.setLayoutData(statusBarData);
+//		createStatusbar(statusBar);
 
 		// We don't want events until the entire UI is created..
 		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();

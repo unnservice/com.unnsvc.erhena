@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Itests
+Bundle-SymbolicName: com.unnsvc.erhena.itest
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: com.unnsvc.erhena.itests.Activator
+Bundle-Vendor: UNNSVC
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.junit,
+ com.unnsvc.erhena.platform,
+ org.eclipse.e4.core.di,
+ org.eclipse.e4.core.contexts
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
