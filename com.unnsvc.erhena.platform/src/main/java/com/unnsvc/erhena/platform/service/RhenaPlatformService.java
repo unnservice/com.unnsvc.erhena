@@ -14,6 +14,7 @@ import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
 
 import com.unnsvc.erhena.common.ErhenaConstants;
+import com.unnsvc.erhena.platform.handlers.ProjectConfigurationHandler;
 import com.unnsvc.rhena.common.IRhenaContext;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
@@ -78,6 +79,8 @@ public class RhenaPlatformService implements IRhenaPlatformService {
 				eventBorker.post(ErhenaConstants.TOPIC_MODULE_ADDREMOVE, evt);
 			}
 		});
+
+		context.addListener(new ProjectConfigurationHandler(context));
 
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		File workspacePath = new File(workspaceRoot.getLocationURI());

@@ -47,14 +47,6 @@ public class RhenaNature implements IProjectNature {
 	@Override
 	public void configure() throws CoreException {
 
-//		try {
-
-//			IRhenaModule module = rhenaPlatformService.newEntryPoint("com.test", "com.test2", "0.0.1");
-
-//		} catch (RhenaException re) {
-//			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
-//		}
-
 		IProjectDescription desc = project.getDescription();
 		ICommand[] commands = desc.getBuildSpec();
 
@@ -72,6 +64,11 @@ public class RhenaNature implements IProjectNature {
 		desc.setBuildSpec(newCommands);
 		project.setDescription(desc, null);
 
+		try {
+			IRhenaModule module = rhenaPlatformService.newWorkspaceEntryPoint(project.getName());
+		} catch (RhenaException re) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
+		}
 	}
 
 	@Override
