@@ -1,7 +1,10 @@
 
-package com.unnsvc.erhena.core.builder;
+package com.unnsvc.erhena.core.commands;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -16,15 +19,13 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.unnsvc.erhena.core.nature.RhenaNature;
 
-public class AddRemoveRhenaNatureHandler extends AbstractHandler {
+public class ConfigureRhenaProject extends AbstractHandler {
 
 	private ISelection selection;
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		// TODO Auto-generated method stub
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
-		//
 		if (selection instanceof IStructuredSelection) {
 			for (Iterator<?> it = ((IStructuredSelection) selection).iterator(); it.hasNext();) {
 				Object element = it.next();
@@ -36,7 +37,11 @@ public class AddRemoveRhenaNatureHandler extends AbstractHandler {
 				}
 				if (project != null) {
 					try {
-						toggleNature(project);
+						if (project.hasNature(RhenaNature.NATURE_ID)) {
+							unconfigureNature(project);
+						} else {
+							configureNature(project);
+						}
 					} catch (CoreException e) {
 						// TODO log something
 						throw new ExecutionException("Failed to toggle nature", e);
@@ -48,35 +53,30 @@ public class AddRemoveRhenaNatureHandler extends AbstractHandler {
 		return null;
 	}
 
+	private void unconfigureNature(IProject project) throws CoreException {
+
+		IProjectDescription desc = project.getDescription();
+		// mutable list
+		List<String> natures = new ArrayList<String>(Arrays.asList(desc.getNatureIds()));
+		natures.remove(RhenaNature.NATURE_ID);
+		desc.setNatureIds(natures.toArray(new String[natures.size()]));
+		project.setDescription(desc, null);
+	}
+
 	/**
 	 * Toggles sample nature on a project
 	 *
 	 * @param project
 	 *            to have sample nature added or removed
 	 */
-	private void toggleNature(IProject project) throws CoreException {
+	private void configureNature(IProject project) throws CoreException {
 
-		IProjectDescription description = project.getDescription();
-		String[] natures = description.getNatureIds();
-
-		for (int i = 0; i < natures.length; ++i) {
-			if (RhenaNature.NATURE_ID.equals(natures[i])) {
-				// Remove the nature
-				String[] newNatures = new String[natures.length - 1];
-				System.arraycopy(natures, 0, newNatures, 0, i);
-				System.arraycopy(natures, i + 1, newNatures, i, natures.length - i - 1);
-				description.setNatureIds(newNatures);
-				project.setDescription(description, null);
-				return;
-			}
-		}
-
-		// Add the nature
-		String[] newNatures = new String[natures.length + 1];
-		System.arraycopy(natures, 0, newNatures, 0, natures.length);
-		newNatures[natures.length] = RhenaNature.NATURE_ID;
-		description.setNatureIds(newNatures);
-		project.setDescription(description, null);
+		IProjectDescription desc = project.getDescription();
+		// mutable list
+		List<String> natures = new ArrayList<String>(Arrays.asList(desc.getNatureIds()));
+		natures.add(RhenaNature.NATURE_ID);
+		desc.setNatureIds(natures.toArray(new String[natures.size()]));
+		project.setDescription(desc, null);
 	}
 
 }

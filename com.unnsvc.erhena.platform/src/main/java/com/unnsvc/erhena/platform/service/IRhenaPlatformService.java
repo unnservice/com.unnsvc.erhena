@@ -21,4 +21,10 @@ public interface IRhenaPlatformService {
 
 	public void destroyEntryPoint(ModuleIdentifier entryPoint) throws RhenaException;
 
+	/**
+	 * @param moduleIdentifier
+	 * @return null if no workspace project mapping exists
+	 */
+	public String getProjectName(ModuleIdentifier moduleIdentifier);
+
 }

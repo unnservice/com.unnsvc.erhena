@@ -24,10 +24,10 @@
             id="com.unnsvc.erhena.core.nature.category">
       </category>
       <command
-            name="Add/Remove eRhena Nature"
-            defaultHandler="com.unnsvc.erhena.core.builder.AddRemoveRhenaNatureHandler"
+            name="Configure eRhena Project"
+            defaultHandler="com.unnsvc.erhena.core.commands.ConfigureRhenaProject"
             categoryId="com.unnsvc.erhena.core.nature.category"
-            id="com.unnsvc.erhena.core.nature.addRemoveRhenaNature">
+            id="com.unnsvc.erhena.core.nature.configureRhenaProject">
       </command>
    </extension>
    <extension
@@ -35,8 +35,8 @@
       <menuContribution
             locationURI="popup:org.eclipse.ui.projectConfigure?after=additions">
          <command
-               commandId="com.unnsvc.erhena.core.nature.addRemoveRhenaNature"
-               label="Disable eRhena builder"
+               commandId="com.unnsvc.erhena.core.nature.configureRhenaProject"
+               label="Unconfigure eRhena Project"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -58,8 +58,8 @@
             </visibleWhen>
          </command>
          <command
-               commandId="com.unnsvc.erhena.core.nature.addRemoveRhenaNature"
-               label="Enable eRhena builder"
+               commandId="com.unnsvc.erhena.core.nature.configureRhenaProject"
+               label="Convert to eRhena Project"
                style="push">
             <visibleWhen
                   checkEnabled="false">

@@ -2,8 +2,8 @@
 package com.unnsvc.erhena.platform.service;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -40,12 +40,13 @@ public class RhenaPlatformService implements IRhenaPlatformService {
 	 * Single context throughout the application
 	 */
 	private IRhenaContext context;
-	private Set<ModuleIdentifier> entryPoints;
+	// module => projectName tracking
+	private Map<ModuleIdentifier, String> entryPoints;
 
 	@Inject
 	public RhenaPlatformService(IEventBroker eventBorker) {
 
-		entryPoints = new HashSet<ModuleIdentifier>();
+		entryPoints = new HashMap<ModuleIdentifier, String>();
 
 		RhenaConfiguration config = new RhenaConfiguration();
 		context = new CachingResolutionContext(config);
@@ -80,7 +81,7 @@ public class RhenaPlatformService implements IRhenaPlatformService {
 			}
 		});
 
-		context.addListener(new ProjectConfigurationHandler(context));
+		context.addListener(new ProjectConfigurationHandler(this, context));
 
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		File workspacePath = new File(workspaceRoot.getLocationURI());
@@ -91,14 +92,21 @@ public class RhenaPlatformService implements IRhenaPlatformService {
 	public IRhenaModule newWorkspaceEntryPoint(String projectName) throws RhenaException {
 
 		IRhenaModule entryPoint = context.materialiseWorkspaceModel(projectName);
-		if (!entryPoints.contains(entryPoint.getModuleIdentifier())) {
-			entryPoints.add(entryPoint.getModuleIdentifier());
+		if (!entryPoints.containsKey(entryPoint.getModuleIdentifier())) {
+			entryPoints.put(entryPoint.getModuleIdentifier(), projectName);
 		}
+		
 		return entryPoint;
 	}
 
 	@Override
 	public void destroyEntryPoint(ModuleIdentifier entryPoint) {
 
+	}
+	
+	@Override
+	public String getProjectName(ModuleIdentifier moduleIdentifier) {
+		
+		return entryPoints.get(moduleIdentifier);
 	}
 }
