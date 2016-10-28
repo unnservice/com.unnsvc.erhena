@@ -26,6 +26,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 
+import com.unnsvc.erhena.common.RhenaUtils;
 import com.unnsvc.erhena.core.nature.RhenaNature;
 import com.unnsvc.rhena.common.RhenaConstants;
 
@@ -184,17 +185,6 @@ public class RhenaModuleProjectSupport {
 		return newProject;
 	}
 
-	private static void createFolder(IFolder folder) throws CoreException {
-
-		IContainer parent = folder.getParent();
-		if (parent instanceof IFolder) {
-			createFolder((IFolder) parent);
-		}
-		if (!folder.exists()) {
-			folder.create(false, true, null);
-		}
-	}
-
 	/**
 	 * Create a folder structure with a parent root, overlay, and a few child
 	 * folders.
@@ -207,7 +197,7 @@ public class RhenaModuleProjectSupport {
 
 		for (String path : paths) {
 			IFolder etcFolders = newProject.getFolder(path);
-			createFolder(etcFolders);
+			RhenaUtils.createFolder(etcFolders);
 		}
 	}
 }

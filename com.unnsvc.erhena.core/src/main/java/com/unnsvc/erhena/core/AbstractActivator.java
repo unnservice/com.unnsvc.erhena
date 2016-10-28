@@ -19,7 +19,6 @@ public abstract class AbstractActivator extends AbstractUIPlugin {
 
 	public void start(BundleContext context) throws Exception {
 
-		System.err.println("Starting contexgt " + context);
 		super.start(context);
 		plugin = this;
 		workspace = ResourcesPlugin.getWorkspace();

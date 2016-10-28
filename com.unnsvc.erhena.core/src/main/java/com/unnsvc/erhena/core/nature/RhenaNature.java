@@ -11,21 +11,21 @@ import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.prefs.BackingStoreException;
 
 import com.unnsvc.erhena.core.Activator;
 import com.unnsvc.erhena.core.builder.RhenaBuilder;
 import com.unnsvc.erhena.platform.service.RhenaPlatformService;
-import com.unnsvc.rhena.common.exceptions.RhenaException;
-import com.unnsvc.rhena.common.model.IRhenaModule;
 
 public class RhenaNature implements IProjectNature {
 
@@ -53,6 +53,7 @@ public class RhenaNature implements IProjectNature {
 
 		IProjectDescription desc = project.getDescription();
 		List<ICommand> commands = new ArrayList<ICommand>(Arrays.asList(desc.getBuildSpec()));
+
 		if (commands.contains(RhenaBuilder.BUILDER_ID)) {
 			return;
 		} else {
@@ -66,9 +67,13 @@ public class RhenaNature implements IProjectNature {
 		}
 
 		try {
-			IRhenaModule module = rhenaPlatformService.newWorkspaceEntryPoint(project.getName());
-		} catch (RhenaException re) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
+			ProjectScope ps = new ProjectScope(getProject());
+			IEclipsePreferences prefs = ps.getNode(Activator.PLUGIN_ID);
+			prefs.put("key", "value");
+			prefs.flush();
+		} catch (BackingStoreException ioe) {
+
+			throw new CoreException(new Status(Status.ERROR, Activator.PLUGIN_ID, ioe.getMessage(), ioe));
 		}
 	}
 

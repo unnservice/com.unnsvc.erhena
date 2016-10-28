@@ -1,6 +1,7 @@
 
 package com.unnsvc.erhena.core.builder;
 
+import java.io.File;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -9,6 +10,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -18,6 +21,9 @@ import org.osgi.framework.FrameworkUtil;
 import com.unnsvc.erhena.core.Activator;
 import com.unnsvc.erhena.platform.service.RhenaPlatformService;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
+import com.unnsvc.rhena.common.execution.EExecutionType;
+import com.unnsvc.rhena.common.execution.IRhenaExecution;
+import com.unnsvc.rhena.common.model.IRhenaModule;
 
 public class RhenaBuilder extends IncrementalProjectBuilder {
 
@@ -28,7 +34,7 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 	// @Inject
 	// private IRhenaService rhenaService;
 	@Inject
-	private RhenaPlatformService rhenaService;
+	private RhenaPlatformService platformService;
 
 	public RhenaBuilder() {
 
@@ -40,61 +46,75 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 
-		System.err.println("Running build");
+		if (kind == FULL_BUILD) {
+			IProject project = getProject();
+			File projectLocation = new File(project.getLocationURI());
+			System.err.println(getClass().getName() + "Full build on: " + projectLocation);
 
-		// eventBroker.post(ErhenaConstants.TOPIC_LOGEVENT, data)
-
-		// try {
-		// handleResources(getProject());
-		// } catch (RhenaException re) {
-		// throw new CoreException(new Status(IStatus.ERROR,
-		// Activator.PLUGIN_ID, re.getMessage(), re));
-		// }
-
-		// try {
-		// IRhenaModule module = rhenaService.newEntryPoint("com.test",
-		// "com.test2", "0.0.1");
-		// } catch (RhenaException re) {
-		// re.printStackTrace();
-		// throw new CoreException(new Status(IStatus.ERROR,
-		// Activator.PLUGIN_ID, re.getMessage(), re));
-		// }
-
-		// IRhenaModule model =
-		// context.materialiseModel(ModuleIdentifier.valueOf("com.unnsvc.erhena:core:0.0.1"));
-		//
-		// EExecutionType type = EExecutionType.PROTOTYPE;
-		// IRhenaEdge entryPointEdge = new RhenaEdge(type, model,
-		// TraverseType.SCOPE);
-		//
-		// GraphResolver graphResovler = new GraphResolver(context);
-		// graphResovler.resolveReferences(entryPointEdge);
-		//
-		// new ParallelGraphProcessor(context).processEdges(context.getEdges());
+			try {
+				IRhenaModule module = platformService.newWorkspaceEntryPoint(project.getName());
+				
+				// This is not cached as it bypasses the rhena context
+				IRhenaExecution exec = module.getRepository().materialiseExecution(module, EExecutionType.PROTOTYPE);
+				
+//				IRhenaExecution exec = platformService.materialiseExecution(module);
+			} catch (RhenaException re) {
+				throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
+			}
+		}
 
 		return null;
 	}
 
-	private void handleResources(IProject project) throws RhenaException {
-
-		// RhenaConfiguration config = new RhenaConfiguration();
-		//
-		// IRhenaContext resolver = new CachingResolutionContext(config);
-		// resolver.getRepositories().add(new WorkspaceRepository(resolver, new
-		// File(ResourcesPlugin.getWorkspace().getRoot().getLocationURI())));
-		//
-		// ModuleIdentifier entryPointIdentifier =
-		// ModuleIdentifier.valueOf("com.unnsvc.erhena:core:0.0.1");
-		// IRhenaModule model = resolver.materialiseModel(entryPointIdentifier);
-		//
-		// EExecutionType type = EExecutionType.PROTOTYPE;
-		// IRhenaEdge entryPointEdge = new RhenaEdge(type, model,
-		// TraverseType.SCOPE);
-		// GraphResolver graphResovler = new GraphResolver(resolver);
-		// graphResovler.resolveReferences(entryPointEdge);
-		//
-		// new
-		// ParallelGraphProcessor(resolver).processEdges(resolver.getEdges());
-	}
-
 }
+
+// private void handleResources(IProject project) throws RhenaException {
+
+// RhenaConfiguration config = new RhenaConfiguration();
+//
+// IRhenaContext resolver = new CachingResolutionContext(config);
+// resolver.getRepositories().add(new WorkspaceRepository(resolver, new
+// File(ResourcesPlugin.getWorkspace().getRoot().getLocationURI())));
+//
+// ModuleIdentifier entryPointIdentifier =
+// ModuleIdentifier.valueOf("com.unnsvc.erhena:core:0.0.1");
+// IRhenaModule model = resolver.materialiseModel(entryPointIdentifier);
+//
+// EExecutionType type = EExecutionType.PROTOTYPE;
+// IRhenaEdge entryPointEdge = new RhenaEdge(type, model,
+// TraverseType.SCOPE);
+// GraphResolver graphResovler = new GraphResolver(resolver);
+// graphResovler.resolveReferences(entryPointEdge);
+//
+// new
+// ParallelGraphProcessor(resolver).processEdges(resolver.getEdges());
+// }
+// eventBroker.post(ErhenaConstants.TOPIC_LOGEVENT, data)
+
+// try {
+// handleResources(getProject());
+// } catch (RhenaException re) {
+// throw new CoreException(new Status(IStatus.ERROR,
+// Activator.PLUGIN_ID, re.getMessage(), re));
+// }
+
+// try {
+// IRhenaModule module = rhenaService.newEntryPoint("com.test",
+// "com.test2", "0.0.1");
+// } catch (RhenaException re) {
+// re.printStackTrace();
+// throw new CoreException(new Status(IStatus.ERROR,
+// Activator.PLUGIN_ID, re.getMessage(), re));
+// }
+
+// IRhenaModule model =
+// context.materialiseModel(ModuleIdentifier.valueOf("com.unnsvc.erhena:core:0.0.1"));
+//
+// EExecutionType type = EExecutionType.PROTOTYPE;
+// IRhenaEdge entryPointEdge = new RhenaEdge(type, model,
+// TraverseType.SCOPE);
+//
+// GraphResolver graphResovler = new GraphResolver(context);
+// graphResovler.resolveReferences(entryPointEdge);
+//
+// new ParallelGraphProcessor(context).processEdges(context.getEdges());

@@ -34,13 +34,17 @@ public class RhenaModuleChangeListener implements IResourceChangeListener {
 
 	public void resourceChanged(IResourceChangeEvent event) {
 
-		if (event.getType() != IResourceChangeEvent.POST_CHANGE) {
-			return;
-		}
+//		if (event.getType() != IResourceChangeEvent.POST_CHANGE) {
+//			return;
+//		}
 
 		// if(event.getType() != IResourceChangeEvent.PRE_BUILD) {
 		// return;
 		// }
+		
+
+
+		
 
 		IResourceDelta delta = event.getDelta();
 

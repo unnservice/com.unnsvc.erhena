@@ -75,7 +75,7 @@ public class ModuleLabelProvider implements ITableLabelProvider, IColorProvider,
 		// } else
 		if (entry instanceof CoreEntry) {
 
-			return "core";
+			return "Rhena Core";
 		} else if (entry instanceof ModuleEntry) {
 			ModuleEntry mo = (ModuleEntry) entry;
 			return mo.getIdentifier().toString();

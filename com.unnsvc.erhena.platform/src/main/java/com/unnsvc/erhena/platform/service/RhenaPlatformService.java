@@ -17,6 +17,8 @@ import com.unnsvc.erhena.common.ErhenaConstants;
 import com.unnsvc.erhena.platform.handlers.ProjectConfigurationHandler;
 import com.unnsvc.rhena.common.IRhenaContext;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
+import com.unnsvc.rhena.common.execution.EExecutionType;
+import com.unnsvc.rhena.common.execution.IRhenaExecution;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 import com.unnsvc.rhena.common.listener.IContextListener;
 import com.unnsvc.rhena.common.model.IRhenaModule;
@@ -95,18 +97,23 @@ public class RhenaPlatformService implements IRhenaPlatformService {
 		if (!entryPoints.containsKey(entryPoint.getModuleIdentifier())) {
 			entryPoints.put(entryPoint.getModuleIdentifier(), projectName);
 		}
-		
+
 		return entryPoint;
+	}
+
+	public IRhenaExecution materialiseExecution(IRhenaModule module) throws RhenaException {
+
+		return context.materialiseExecution(module, EExecutionType.DELIVERABLE);
 	}
 
 	@Override
 	public void destroyEntryPoint(ModuleIdentifier entryPoint) {
 
 	}
-	
+
 	@Override
 	public String getProjectName(ModuleIdentifier moduleIdentifier) {
-		
+
 		return entryPoints.get(moduleIdentifier);
 	}
 }

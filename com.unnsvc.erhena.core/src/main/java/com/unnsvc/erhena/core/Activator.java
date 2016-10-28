@@ -49,13 +49,13 @@ public class Activator extends AbstractActivator {
 //			}
 //		}
 
-		listener = new RhenaModuleChangeListener(platformService);
-		getWorkspace().addResourceChangeListener(listener);
+//		listener = new RhenaModuleChangeListener(platformService);
+//		getWorkspace().addResourceChangeListener(listener);
 	}
 
 	@Override
 	public void stopBundle(BundleContext context) throws Exception {
 
-		getWorkspace().removeResourceChangeListener(listener);
+//		getWorkspace().removeResourceChangeListener(listener);
 	}
 }

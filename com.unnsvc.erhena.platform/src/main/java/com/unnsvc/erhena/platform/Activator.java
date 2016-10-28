@@ -36,7 +36,7 @@ public class Activator extends AbstractUIPlugin {
 
 		super.start(context);
 		plugin = this;
-		this.context = context;
+//		this.context = context;
 		// listener = new RhenaModuleChangeListener();
 		// workspace.addResourceChangeListener(listener);		
 	}
@@ -51,7 +51,7 @@ public class Activator extends AbstractUIPlugin {
 
 		plugin = null;
 		super.stop(context);
-		this.context = context;
+//		this.context = context;
 
 		// if (workspace != null) {
 		// workspace.removeResourceChangeListener(listener);
