@@ -7,9 +7,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 
+import com.unnsvc.rhena.core.events.LogEvent;
 import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent;
 import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent.EAddRemove;
-import com.unnsvc.rhena.core.logging.LogEvent;
 
 public class ModuleViewTable {
 

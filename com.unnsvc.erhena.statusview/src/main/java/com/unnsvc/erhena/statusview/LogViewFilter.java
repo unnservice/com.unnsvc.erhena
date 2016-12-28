@@ -8,7 +8,7 @@ import com.unnsvc.erhena.statusview.modules.AbstractModuleEntry;
 import com.unnsvc.erhena.statusview.modules.CoreEntry;
 import com.unnsvc.erhena.statusview.modules.ModuleEntry;
 import com.unnsvc.rhena.common.logging.ELogLevel;
-import com.unnsvc.rhena.core.logging.LogEvent;
+import com.unnsvc.rhena.core.events.LogEvent;
 
 public class LogViewFilter extends ViewerFilter {
 

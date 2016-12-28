@@ -3,7 +3,7 @@ package com.unnsvc.erhena.statusview.log;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 
-import com.unnsvc.rhena.core.logging.LogEvent;
+import com.unnsvc.rhena.core.events.LogEvent;
 
 public class LogContentProvider implements IStructuredContentProvider {
 

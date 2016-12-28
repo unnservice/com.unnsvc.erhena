@@ -12,14 +12,13 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 import com.unnsvc.erhena.platform.service.RhenaPlatformService;
+import com.unnsvc.rhena.common.exceptions.RhenaException;
+import com.unnsvc.rhena.common.execution.IRhenaExecution;
+import com.unnsvc.rhena.common.identity.ModuleIdentifier;
+import com.unnsvc.rhena.common.model.IRhenaModule;
 
 public class PlatformResourceChangeListener implements IResourceChangeListener {
 
@@ -79,25 +78,15 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 
 					System.err.println(getClass().getName() + " POST_CHANGE event, building " + affected.getName());
 
-					WorkspaceJob wj = new WorkspaceJob("Invoking full build on " + affected.getName()) {
+					ModuleIdentifier identifier = platformService.getEntryPointIdentifier(affected.getName());
 
-						@Override
-						public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+					platformService.dropFromCache(identifier);
 
-							try {
-								affected.build(IncrementalProjectBuilder.FULL_BUILD, monitor);
-
-								return Status.OK_STATUS;
-							} catch (CoreException ce) {
-
-								return new Status(IStatus.ERROR, Activator.PLUGIN_ID, ce.getMessage(), ce);
-							}
-						}
-					};
-					wj.schedule();
+					IRhenaModule module = platformService.newWorkspaceEntryPoint(affected.getProject().getLocationURI());
+					IRhenaExecution execution = platformService.materialiseExecution(module);
 
 				}
-			} catch (CoreException e) {
+			} catch (RhenaException | CoreException e) {
 
 				e.printStackTrace();
 			}

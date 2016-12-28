@@ -46,22 +46,22 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 
-		if (kind == FULL_BUILD) {
-			IProject project = getProject();
-			File projectLocation = new File(project.getLocationURI());
-			System.err.println(getClass().getName() + "Full build on: " + projectLocation);
-
-			try {
-				IRhenaModule module = platformService.newWorkspaceEntryPoint(project.getName());
-				
-				// This is not cached as it bypasses the rhena context
-				IRhenaExecution exec = module.getRepository().materialiseExecution(module, EExecutionType.PROTOTYPE);
-				
-//				IRhenaExecution exec = platformService.materialiseExecution(module);
-			} catch (RhenaException re) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
-			}
-		}
+//		if (kind == FULL_BUILD) {
+//			IProject project = getProject();
+//			File projectLocation = new File(project.getLocationURI());
+//			System.err.println(getClass().getName() + "Full build on: " + projectLocation);
+//
+//			try {
+//				IRhenaModule module = platformService.newWorkspaceEntryPoint(project.getName());
+//				
+//				// This is not cached as it bypasses the rhena context
+//				IRhenaExecution exec = module.getRepository().materialiseExecution(module, EExecutionType.PROTOTYPE);
+//				
+////				IRhenaExecution exec = platformService.materialiseExecution(module);
+//			} catch (RhenaException re) {
+//				throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
+//			}
+//		}
 
 		return null;
 	}

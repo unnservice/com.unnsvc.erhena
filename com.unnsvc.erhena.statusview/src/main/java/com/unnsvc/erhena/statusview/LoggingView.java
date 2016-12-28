@@ -32,8 +32,8 @@ import com.unnsvc.erhena.statusview.log.LoggingViewTable;
 import com.unnsvc.erhena.statusview.modules.AbstractModuleEntry;
 import com.unnsvc.erhena.statusview.modules.ModuleViewTable;
 import com.unnsvc.rhena.common.logging.ELogLevel;
+import com.unnsvc.rhena.core.events.LogEvent;
 import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent;
-import com.unnsvc.rhena.core.logging.LogEvent;
 
 public class LoggingView extends ViewPart {
 

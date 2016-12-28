@@ -2,6 +2,7 @@
 package com.unnsvc.erhena.platform.service;
 
 import java.io.File;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,18 +15,20 @@ import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
 
 import com.unnsvc.erhena.common.ErhenaConstants;
-import com.unnsvc.erhena.platform.handlers.ProjectConfigurationHandler;
-import com.unnsvc.rhena.common.IRhenaContext;
+import com.unnsvc.rhena.common.IRhenaConfiguration;
+import com.unnsvc.rhena.common.IRhenaEngine;
+import com.unnsvc.rhena.common.Utils;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.execution.EExecutionType;
 import com.unnsvc.rhena.common.execution.IRhenaExecution;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 import com.unnsvc.rhena.common.listener.IContextListener;
 import com.unnsvc.rhena.common.model.IRhenaModule;
-import com.unnsvc.rhena.core.configuration.RhenaConfiguration;
+import com.unnsvc.rhena.core.RhenaConfiguration;
+import com.unnsvc.rhena.core.RhenaEngine;
+import com.unnsvc.rhena.core.events.LogEvent;
 import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent;
-import com.unnsvc.rhena.core.logging.LogEvent;
-import com.unnsvc.rhena.core.resolution.CachingResolutionContext;
+import com.unnsvc.rhena.core.resolution.LocalCacheRepository;
 import com.unnsvc.rhena.core.resolution.WorkspaceRepository;
 
 /**
@@ -41,19 +44,26 @@ public class RhenaPlatformService implements IRhenaPlatformService {
 	/**
 	 * Single context throughout the application
 	 */
-	private IRhenaContext context;
+	private IRhenaEngine engine;
 	// module => projectName tracking
-	private Map<ModuleIdentifier, String> entryPoints;
+	private Map<URI, ModuleIdentifier> entryPoints;
 
 	@Inject
 	public RhenaPlatformService(IEventBroker eventBorker) {
+		
+		entryPoints = new HashMap<URI, ModuleIdentifier>();
 
-		entryPoints = new HashMap<ModuleIdentifier, String>();
-
-		RhenaConfiguration config = new RhenaConfiguration();
-		context = new CachingResolutionContext(config);
-
-		context.addListener(new IContextListener<LogEvent>() {
+		IRhenaConfiguration config = new RhenaConfiguration();
+		config.setRhenaHome(new File(System.getProperty("user.home"), ".rhena"));
+		config.addWorkspaceRepository(new WorkspaceRepository(config, new File("../../")));
+		config.addWorkspaceRepository(new WorkspaceRepository(config, new File("../")));
+		config.setLocalRepository(new LocalCacheRepository(config));
+		config.setRunTest(true);
+		config.setRunItest(true);
+		config.setParallel(false);
+		config.setPackageWorkspace(false);
+		config.setInstallLocal(true);
+		config.getListenerConfig().addListener(new IContextListener<LogEvent>() {
 
 			@Override
 			public Class<LogEvent> getType() {
@@ -67,8 +77,7 @@ public class RhenaPlatformService implements IRhenaPlatformService {
 				eventBorker.post(ErhenaConstants.TOPIC_LOGEVENT, evt);
 			}
 		});
-
-		context.addListener(new IContextListener<ModuleAddRemoveEvent>() {
+		config.getListenerConfig().addListener(new IContextListener<ModuleAddRemoveEvent>() {
 
 			@Override
 			public Class<ModuleAddRemoveEvent> getType() {
@@ -83,27 +92,35 @@ public class RhenaPlatformService implements IRhenaPlatformService {
 			}
 		});
 
-		context.addListener(new ProjectConfigurationHandler(this, context));
+		// context.addListener(new ProjectConfigurationHandler(this, context));
 
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		File workspacePath = new File(workspaceRoot.getLocationURI());
-		context.getRepositories().add(new WorkspaceRepository(context, workspacePath));
+		config.addWorkspaceRepository(new WorkspaceRepository(config, workspacePath));
+
+		engine = new RhenaEngine(config);
 	}
 
 	@Override
-	public IRhenaModule newWorkspaceEntryPoint(String projectName) throws RhenaException {
+	public IRhenaModule newWorkspaceEntryPoint(URI projectLocation) throws RhenaException {
 
-		IRhenaModule entryPoint = context.materialiseWorkspaceModel(projectName);
-		if (!entryPoints.containsKey(entryPoint.getModuleIdentifier())) {
-			entryPoints.put(entryPoint.getModuleIdentifier(), projectName);
+		ModuleIdentifier identifier = entryPoints.get(projectLocation);
+		if (identifier == null) {
+			File moduleLocation = new File(projectLocation);
+			identifier = Utils.readModuleIdentifier(moduleLocation);
 		}
 
-		return entryPoint;
+		IRhenaModule module = engine.materialiseModel(identifier);
+		if (!entryPoints.containsKey(module.getIdentifier())) {
+			entryPoints.put(projectLocation, module.getIdentifier());
+		}
+
+		return module;
 	}
 
 	public IRhenaExecution materialiseExecution(IRhenaModule module) throws RhenaException {
 
-		return context.materialiseExecution(module, EExecutionType.DELIVERABLE);
+		return engine.materialiseExecution(module, EExecutionType.DELIVERABLE);
 	}
 
 	@Override
@@ -112,8 +129,13 @@ public class RhenaPlatformService implements IRhenaPlatformService {
 	}
 
 	@Override
-	public String getProjectName(ModuleIdentifier moduleIdentifier) {
+	public ModuleIdentifier getEntryPointIdentifier(String workspaceProjectName) {
 
-		return entryPoints.get(moduleIdentifier);
+		return entryPoints.get(workspaceProjectName);
+	}
+
+	public void dropFromCache(ModuleIdentifier identifier) {
+
+		// context.dropFromCache(identifier);
 	}
 }

@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Table;
 import com.unnsvc.erhena.statusview.LogViewFilter;
 import com.unnsvc.erhena.statusview.modules.AbstractModuleEntry;
 import com.unnsvc.rhena.common.logging.ELogLevel;
-import com.unnsvc.rhena.core.logging.LogEvent;
+import com.unnsvc.rhena.core.events.LogEvent;
 
 public class LoggingViewTable {
 

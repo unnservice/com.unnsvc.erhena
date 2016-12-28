@@ -1,14 +1,13 @@
 
 package com.unnsvc.erhena.pdelifecycle;
 
-import com.unnsvc.rhena.common.IRhenaContext;
-import com.unnsvc.rhena.lifecycle.DefaultProcessor;
+public class PdeProcessor {
 
-public class PdeProcessor extends DefaultProcessor {
+// extends DefaultProcessor {
 
-	public PdeProcessor(IRhenaContext context) {
-
-		super(context);
-	}
+//	public PdeProcessor(IRhenaEngine context) {
+//
+//		super(context);
+//	}
 
 }
