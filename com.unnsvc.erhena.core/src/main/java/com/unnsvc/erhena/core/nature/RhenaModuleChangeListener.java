@@ -25,26 +25,34 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 
-import com.unnsvc.erhena.platform.service.IRhenaPlatformService;
+import com.unnsvc.erhena.platform.service.IRhenaService;
 
+/**
+ * This class will perform 3 tasks. Walk the delta tree of changed resources and
+ * select the relevant projects while ignoring the output directories. Determine
+ * which projects need building. And lastly, call the builders on each project
+ * to perform the build.
+ * 
+ * At present, this will perform the build on all projects
+ * 
+ * @author noname
+ *
+ */
 public class RhenaModuleChangeListener implements IResourceChangeListener {
 
-	public RhenaModuleChangeListener(IRhenaPlatformService platformService) {
+	public RhenaModuleChangeListener(IRhenaService platformService) {
+
 	}
 
 	public void resourceChanged(IResourceChangeEvent event) {
 
-//		if (event.getType() != IResourceChangeEvent.POST_CHANGE) {
-//			return;
-//		}
+		// if (event.getType() != IResourceChangeEvent.POST_CHANGE) {
+		// return;
+		// }
 
 		// if(event.getType() != IResourceChangeEvent.PRE_BUILD) {
 		// return;
 		// }
-		
-
-
-		
 
 		IResourceDelta delta = event.getDelta();
 
@@ -66,36 +74,31 @@ public class RhenaModuleChangeListener implements IResourceChangeListener {
 				IProject project = resource.getProject();
 				try {
 
-					if (project != null) {
-						if (project.exists()) {
-							if (project.isOpen()) {
-								if (project.hasNature(RhenaNature.NATURE_ID)) {
-									if (!resources.containsKey(project)) {
-										resources.put(project, new HashSet<IResource>());
-									}
+					if (project != null && project.exists() && project.isOpen() && project.hasNature(RhenaNature.NATURE_ID)) {
 
-									/**
-									 * @TODO Figure it out dynamically
-									 */
-									IFolder folder = project.getFolder("target");
-									IPath path = folder.getProjectRelativePath();
-
-									// Don't enter target
-									if (resource.getProjectRelativePath().equals(path)) {
-
-										return false;
-									} else {
-
-										// @TODO we should only care about files
-										// and not directories but idk how to
-										// check if a path is a directory in
-										// eclipse pde
-										resources.get(project).add(resource);
-									}
-
-								}
-							}
+						if (!resources.containsKey(project)) {
+							resources.put(project, new HashSet<IResource>());
 						}
+
+						/**
+						 * @TODO Figure it out dynamically
+						 */
+						IFolder folder = project.getFolder("target");
+						IPath path = folder.getProjectRelativePath();
+
+						// Don't enter target
+						if (resource.getProjectRelativePath().equals(path)) {
+
+							return false;
+						} else {
+
+							// @TODO we should only care about files
+							// and not directories but idk how to
+							// check if a path is a directory in
+							// eclipse pde
+							resources.get(project).add(resource);
+						}
+
 					}
 
 				} catch (CoreException ce) {
@@ -130,22 +133,22 @@ public class RhenaModuleChangeListener implements IResourceChangeListener {
 
 			Map<String, String> buildmap = new HashMap<String, String>();
 
-			WorkspaceJob wj = new WorkspaceJob("Building " + project.getName()) {
-
-				@Override
-				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+//			WorkspaceJob wj = new WorkspaceJob("Building " + project.getName()) {
+//
+//				@Override
+//				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 
 					try {
 						build(project, buildmap);
 					} catch (Exception re) {
 						re.printStackTrace();
 						// @TODO what to throw from here?
-						return Status.CANCEL_STATUS;
+//						return Status.CANCEL_STATUS;
 					}
-					return Status.OK_STATUS;
-				}
-			};
-			wj.schedule();
+//					return Status.OK_STATUS;
+//				}
+//			};
+//			wj.schedule();
 		}
 
 	}

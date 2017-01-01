@@ -19,7 +19,8 @@ import org.eclipse.ui.IStartup;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
-import com.unnsvc.erhena.platform.service.RhenaPlatformService;
+import com.unnsvc.erhena.platform.service.ProjectService;
+import com.unnsvc.erhena.platform.service.RhenaService;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.execution.IRhenaExecution;
 import com.unnsvc.rhena.common.model.IRhenaModule;
@@ -27,8 +28,10 @@ import com.unnsvc.rhena.common.model.IRhenaModule;
 public class PlatformStartup implements IStartup {
 
 	@Inject
-	private RhenaPlatformService platformService;
-
+	private RhenaService platformService;
+	@Inject
+	private ProjectService projectService;
+	
 	@Override
 	public void earlyStartup() {
 
@@ -69,7 +72,7 @@ public class PlatformStartup implements IStartup {
 						// null);
 						try {
 
-							IRhenaModule model = platformService.newWorkspaceEntryPoint(project.getLocationURI());
+							IRhenaModule model = projectService.newWorkspaceEntryPoint(project.getLocationURI());
 							IRhenaExecution execution = platformService.materialiseExecution(model);
 							System.err.println("Run from phase 1");
 
@@ -91,7 +94,7 @@ public class PlatformStartup implements IStartup {
 
 				System.err.println("Register listenre");
 				IWorkspace ws = ResourcesPlugin.getWorkspace();
-				ws.addResourceChangeListener(new PlatformResourceChangeListener(platformService), IResourceChangeEvent.POST_CHANGE);
+				ws.addResourceChangeListener(new PlatformResourceChangeListener(platformService, projectService), IResourceChangeEvent.POST_CHANGE);
 
 				return Status.OK_STATUS;
 			}

@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.e4.core.di.annotations.Creatable;
@@ -39,19 +40,17 @@ import com.unnsvc.rhena.core.resolution.WorkspaceRepository;
  */
 @Singleton
 @Creatable
-public class RhenaPlatformService implements IRhenaPlatformService {
+public class RhenaService implements IRhenaService {
 
 	/**
 	 * Single context throughout the application
 	 */
 	private IRhenaEngine engine;
 	// module => projectName tracking
-	private Map<URI, ModuleIdentifier> entryPoints;
 
 	@Inject
-	public RhenaPlatformService(IEventBroker eventBorker) {
-		
-		entryPoints = new HashMap<URI, ModuleIdentifier>();
+	public RhenaService(IEventBroker eventBorker) {
+
 
 		IRhenaConfiguration config = new RhenaConfiguration();
 		config.setRhenaHome(new File(System.getProperty("user.home"), ".rhena"));
@@ -102,21 +101,12 @@ public class RhenaPlatformService implements IRhenaPlatformService {
 	}
 
 	@Override
-	public IRhenaModule newWorkspaceEntryPoint(URI projectLocation) throws RhenaException {
-
-		ModuleIdentifier identifier = entryPoints.get(projectLocation);
-		if (identifier == null) {
-			File moduleLocation = new File(projectLocation);
-			identifier = Utils.readModuleIdentifier(moduleLocation);
-		}
-
-		IRhenaModule module = engine.materialiseModel(identifier);
-		if (!entryPoints.containsKey(module.getIdentifier())) {
-			entryPoints.put(projectLocation, module.getIdentifier());
-		}
-
-		return module;
+	public void buildProject(IProject project) {
+		
+		
 	}
+
+
 
 	public IRhenaExecution materialiseExecution(IRhenaModule module) throws RhenaException {
 
@@ -128,11 +118,13 @@ public class RhenaPlatformService implements IRhenaPlatformService {
 
 	}
 
-	@Override
-	public ModuleIdentifier getEntryPointIdentifier(String workspaceProjectName) {
+	
+	
+	public IRhenaEngine getEngine() {
 
-		return entryPoints.get(workspaceProjectName);
+		return engine;
 	}
+
 
 	public void dropFromCache(ModuleIdentifier identifier) {
 

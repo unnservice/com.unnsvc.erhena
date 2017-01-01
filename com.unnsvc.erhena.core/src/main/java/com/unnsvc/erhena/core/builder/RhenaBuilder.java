@@ -1,7 +1,6 @@
 
 package com.unnsvc.erhena.core.builder;
 
-import java.io.File;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -10,8 +9,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -19,11 +16,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.core.Activator;
-import com.unnsvc.erhena.platform.service.RhenaPlatformService;
-import com.unnsvc.rhena.common.exceptions.RhenaException;
-import com.unnsvc.rhena.common.execution.EExecutionType;
-import com.unnsvc.rhena.common.execution.IRhenaExecution;
-import com.unnsvc.rhena.common.model.IRhenaModule;
+import com.unnsvc.erhena.platform.service.RhenaService;
 
 public class RhenaBuilder extends IncrementalProjectBuilder {
 
@@ -34,7 +27,7 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 	// @Inject
 	// private IRhenaService rhenaService;
 	@Inject
-	private RhenaPlatformService platformService;
+	private RhenaService platformService;
 
 	public RhenaBuilder() {
 
@@ -62,6 +55,8 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 //				throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
 //			}
 //		}
+		
+
 
 		return null;
 	}

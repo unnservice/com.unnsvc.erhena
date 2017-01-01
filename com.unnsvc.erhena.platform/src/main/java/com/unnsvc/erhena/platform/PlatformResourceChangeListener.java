@@ -14,7 +14,8 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 
-import com.unnsvc.erhena.platform.service.RhenaPlatformService;
+import com.unnsvc.erhena.platform.service.ProjectService;
+import com.unnsvc.erhena.platform.service.RhenaService;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.execution.IRhenaExecution;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
@@ -22,10 +23,12 @@ import com.unnsvc.rhena.common.model.IRhenaModule;
 
 public class PlatformResourceChangeListener implements IResourceChangeListener {
 
-	private RhenaPlatformService platformService;
+	private ProjectService projectService;
+	private RhenaService platformService;
 
-	public PlatformResourceChangeListener(RhenaPlatformService platformService) {
+	public PlatformResourceChangeListener(RhenaService platformService, ProjectService projectService) {
 
+		this.projectService = projectService;
 		System.err.println(getClass().getName() + "Created platform change listener");
 		this.platformService = platformService;
 	}
@@ -78,11 +81,11 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 
 					System.err.println(getClass().getName() + " POST_CHANGE event, building " + affected.getName());
 
-					ModuleIdentifier identifier = platformService.getEntryPointIdentifier(affected.getName());
+					ModuleIdentifier identifier = projectService.getEntryPointIdentifier(affected.getName());
 
 					platformService.dropFromCache(identifier);
 
-					IRhenaModule module = platformService.newWorkspaceEntryPoint(affected.getProject().getLocationURI());
+					IRhenaModule module = projectService.newWorkspaceEntryPoint(affected.getProject().getLocationURI());
 					IRhenaExecution execution = platformService.materialiseExecution(module);
 
 				}

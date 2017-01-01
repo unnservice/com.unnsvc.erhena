@@ -25,7 +25,7 @@ import org.osgi.service.prefs.BackingStoreException;
 
 import com.unnsvc.erhena.core.Activator;
 import com.unnsvc.erhena.core.builder.RhenaBuilder;
-import com.unnsvc.erhena.platform.service.RhenaPlatformService;
+import com.unnsvc.erhena.platform.service.RhenaService;
 
 public class RhenaNature implements IProjectNature {
 
@@ -39,7 +39,7 @@ public class RhenaNature implements IProjectNature {
 	private IEclipseContext eclipseContext;
 
 	@Inject
-	private RhenaPlatformService rhenaPlatformService;
+	private RhenaService rhenaPlatformService;
 
 	public RhenaNature() {
 

@@ -11,7 +11,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.core.nature.RhenaModuleChangeListener;
-import com.unnsvc.erhena.platform.service.RhenaPlatformService;
+import com.unnsvc.erhena.platform.service.RhenaService;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -19,7 +19,7 @@ import com.unnsvc.erhena.platform.service.RhenaPlatformService;
 public class Activator extends AbstractActivator {
 
 	@Inject
-	private RhenaPlatformService platformService;
+	private RhenaService platformService;
 	private IResourceChangeListener listener;
 
 	public Activator() {
