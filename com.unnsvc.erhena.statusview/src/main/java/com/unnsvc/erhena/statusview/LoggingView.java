@@ -60,6 +60,8 @@ public class LoggingView extends ViewPart {
 		data.grabExcessHorizontalSpace = true;
 		data.horizontalSpan = 1;
 		Text text = new Text(container, SWT.SEARCH);
+		text.setText("Search is not implemented yet");
+		text.setEnabled(false);
 		text.setLayoutData(data);
 
 		GridData loglevelData = new GridData();
