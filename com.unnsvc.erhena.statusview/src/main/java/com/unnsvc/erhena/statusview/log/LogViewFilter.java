@@ -1,5 +1,5 @@
 
-package com.unnsvc.erhena.statusview;
+package com.unnsvc.erhena.statusview.log;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -41,7 +41,7 @@ public class LogViewFilter extends ViewerFilter {
 		// } else
 		if (entryType instanceof CoreEntry && log.getIdentifier() == null) {
 			return filterLevel(log);
-		} else if (entryType instanceof ModuleEntry && log.getIdentifier() != null) {
+		} else if (entryType instanceof ModuleEntry && log.getIdentifier() != null && log.getIdentifier().equals(((ModuleEntry) entryType).getIdentifier())) {
 			return filterLevel(log);
 		}
 

@@ -8,7 +8,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 
-import com.unnsvc.erhena.statusview.LogViewFilter;
 import com.unnsvc.erhena.statusview.modules.AbstractModuleEntry;
 import com.unnsvc.rhena.common.logging.ELogLevel;
 import com.unnsvc.rhena.core.events.LogEvent;

@@ -17,4 +17,11 @@ public class ModuleEntry extends AbstractModuleEntry {
 
 		return identifier;
 	}
+
+	@Override
+	public String toString() {
+
+		return "ModuleEntry [identifier=" + identifier + "]";
+	}
+
 }
