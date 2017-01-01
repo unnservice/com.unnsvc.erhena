@@ -120,7 +120,7 @@ public class RhenaPlatformService implements IRhenaPlatformService {
 
 	public IRhenaExecution materialiseExecution(IRhenaModule module) throws RhenaException {
 
-		return engine.materialiseExecution(module, EExecutionType.DELIVERABLE);
+		return engine.materialiseExecution(module, EExecutionType.MAIN);
 	}
 
 	@Override
