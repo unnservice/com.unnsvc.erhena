@@ -22,8 +22,7 @@ import org.osgi.framework.FrameworkUtil;
 import com.unnsvc.erhena.platform.service.ProjectService;
 import com.unnsvc.erhena.platform.service.RhenaService;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
-import com.unnsvc.rhena.common.execution.IRhenaExecution;
-import com.unnsvc.rhena.common.model.IRhenaModule;
+import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 
 public class PlatformStartup implements IStartup {
 
@@ -31,7 +30,7 @@ public class PlatformStartup implements IStartup {
 	private RhenaService platformService;
 	@Inject
 	private ProjectService projectService;
-	
+
 	@Override
 	public void earlyStartup() {
 
@@ -72,9 +71,16 @@ public class PlatformStartup implements IStartup {
 						// null);
 						try {
 
-							IRhenaModule model = projectService.newWorkspaceEntryPoint(project.getLocationURI());
-							IRhenaExecution execution = platformService.materialiseExecution(model);
-							System.err.println("Run from phase 1");
+							ModuleIdentifier identifier = projectService.manageProject(project.getLocationURI());
+							platformService.getRhenaLogger().info(PlatformStartup.class, "Brought " + identifier.toString() + " into eRhena context");
+
+							// Don't perform build, just manage project on
+							// startup
+							// IRhenaModule model =
+							// projectService.newWorkspaceEntryPoint(project.getLocationURI());
+							// IRhenaExecution execution =
+							// platformService.materialiseExecution(model);
+							// System.err.println("Run from phase 1");
 
 						} catch (RhenaException re) {
 							throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));

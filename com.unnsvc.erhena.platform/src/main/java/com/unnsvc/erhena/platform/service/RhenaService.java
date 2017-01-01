@@ -2,9 +2,6 @@
 package com.unnsvc.erhena.platform.service;
 
 import java.io.File;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,12 +15,12 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import com.unnsvc.erhena.common.ErhenaConstants;
 import com.unnsvc.rhena.common.IRhenaConfiguration;
 import com.unnsvc.rhena.common.IRhenaEngine;
-import com.unnsvc.rhena.common.Utils;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.execution.EExecutionType;
 import com.unnsvc.rhena.common.execution.IRhenaExecution;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 import com.unnsvc.rhena.common.listener.IContextListener;
+import com.unnsvc.rhena.common.logging.ILogger;
 import com.unnsvc.rhena.common.model.IRhenaModule;
 import com.unnsvc.rhena.core.RhenaConfiguration;
 import com.unnsvc.rhena.core.RhenaEngine;
@@ -45,14 +42,14 @@ public class RhenaService implements IRhenaService {
 	/**
 	 * Single context throughout the application
 	 */
+	private IRhenaConfiguration config;
 	private IRhenaEngine engine;
 	// module => projectName tracking
 
 	@Inject
 	public RhenaService(IEventBroker eventBorker) {
 
-
-		IRhenaConfiguration config = new RhenaConfiguration();
+		config = new RhenaConfiguration();
 		config.setRhenaHome(new File(System.getProperty("user.home"), ".rhena"));
 		config.addWorkspaceRepository(new WorkspaceRepository(config, new File("../../")));
 		config.addWorkspaceRepository(new WorkspaceRepository(config, new File("../")));
@@ -102,11 +99,8 @@ public class RhenaService implements IRhenaService {
 
 	@Override
 	public void buildProject(IProject project) {
-		
-		
+
 	}
-
-
 
 	public IRhenaExecution materialiseExecution(IRhenaModule module) throws RhenaException {
 
@@ -118,16 +112,13 @@ public class RhenaService implements IRhenaService {
 
 	}
 
-	
-	
 	public IRhenaEngine getEngine() {
 
 		return engine;
 	}
 
+	public ILogger getRhenaLogger() {
 
-	public void dropFromCache(ModuleIdentifier identifier) {
-
-		// context.dropFromCache(identifier);
+		return config.getLogger();
 	}
 }
