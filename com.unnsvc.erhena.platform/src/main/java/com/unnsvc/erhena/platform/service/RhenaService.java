@@ -6,7 +6,6 @@ import java.io.File;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.e4.core.di.annotations.Creatable;
@@ -97,19 +96,16 @@ public class RhenaService implements IRhenaService {
 		engine = new RhenaEngine(config);
 	}
 
-	@Override
-	public void buildProject(IProject project) {
+	public IRhenaExecution buildProject(ModuleIdentifier identifier) throws RhenaException {
 
+		IRhenaModule module = engine.materialiseModel(identifier);
+		IRhenaExecution execution = engine.materialiseExecution(module, EExecutionType.TEST);
+		return execution;
 	}
 
 	public IRhenaExecution materialiseExecution(IRhenaModule module) throws RhenaException {
 
 		return engine.materialiseExecution(module, EExecutionType.MAIN);
-	}
-
-	@Override
-	public void destroyEntryPoint(ModuleIdentifier entryPoint) {
-
 	}
 
 	public IRhenaEngine getEngine() {
@@ -121,4 +117,5 @@ public class RhenaService implements IRhenaService {
 
 		return config.getLogger();
 	}
+
 }

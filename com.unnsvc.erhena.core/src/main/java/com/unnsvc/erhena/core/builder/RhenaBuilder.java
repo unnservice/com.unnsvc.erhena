@@ -9,6 +9,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -16,7 +18,10 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.core.Activator;
+import com.unnsvc.erhena.platform.service.ProjectService;
 import com.unnsvc.erhena.platform.service.RhenaService;
+import com.unnsvc.rhena.common.exceptions.RhenaException;
+import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 
 public class RhenaBuilder extends IncrementalProjectBuilder {
 
@@ -28,6 +33,8 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 	// private IRhenaService rhenaService;
 	@Inject
 	private RhenaService platformService;
+	@Inject
+	private ProjectService projectService;
 
 	public RhenaBuilder() {
 
@@ -39,26 +46,45 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 
-//		if (kind == FULL_BUILD) {
-//			IProject project = getProject();
-//			File projectLocation = new File(project.getLocationURI());
-//			System.err.println(getClass().getName() + "Full build on: " + projectLocation);
-//
-//			try {
-//				IRhenaModule module = platformService.newWorkspaceEntryPoint(project.getName());
-//				
-//				// This is not cached as it bypasses the rhena context
-//				IRhenaExecution exec = module.getRepository().materialiseExecution(module, EExecutionType.PROTOTYPE);
-//				
-////				IRhenaExecution exec = platformService.materialiseExecution(module);
-//			} catch (RhenaException re) {
-//				throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
-//			}
-//		}
-		
+		if (kind == FULL_BUILD) {
+			IProject project = getProject();
 
+			try {
+				build(project);
+			} catch (RhenaException re) {
+				throw new CoreException(new Status(IStatus.OK, Activator.PLUGIN_ID, re.getMessage(), re));
+			}
+
+			// File projectLocation = new File(project.getLocationURI());
+			// System.err.println(getClass().getName() + "Full build on: " +
+			// projectLocation);
+			//
+			// try {
+			// IRhenaModule module =
+			// platformService.newWorkspaceEntryPoint(project.getName());
+			//
+			// // This is not cached as it bypasses the rhena context
+			// IRhenaExecution exec =
+			// module.getRepository().materialiseExecution(module,
+			// EExecutionType.PROTOTYPE);
+			//
+			//// IRhenaExecution exec =
+			// platformService.materialiseExecution(module);
+			// } catch (RhenaException re) {
+			// throw new CoreException(new Status(IStatus.ERROR,
+			// Activator.PLUGIN_ID, re.getMessage(), re));
+			// }
+		}
 
 		return null;
+	}
+
+	private void build(IProject project) throws RhenaException {
+
+		ModuleIdentifier identifier = projectService.manageProject(project.getLocationURI());
+		platformService.buildProject(identifier);
+
+		// If build succeeds, continue with reconfiguring project classpaths
 	}
 
 }

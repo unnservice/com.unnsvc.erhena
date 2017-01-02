@@ -13,8 +13,12 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 
 import com.unnsvc.erhena.platform.service.ProjectService;
 import com.unnsvc.erhena.platform.service.RhenaService;
@@ -49,9 +53,12 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 						IResource resource = delta.getResource();
 						IProject project = resource.getProject();
 
-//						System.err.println("Changed: " + resource.getRawLocation());
-//
-//						System.err.println(getClass().getName() + " DELTA Affected resource: " + resource + " resource project " + project);
+						// System.err.println("Changed: " +
+						// resource.getRawLocation());
+						//
+						// System.err.println(getClass().getName() + " DELTA
+						// Affected resource: " + resource + " resource project
+						// " + project);
 
 						if (project != null && project.isOpen()) {
 							if (project.hasNature("com.unnsvc.erhena.core.nature")) {
@@ -76,17 +83,35 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 				System.err.println(getClass().getName() + " POST_CHANGE " + resources.keySet().size() + " affected projects");
 
 				for (IProject affected : resources.keySet()) {
-//
-//					System.err.println(getClass().getName() + " POST_CHANGE event, building " + affected.getName());
-//
-//					ModuleIdentifier identifier = projectService.getEntryPointIdentifier(affected.getName());
-//
-//					platformService.dropFromCache(identifier);
-//
-//					IRhenaModule module = projectService.newWorkspaceEntryPoint(affected.getProject().getLocationURI());
-//					IRhenaExecution execution = platformService.materialiseExecution(module);
-//
-					affected.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
+					//
+					// System.err.println(getClass().getName() + " POST_CHANGE
+					// event, building " + affected.getName());
+					//
+					// ModuleIdentifier identifier =
+					// projectService.getEntryPointIdentifier(affected.getName());
+					//
+					// platformService.dropFromCache(identifier);
+					//
+					// IRhenaModule module =
+					// projectService.newWorkspaceEntryPoint(affected.getProject().getLocationURI());
+					// IRhenaExecution execution =
+					// platformService.materialiseExecution(module);
+					//
+					WorkspaceJob wj = new WorkspaceJob("Building " + affected.getName()) {
+
+						@Override
+						public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+
+							try {
+								affected.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
+								return new Status(IStatus.OK, Activator.PLUGIN_ID, "Built " + affected.getName());
+							} catch (CoreException ce) {
+								return new Status(IStatus.ERROR, Activator.PLUGIN_ID, ce.getMessage(), ce);
+							}
+						}
+					};
+					wj.schedule();
+
 				}
 			} catch (CoreException e) {
 
