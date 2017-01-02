@@ -137,6 +137,7 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 		// Dependencies here
 		
 		
+		
 		project.setRawClasspath(sourcePaths.toArray(new IClasspathEntry[sourcePaths.size()]), new NullProgressMonitor());
 
 		//

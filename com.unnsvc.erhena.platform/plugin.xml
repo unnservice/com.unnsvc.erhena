@@ -7,5 +7,16 @@
             class="com.unnsvc.erhena.platform.PlatformStartup">
       </startup>
    </extension>
+   <extension
+         point="org.eclipse.wst.xml.core.catalogContributions">
+      <catalogContribution
+            id="http://schema.unnsvc.com/rhena/module.xsd">
+         <uri
+               id="http://schema.unnsvc.com/rhena/module.xsd"
+               name="http://schema.unnsvc.com/rhena/module.xsd"
+               uri="platform:/plugin/com.unnsvc.erhena.platform/META-INF/schema/module.xsd">
+         </uri>
+      </catalogContribution>
+   </extension>
 
 </plugin>

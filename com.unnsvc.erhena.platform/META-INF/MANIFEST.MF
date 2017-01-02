@@ -18,7 +18,8 @@ Require-Bundle: com.unnsvc.erhena.common,
  org.eclipse.e4.ui.di,
  org.eclipse.jface,
  org.eclipse.ui,
- org.eclipse.jdt.core
+ org.eclipse.jdt.core,
+ org.eclipse.wst.xml.core
 Export-Package: com.unnsvc.erhena.platform.service,
  com.unnsvc.rhena.common,
  com.unnsvc.rhena.common.exceptions,
