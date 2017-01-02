@@ -167,12 +167,12 @@ public class LoggingView extends ViewPart {
 		logViewTable.addLogEvent(logEvent);
 	}
 
-	@Inject
-	@Optional
-	private void subscribeModuleAddRemoveEvent(@UIEventTopic(ErhenaConstants.TOPIC_MODULE_ADDREMOVE) ModuleAddRemoveEvent moduleAddRemove) {
-
-		moduleViewTable.onModule(moduleAddRemove);
-	}
+//	@Inject
+//	@Optional
+//	private void subscribeModuleAddRemoveEvent(@UIEventTopic(ErhenaConstants.TOPIC_MODULE_ADDREMOVE) ModuleAddRemoveEvent moduleAddRemove) {
+//
+//		moduleViewTable.onModule(moduleAddRemove);
+//	}
 
 }
 

@@ -8,8 +8,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 
 import com.unnsvc.rhena.core.events.LogEvent;
-import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent;
-import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent.EAddRemove;
 
 public class ModuleViewTable {
 
@@ -30,9 +28,9 @@ public class ModuleViewTable {
 		Table table = tableViewer.getTable();
 		table.setHeaderVisible(false);
 		table.setLinesVisible(false);
-				
+
 		tableViewer.setInput(moduleViewContentProvider.getActiveModules());
-		
+
 		table.select(0);
 	}
 
@@ -46,28 +44,44 @@ public class ModuleViewTable {
 		return tableViewer;
 	}
 
-	public void onModule(ModuleAddRemoveEvent moduleAddRemove) {
-
-		if (moduleAddRemove.getAddRemove() == EAddRemove.ADDED) {
-			ModuleEntry moduleEntry = new ModuleEntry(moduleAddRemove.getIdentifier());
-			moduleEntry.setActivity(true);
-			moduleViewContentProvider.addElement(moduleEntry);
-		} else if (moduleAddRemove.getAddRemove() == EAddRemove.REMOVED) {
-			moduleViewContentProvider.removeElement(moduleAddRemove.getIdentifier());
-		}
-
-		refresh();
-	}
-
 	public void onLogEvent(LogEvent logEvent) {
 
 		IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-		AbstractModuleEntry entry = (AbstractModuleEntry) selection.getFirstElement();
+		AbstractModuleEntry selected = (AbstractModuleEntry) selection.getFirstElement();
+		
+		/**
+		 * @TODO this is highly inefficient, figure out some faster way later
+		 */
+		if(logEvent.getIdentifier() != null && !moduleViewContentProvider.containsModule(logEvent.getIdentifier())) {
+			
+			ModuleEntry moduleEntry = new ModuleEntry(logEvent.getIdentifier());
+			moduleEntry.setActivity(true);
+			moduleViewContentProvider.addElement(moduleEntry);
+		}
 
+		/**
+		 * We only want to configure unselected entries so they "light up" in
+		 * colors representing the log level or black for normal activity
+		 */
 		for (AbstractModuleEntry moduleEntry : moduleViewContentProvider.getActiveModules()) {
 
-			if (moduleEntry != entry) {
-				configureUnselectedEntry(moduleEntry, logEvent);
+			if (moduleEntry != selected) {
+
+				// Only select entries that aren't selected in the UI, plus is
+				// relevant to the log event
+
+				if (moduleEntry instanceof CoreEntry && logEvent.getIdentifier() == null) {
+					configureUnselectedEntry(moduleEntry, logEvent);
+					break;
+				}
+
+				if (moduleEntry instanceof ModuleEntry && logEvent.getIdentifier() != null) {
+					ModuleEntry me = (ModuleEntry) moduleEntry;
+					if (me.getIdentifier().equals(logEvent.getIdentifier())) {
+						configureUnselectedEntry(moduleEntry, logEvent);
+						break;
+					}
+				}
 			}
 		}
 
@@ -75,7 +89,7 @@ public class ModuleViewTable {
 	}
 
 	private void configureUnselectedEntry(AbstractModuleEntry moduleEntry, LogEvent logEvent) {
-		
+
 		moduleEntry.setActivity(true);
 		moduleEntry.setLevel(logEvent.getLevel());
 	}

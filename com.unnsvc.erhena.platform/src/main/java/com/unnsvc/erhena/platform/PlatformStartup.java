@@ -15,14 +15,18 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.ui.IStartup;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
+import com.unnsvc.erhena.common.ErhenaConstants;
 import com.unnsvc.erhena.platform.service.ProjectService;
 import com.unnsvc.erhena.platform.service.RhenaService;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
+import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent;
+import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent.EAddRemove;
 
 public class PlatformStartup implements IStartup {
 
@@ -30,6 +34,8 @@ public class PlatformStartup implements IStartup {
 	private RhenaService platformService;
 	@Inject
 	private ProjectService projectService;
+	@Inject
+	private IEventBroker eventBroker;
 
 	@Override
 	public void earlyStartup() {
@@ -72,7 +78,9 @@ public class PlatformStartup implements IStartup {
 						try {
 
 							ModuleIdentifier identifier = projectService.manageProject(project.getLocationURI());
-							platformService.getRhenaLogger().info(PlatformStartup.class, "Brought " + identifier.toString() + " into eRhena context");
+//							eventBroker.post(ErhenaConstants.TOPIC_MODULE_ADDREMOVE, new ModuleAddRemoveEvent(identifier, EAddRemove.ADDED));
+
+							platformService.getRhenaLogger().info(PlatformStartup.class, identifier, "Brought into eRhena context");
 
 							// Don't perform build, just manage project on
 							// startup
@@ -98,7 +106,7 @@ public class PlatformStartup implements IStartup {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 
-				System.err.println("Register listenre");
+				System.err.println(getClass() + ": Register listener");
 				IWorkspace ws = ResourcesPlugin.getWorkspace();
 				ws.addResourceChangeListener(new PlatformResourceChangeListener(platformService, projectService), IResourceChangeEvent.POST_CHANGE);
 

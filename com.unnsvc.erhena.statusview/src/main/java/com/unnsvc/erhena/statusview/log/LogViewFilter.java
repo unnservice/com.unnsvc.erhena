@@ -50,7 +50,7 @@ public class LogViewFilter extends ViewerFilter {
 
 	private boolean filterLevel(LogEvent log) {
 
-		return log.getLevel().isGreaterThan(level);
+		return log.getLevel().isGreaterOrEquals(level);
 	}
 
 }

@@ -28,11 +28,12 @@ public class ProjectService implements IProjectService {
 		this.rhena = rhena;
 		managedProjects = new HashMap<URI, ModuleIdentifier>();
 	}
-	
+
 	public ModuleIdentifier manageProject(URI projectLocation) throws RhenaException {
-		
-		ModuleIdentifier identifier =  managedProjects.get(projectLocation);
-		if(identifier == null) {
+
+		ModuleIdentifier identifier = managedProjects.get(projectLocation);
+
+		if (identifier == null) {
 			File moduleLocation = new File(projectLocation);
 			identifier = Utils.readModuleIdentifier(moduleLocation);
 			managedProjects.put(projectLocation, identifier);
@@ -40,24 +41,26 @@ public class ProjectService implements IProjectService {
 		return identifier;
 	}
 
-//	public IRhenaModule newWorkspaceEntryPoint(URI projectLocation) throws RhenaException {
-//
-//		ModuleIdentifier identifier = entryPoints.get(projectLocation);
-//		if (identifier == null) {
-//			File moduleLocation = new File(projectLocation);
-//			identifier = Utils.readModuleIdentifier(moduleLocation);
-//		}
-//
-//		IRhenaModule module = rhena.getEngine().materialiseModel(identifier);
-//		if (!entryPoints.containsKey(module.getIdentifier())) {
-//			entryPoints.put(projectLocation, module.getIdentifier());
-//		}
-//
-//		return module;
-//	}
-//
-//	public ModuleIdentifier getEntryPointIdentifier(String workspaceProjectName) {
-//
-//		return entryPoints.get(workspaceProjectName);
-//	}
+	// public IRhenaModule newWorkspaceEntryPoint(URI projectLocation) throws
+	// RhenaException {
+	//
+	// ModuleIdentifier identifier = entryPoints.get(projectLocation);
+	// if (identifier == null) {
+	// File moduleLocation = new File(projectLocation);
+	// identifier = Utils.readModuleIdentifier(moduleLocation);
+	// }
+	//
+	// IRhenaModule module = rhena.getEngine().materialiseModel(identifier);
+	// if (!entryPoints.containsKey(module.getIdentifier())) {
+	// entryPoints.put(projectLocation, module.getIdentifier());
+	// }
+	//
+	// return module;
+	// }
+	//
+	// public ModuleIdentifier getEntryPointIdentifier(String
+	// workspaceProjectName) {
+	//
+	// return entryPoints.get(workspaceProjectName);
+	// }
 }

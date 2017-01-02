@@ -71,8 +71,14 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 
 			try {
 				build(project);
-			} catch (Exception re) {
-				throw new CoreException(new Status(IStatus.OK, Activator.PLUGIN_ID, re.getMessage(), re));
+			} catch (Exception e) {
+				try {
+					ModuleIdentifier identifier = projectService.manageProject(project.getLocationURI());
+					platformService.getRhenaLogger().error(getClass(), identifier, e.getMessage());
+					e.printStackTrace();
+				} catch (RhenaException re) {
+					throw new CoreException(new Status(IStatus.OK, Activator.PLUGIN_ID, re.getMessage(), re));
+				}
 			}
 
 			// File projectLocation = new File(project.getLocationURI());
@@ -115,7 +121,8 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 		List<IResource> resources = context.getResources();
 
 		IJavaProject project = JavaCore.create(p);
-//		project.setRawClasspath(new IClasspathEntry[] {}, new NullProgressMonitor());
+		// project.setRawClasspath(new IClasspathEntry[] {}, new
+		// NullProgressMonitor());
 
 		// Source paths
 		List<IClasspathEntry> sourcePaths = new ArrayList<IClasspathEntry>();
@@ -126,18 +133,16 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 			IClasspathEntry entry = JavaCore.newSourceEntry(fragmentRoot.getPath());
 			sourcePaths.add(entry);
 		}
-		
+
 		// JVM entry
 		IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
 		IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
 		IPath vmPath = containerPath.append(vmInstall.getVMInstallType().getId()).append(vmInstall.getName());
 		IClasspathEntry jreEntry = JavaCore.newContainerEntry(vmPath);
 		sourcePaths.add(jreEntry);
-		
+
 		// Dependencies here
-		
-		
-		
+
 		project.setRawClasspath(sourcePaths.toArray(new IClasspathEntry[sourcePaths.size()]), new NullProgressMonitor());
 
 		//

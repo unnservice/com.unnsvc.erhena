@@ -50,4 +50,17 @@ public class ModuleViewContentProvider implements IStructuredContentProvider {
 			}
 		}
 	}
+
+	public boolean containsModule(ModuleIdentifier identifier) {
+
+		for(AbstractModuleEntry entry : activeModules) {
+			if(entry instanceof ModuleEntry) {
+				ModuleEntry me = (ModuleEntry) entry;
+				if(me.getIdentifier().equals(identifier)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

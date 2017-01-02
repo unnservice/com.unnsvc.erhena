@@ -31,7 +31,7 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 	public PlatformResourceChangeListener(RhenaService platformService, ProjectService projectService) {
 
 		this.projectService = projectService;
-		System.err.println(getClass().getName() + "Created platform change listener");
+//		System.err.println(getClass().getName() + "Created platform change listener");
 		this.platformService = platformService;
 	}
 
@@ -80,7 +80,7 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 			try {
 				delta.accept(visitor);
 
-				System.err.println(getClass().getName() + " POST_CHANGE " + resources.keySet().size() + " affected projects");
+//				System.err.println(getClass().getName() + " POST_CHANGE " + resources.keySet().size() + " affected projects");
 
 				for (IProject affected : resources.keySet()) {
 					//
