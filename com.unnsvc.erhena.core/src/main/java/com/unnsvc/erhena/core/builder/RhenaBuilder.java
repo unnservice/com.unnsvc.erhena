@@ -1,27 +1,47 @@
 
 package com.unnsvc.erhena.core.builder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
+import com.unnsvc.erhena.common.RhenaUtils;
 import com.unnsvc.erhena.core.Activator;
 import com.unnsvc.erhena.platform.service.ProjectService;
 import com.unnsvc.erhena.platform.service.RhenaService;
+import com.unnsvc.rhena.common.IRhenaCache;
+import com.unnsvc.rhena.common.IRhenaEngine;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
+import com.unnsvc.rhena.common.execution.IRhenaExecution;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
+import com.unnsvc.rhena.common.model.lifecycle.IExecutionContext;
+import com.unnsvc.rhena.common.model.lifecycle.ILifecycle;
+import com.unnsvc.rhena.common.model.lifecycle.IProcessor;
+import com.unnsvc.rhena.common.model.lifecycle.IResource;
 
 public class RhenaBuilder extends IncrementalProjectBuilder {
 
@@ -51,7 +71,7 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 
 			try {
 				build(project);
-			} catch (RhenaException re) {
+			} catch (Exception re) {
 				throw new CoreException(new Status(IStatus.OK, Activator.PLUGIN_ID, re.getMessage(), re));
 			}
 
@@ -79,12 +99,51 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 		return null;
 	}
 
-	private void build(IProject project) throws RhenaException {
+	private void build(IProject p) throws RhenaException, CoreException {
 
-		ModuleIdentifier identifier = projectService.manageProject(project.getLocationURI());
-		platformService.buildProject(identifier);
+		ModuleIdentifier identifier = projectService.manageProject(p.getLocationURI());
+		IRhenaExecution testExecution = platformService.buildProject(identifier);
 
 		// If build succeeds, continue with reconfiguring project classpaths
+
+		IRhenaEngine engine = platformService.getEngine();
+		IRhenaCache cache = engine.getCache();
+
+		ILifecycle lifecycle = cache.getLifecycles().get(identifier);
+		IExecutionContext context = lifecycle.getContext();
+		List<IProcessor> processors = lifecycle.getProcessors();
+		List<IResource> resources = context.getResources();
+
+		IJavaProject project = JavaCore.create(p);
+//		project.setRawClasspath(new IClasspathEntry[] {}, new NullProgressMonitor());
+
+		// Source paths
+		List<IClasspathEntry> sourcePaths = new ArrayList<IClasspathEntry>();
+		for (IResource resource : resources) {
+			IFolder sourceFolder = p.getFolder(resource.getRelativePath());
+			RhenaUtils.createFolder(sourceFolder);
+			IPackageFragmentRoot fragmentRoot = project.getPackageFragmentRoot(sourceFolder);
+			IClasspathEntry entry = JavaCore.newSourceEntry(fragmentRoot.getPath());
+			sourcePaths.add(entry);
+		}
+		
+		// JVM entry
+		IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
+		IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
+		IPath vmPath = containerPath.append(vmInstall.getVMInstallType().getId()).append(vmInstall.getName());
+		IClasspathEntry jreEntry = JavaCore.newContainerEntry(vmPath);
+		sourcePaths.add(jreEntry);
+		
+		// Dependencies here
+		
+		
+		project.setRawClasspath(sourcePaths.toArray(new IClasspathEntry[sourcePaths.size()]), new NullProgressMonitor());
+
+		//
+		// for(IClasspathEntry ce : project.getRawClasspath()) {
+		// System.err.println("Classpath in build: " + ce);
+		// }
+
 	}
 
 }
