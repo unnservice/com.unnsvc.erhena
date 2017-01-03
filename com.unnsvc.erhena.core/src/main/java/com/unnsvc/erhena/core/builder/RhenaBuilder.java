@@ -31,6 +31,7 @@ import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.common.RhenaUtils;
 import com.unnsvc.erhena.core.Activator;
+import com.unnsvc.erhena.core.classpath.RhenaClasspathContainerInitializer;
 import com.unnsvc.erhena.platform.service.ProjectService;
 import com.unnsvc.erhena.platform.service.RhenaService;
 import com.unnsvc.rhena.common.IRhenaCache;
@@ -70,7 +71,7 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 			IProject project = getProject();
 
 			try {
-				build(project);
+				build(project, monitor);
 			} catch (Exception e) {
 				try {
 					ModuleIdentifier identifier = projectService.manageProject(project.getLocationURI());
@@ -105,7 +106,7 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 		return null;
 	}
 
-	private void build(IProject p) throws RhenaException, CoreException {
+	private void build(IProject p, IProgressMonitor monitor) throws RhenaException, CoreException {
 
 		ModuleIdentifier identifier = projectService.manageProject(p.getLocationURI());
 		IRhenaExecution testExecution = platformService.buildProject(identifier);
@@ -136,19 +137,41 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 
 		// JVM entry
 		IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
-		IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
-		IPath vmPath = containerPath.append(vmInstall.getVMInstallType().getId()).append(vmInstall.getName());
+		IPath jreContainerPath = new Path(JavaRuntime.JRE_CONTAINER);
+		IPath vmPath = jreContainerPath.append(vmInstall.getVMInstallType().getId()).append(vmInstall.getName());
 		IClasspathEntry jreEntry = JavaCore.newContainerEntry(vmPath);
 		sourcePaths.add(jreEntry);
-
-		// Dependencies here
-
-		project.setRawClasspath(sourcePaths.toArray(new IClasspathEntry[sourcePaths.size()]), new NullProgressMonitor());
 
 		//
 		// for(IClasspathEntry ce : project.getRawClasspath()) {
 		// System.err.println("Classpath in build: " + ce);
 		// }
+
+		IPath containerPath = new Path("com.unnsvc.erhena.core.classpathContainer");
+
+		RhenaClasspathContainerInitializer initializer = (RhenaClasspathContainerInitializer) JavaCore.getClasspathContainerInitializer(containerPath.segment(0));
+		initializer.addClasspathEntry(JavaCore.newLibraryEntry(new Path("/home/noname/.m2/repository/log4j/log4j/1.2.17/log4j-1.2.17.jar"), null, null));
+
+		// initializer.initialize(containerPath, project);
+		// RhenaClasspathContainer container = new
+		// RhenaClasspathContainer(containerPath);
+		// container.addEntry(JavaCore.newLibraryEntry(new
+		// Path("/home/noname/.m2/repository/log4j/log4j/1.2.17/log4j-1.2.17.jar"),
+		// null, null));
+		// initializer.requestClasspathContainerUpdate(containerPath, project,
+		// container);
+
+		IClasspathEntry containerEntry = JavaCore.newContainerEntry(containerPath);
+		sourcePaths.add(containerEntry);
+
+		// IClasspathContainer container =
+		// JavaCore.getClasspathContainer(containerPath, project);
+
+		// Dependencies here
+
+		project.setRawClasspath(sourcePaths.toArray(new IClasspathEntry[sourcePaths.size()]), new NullProgressMonitor());
+
+		p.refreshLocal(org.eclipse.core.resources.IResource.DEPTH_INFINITE, new NullProgressMonitor());
 
 	}
 

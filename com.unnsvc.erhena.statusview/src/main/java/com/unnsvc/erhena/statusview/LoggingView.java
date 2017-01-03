@@ -34,7 +34,6 @@ import com.unnsvc.erhena.statusview.modules.AbstractModuleEntry;
 import com.unnsvc.erhena.statusview.modules.ModuleViewTable;
 import com.unnsvc.rhena.common.logging.ELogLevel;
 import com.unnsvc.rhena.core.events.LogEvent;
-import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent;
 
 public class LoggingView extends ViewPart {
 
@@ -166,14 +165,6 @@ public class LoggingView extends ViewPart {
 		moduleViewTable.onLogEvent(logEvent);
 		logViewTable.addLogEvent(logEvent);
 	}
-
-//	@Inject
-//	@Optional
-//	private void subscribeModuleAddRemoveEvent(@UIEventTopic(ErhenaConstants.TOPIC_MODULE_ADDREMOVE) ModuleAddRemoveEvent moduleAddRemove) {
-//
-//		moduleViewTable.onModule(moduleAddRemove);
-//	}
-
 }
 
 /**

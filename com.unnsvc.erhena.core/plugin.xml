@@ -103,5 +103,12 @@
             natureId="com.unnsvc.erhena.core.nature">
       </image>
    </extension>
+   <extension
+         point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+            class="com.unnsvc.erhena.core.classpath.RhenaClasspathContainerInitializer"
+            id="com.unnsvc.erhena.core.classpathContainer">
+      </classpathContainerInitializer>
+   </extension>
 
 </plugin>

@@ -20,13 +20,10 @@ import org.eclipse.ui.IStartup;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
-import com.unnsvc.erhena.common.ErhenaConstants;
 import com.unnsvc.erhena.platform.service.ProjectService;
 import com.unnsvc.erhena.platform.service.RhenaService;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
-import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent;
-import com.unnsvc.rhena.core.events.ModuleAddRemoveEvent.EAddRemove;
 
 public class PlatformStartup implements IStartup {
 
