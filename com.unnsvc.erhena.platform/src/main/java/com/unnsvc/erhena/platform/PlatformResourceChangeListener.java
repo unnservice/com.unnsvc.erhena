@@ -31,7 +31,8 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 	public PlatformResourceChangeListener(RhenaService platformService, ProjectService projectService) {
 
 		this.projectService = projectService;
-//		System.err.println(getClass().getName() + "Created platform change listener");
+		// System.err.println(getClass().getName() + "Created platform change
+		// listener");
 		this.platformService = platformService;
 	}
 
@@ -53,13 +54,6 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 						IResource resource = delta.getResource();
 						IProject project = resource.getProject();
 
-						// System.err.println("Changed: " +
-						// resource.getRawLocation());
-						//
-						// System.err.println(getClass().getName() + " DELTA
-						// Affected resource: " + resource + " resource project
-						// " + project);
-
 						if (project != null && project.isOpen()) {
 							if (project.hasNature("com.unnsvc.erhena.core.nature")) {
 								if (!resources.containsKey(project)) {
@@ -80,39 +74,37 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 			try {
 				delta.accept(visitor);
 
-//				System.err.println(getClass().getName() + " POST_CHANGE " + resources.keySet().size() + " affected projects");
+				// System.err.println(getClass().getName() + " POST_CHANGE " +
+				// resources.keySet().size() + " affected projects");
+				WorkspaceJob wj = new WorkspaceJob("Building workspace") {
 
-				for (IProject affected : resources.keySet()) {
-					//
-					// System.err.println(getClass().getName() + " POST_CHANGE
-					// event, building " + affected.getName());
-					//
-					// ModuleIdentifier identifier =
-					// projectService.getEntryPointIdentifier(affected.getName());
-					//
-					// platformService.dropFromCache(identifier);
-					//
-					// IRhenaModule module =
-					// projectService.newWorkspaceEntryPoint(affected.getProject().getLocationURI());
-					// IRhenaExecution execution =
-					// platformService.materialiseExecution(module);
-					//
-					WorkspaceJob wj = new WorkspaceJob("Building " + affected.getName()) {
+					@Override
+					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 
-						@Override
-						public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-
-							try {
-								affected.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
-								return new Status(IStatus.OK, Activator.PLUGIN_ID, "Built " + affected.getName());
-							} catch (CoreException ce) {
-								return new Status(IStatus.ERROR, Activator.PLUGIN_ID, ce.getMessage(), ce);
-							}
+						if (!resources.isEmpty()) {
+							System.err.println("Dropping caches");
+							platformService.dropCaches();
 						}
-					};
-					wj.schedule();
 
-				}
+						try {
+							for (IProject affected : resources.keySet()) {
+
+								affected.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
+
+								// affected.refreshLocal(IResource.DEPTH_INFINITE,
+								// monitor);
+
+							}
+							return new Status(IStatus.OK, Activator.PLUGIN_ID, "Built workspace");
+
+						} catch (CoreException ce) {
+							return new Status(IStatus.ERROR, Activator.PLUGIN_ID, ce.getMessage(), ce);
+						}
+					}
+				};
+
+				wj.schedule();
+
 			} catch (CoreException e) {
 
 				e.printStackTrace();
@@ -121,6 +113,33 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 		}
 	}
 }
+
+// IResourceRuleFactory ruleFactory =
+// ResourcesPlugin.getWorkspace().getRuleFactory();
+
+// wj.setRule(ResourcesPlugin.getWorkspace().getRoot());
+// System.err.println("Changed: " +
+// resource.getRawLocation());
+//
+// System.err.println(getClass().getName() + " DELTA
+// Affected resource: " + resource + " resource project
+// " + project);
+
+//
+// System.err.println(getClass().getName() + "
+// POST_CHANGE
+// event, building " + affected.getName());
+//
+// ModuleIdentifier identifier =
+// projectService.getEntryPointIdentifier(affected.getName());
+//
+// platformService.dropFromCache(identifier);
+//
+// IRhenaModule module =
+// projectService.newWorkspaceEntryPoint(affected.getProject().getLocationURI());
+// IRhenaExecution execution =
+// platformService.materialiseExecution(module);
+//
 
 // System.err.println("On resource change event");
 // System.err.println("-------------- Change event");

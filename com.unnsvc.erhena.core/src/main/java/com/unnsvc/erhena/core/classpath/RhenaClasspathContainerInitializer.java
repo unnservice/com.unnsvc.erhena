@@ -23,9 +23,7 @@ public class RhenaClasspathContainerInitializer extends ClasspathContainerInitia
 
 	@Override
 	public void initialize(IPath containerPath, IJavaProject project) throws CoreException {
-
-		System.err.println("Creating entry " + containerPath + " on " + this.toString());
-
+		
 		RhenaClasspathContainer container = new RhenaClasspathContainer("eRhena Main", containerPath, classpathEntries);
 		JavaCore.setClasspathContainer(containerPath, new IJavaProject[] { project }, new IClasspathContainer[] { container }, null);
 	}
@@ -48,9 +46,9 @@ public class RhenaClasspathContainerInitializer extends ClasspathContainerInitia
 
 	public void addClasspathEntry(IClasspathEntry classpathEntry) {
 
-		System.err.println("Adding entry to " + this.toString());
-
-		classpathEntries.add(classpathEntry);
+		if(!classpathEntries.contains(classpathEntry)) {
+			classpathEntries.add(classpathEntry);
+		}
 	}
 
 }

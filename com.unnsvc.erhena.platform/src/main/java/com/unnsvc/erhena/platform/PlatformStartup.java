@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
@@ -70,26 +71,18 @@ public class PlatformStartup implements IStartup {
 
 					if (project.hasNature("com.unnsvc.erhena.core.nature")) {
 
-						// project.build(IncrementalProjectBuilder.FULL_BUILD,
-						// null);
 						try {
 
 							ModuleIdentifier identifier = projectService.manageProject(project.getLocationURI());
-//							eventBroker.post(ErhenaConstants.TOPIC_MODULE_ADDREMOVE, new ModuleAddRemoveEvent(identifier, EAddRemove.ADDED));
 
 							platformService.getRhenaLogger().info(PlatformStartup.class, identifier, "Brought into eRhena context");
-
-							// Don't perform build, just manage project on
-							// startup
-							// IRhenaModule model =
-							// projectService.newWorkspaceEntryPoint(project.getLocationURI());
-							// IRhenaExecution execution =
-							// platformService.materialiseExecution(model);
-							// System.err.println("Run from phase 1");
 
 						} catch (RhenaException re) {
 							throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
 						}
+						
+						 project.build(IncrementalProjectBuilder.FULL_BUILD, null);
+
 					}
 				}
 
@@ -103,7 +96,7 @@ public class PlatformStartup implements IStartup {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 
-				System.err.println(getClass() + ": Register listener");
+				System.err.println(getClass() + ": Register workspace listener");
 				IWorkspace ws = ResourcesPlugin.getWorkspace();
 				ws.addResourceChangeListener(new PlatformResourceChangeListener(platformService, projectService), IResourceChangeEvent.POST_CHANGE);
 

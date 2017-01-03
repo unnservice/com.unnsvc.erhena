@@ -88,11 +88,6 @@ public class RhenaService implements IRhenaService {
 		return execution;
 	}
 
-	public IRhenaExecution materialiseExecution(IRhenaModule module) throws RhenaException {
-
-		return engine.materialiseExecution(module, EExecutionType.MAIN);
-	}
-
 	public IRhenaEngine getEngine() {
 
 		return engine;
@@ -101,6 +96,13 @@ public class RhenaService implements IRhenaService {
 	public ILogger getRhenaLogger() {
 
 		return config.getLogger();
+	}
+
+	public void dropCaches() {
+
+		engine.getCache().getExecutions().clear();
+		engine.getCache().getLifecycles().clear();
+		engine.getCache().getModules().clear();
 	}
 
 }

@@ -81,6 +81,8 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 					throw new CoreException(new Status(IStatus.OK, Activator.PLUGIN_ID, re.getMessage(), re));
 				}
 			}
+			
+//			project.refreshLocal(org.eclipse.core.resources.IResource.DEPTH_INFINITE, new NullProgressMonitor());
 
 			// File projectLocation = new File(project.getLocationURI());
 			// System.err.println(getClass().getName() + "Full build on: " +
@@ -171,7 +173,8 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 
 		project.setRawClasspath(sourcePaths.toArray(new IClasspathEntry[sourcePaths.size()]), new NullProgressMonitor());
 
-		p.refreshLocal(org.eclipse.core.resources.IResource.DEPTH_INFINITE, new NullProgressMonitor());
+//		p.refreshLocal(org.eclipse.core.resources.IResource.DEPTH_INFINITE, new NullProgressMonitor());
+//		p.getFolder(".classpath").refreshLocal(org.eclipse.core.resources.IResource.DEPTH_ZERO, monitor);
 
 	}
 
