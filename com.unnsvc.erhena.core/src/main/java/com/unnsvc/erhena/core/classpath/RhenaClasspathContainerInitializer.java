@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.JavaCore;
 
 public class RhenaClasspathContainerInitializer extends ClasspathContainerInitializer {
 
+	public static final String CONTAINER_ID = "com.unnsvc.erhena.core.classpathContainer";
 	private List<IClasspathEntry> classpathEntries;
 
 	public RhenaClasspathContainerInitializer() {

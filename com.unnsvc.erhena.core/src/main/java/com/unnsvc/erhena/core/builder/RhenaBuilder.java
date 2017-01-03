@@ -31,7 +31,9 @@ import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.common.RhenaUtils;
 import com.unnsvc.erhena.core.Activator;
+import com.unnsvc.erhena.core.classpath.RhenaFrameworkClasspathContainer;
 import com.unnsvc.erhena.core.classpath.RhenaClasspathContainerInitializer;
+import com.unnsvc.erhena.core.classpath.RhenaFrameworkContainer;
 import com.unnsvc.erhena.platform.service.ProjectService;
 import com.unnsvc.erhena.platform.service.RhenaService;
 import com.unnsvc.rhena.common.IRhenaCache;
@@ -81,28 +83,6 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 					throw new CoreException(new Status(IStatus.OK, Activator.PLUGIN_ID, re.getMessage(), re));
 				}
 			}
-			
-//			project.refreshLocal(org.eclipse.core.resources.IResource.DEPTH_INFINITE, new NullProgressMonitor());
-
-			// File projectLocation = new File(project.getLocationURI());
-			// System.err.println(getClass().getName() + "Full build on: " +
-			// projectLocation);
-			//
-			// try {
-			// IRhenaModule module =
-			// platformService.newWorkspaceEntryPoint(project.getName());
-			//
-			// // This is not cached as it bypasses the rhena context
-			// IRhenaExecution exec =
-			// module.getRepository().materialiseExecution(module,
-			// EExecutionType.PROTOTYPE);
-			//
-			//// IRhenaExecution exec =
-			// platformService.materialiseExecution(module);
-			// } catch (RhenaException re) {
-			// throw new CoreException(new Status(IStatus.ERROR,
-			// Activator.PLUGIN_ID, re.getMessage(), re));
-			// }
 		}
 
 		return null;
@@ -149,36 +129,66 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 		// System.err.println("Classpath in build: " + ce);
 		// }
 
-		IPath containerPath = new Path("com.unnsvc.erhena.core.classpathContainer");
+		IPath containerPath = new Path(RhenaClasspathContainerInitializer.CONTAINER_ID);
 
 		RhenaClasspathContainerInitializer initializer = (RhenaClasspathContainerInitializer) JavaCore.getClasspathContainerInitializer(containerPath.segment(0));
 		initializer.addClasspathEntry(JavaCore.newLibraryEntry(new Path("/home/noname/.m2/repository/log4j/log4j/1.2.17/log4j-1.2.17.jar"), null, null));
-
-		// initializer.initialize(containerPath, project);
-		// RhenaClasspathContainer container = new
-		// RhenaClasspathContainer(containerPath);
-		// container.addEntry(JavaCore.newLibraryEntry(new
-		// Path("/home/noname/.m2/repository/log4j/log4j/1.2.17/log4j-1.2.17.jar"),
-		// null, null));
-		// initializer.requestClasspathContainerUpdate(containerPath, project,
-		// container);
-
+		
 		IClasspathEntry containerEntry = JavaCore.newContainerEntry(containerPath);
 		sourcePaths.add(containerEntry);
-
-		// IClasspathContainer container =
-		// JavaCore.getClasspathContainer(containerPath, project);
-
-		// Dependencies here
+		
+		
+		// rhena framework library
+		IClasspathEntry frameworkContainer = JavaCore.newContainerEntry(new Path(RhenaFrameworkClasspathContainer.CONTAINER_ID));
+		sourcePaths.add(frameworkContainer);
+		
 
 		project.setRawClasspath(sourcePaths.toArray(new IClasspathEntry[sourcePaths.size()]), new NullProgressMonitor());
-
-//		p.refreshLocal(org.eclipse.core.resources.IResource.DEPTH_INFINITE, new NullProgressMonitor());
-//		p.getFolder(".classpath").refreshLocal(org.eclipse.core.resources.IResource.DEPTH_ZERO, monitor);
 
 	}
 
 }
+
+// initializer.initialize(containerPath, project);
+// RhenaClasspathContainer container = new
+// RhenaClasspathContainer(containerPath);
+// container.addEntry(JavaCore.newLibraryEntry(new
+// Path("/home/noname/.m2/repository/log4j/log4j/1.2.17/log4j-1.2.17.jar"),
+// null, null));
+// initializer.requestClasspathContainerUpdate(containerPath, project,
+// container);
+
+// IClasspathContainer container =
+// JavaCore.getClasspathContainer(containerPath, project);
+
+// Dependencies here
+
+// p.refreshLocal(org.eclipse.core.resources.IResource.DEPTH_INFINITE, new
+// NullProgressMonitor());
+// p.getFolder(".classpath").refreshLocal(org.eclipse.core.resources.IResource.DEPTH_ZERO,
+// monitor);
+// project.refreshLocal(org.eclipse.core.resources.IResource.DEPTH_INFINITE, new
+// NullProgressMonitor());
+
+// File projectLocation = new File(project.getLocationURI());
+// System.err.println(getClass().getName() + "Full build on: " +
+// projectLocation);
+//
+// try {
+// IRhenaModule module =
+// platformService.newWorkspaceEntryPoint(project.getName());
+//
+// // This is not cached as it bypasses the rhena context
+// IRhenaExecution exec =
+// module.getRepository().materialiseExecution(module,
+// EExecutionType.PROTOTYPE);
+//
+//// IRhenaExecution exec =
+// platformService.materialiseExecution(module);
+// } catch (RhenaException re) {
+// throw new CoreException(new Status(IStatus.ERROR,
+// Activator.PLUGIN_ID, re.getMessage(), re));
+// }
 
 // private void handleResources(IProject project) throws RhenaException {
 

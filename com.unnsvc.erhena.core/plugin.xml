@@ -109,6 +109,10 @@
             class="com.unnsvc.erhena.core.classpath.RhenaClasspathContainerInitializer"
             id="com.unnsvc.erhena.core.classpathContainer">
       </classpathContainerInitializer>
+      <classpathContainerInitializer
+            class="com.unnsvc.erhena.core.classpath.RhenaFrameworkClasspathContainer"
+            id="com.unnsvc.erhena.core.frameworkClasspathContainer">
+      </classpathContainerInitializer>
    </extension>
 
 </plugin>
