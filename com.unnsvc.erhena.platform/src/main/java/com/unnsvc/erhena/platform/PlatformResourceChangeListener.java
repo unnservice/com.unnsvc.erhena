@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -45,6 +46,7 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 
 			IResourceDelta delta = event.getDelta();
 			Map<IProject, Set<IResource>> resources = new HashMap<IProject, Set<IResource>>();
+			// Set<IProject> affected = new HashSet<IProject>();
 
 			IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
 
@@ -52,30 +54,44 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 
 					try {
 						IResource resource = delta.getResource();
-						IProject project = resource.getProject();
-
-						if (project != null && project.isOpen()) {
-							if (project.hasNature("com.unnsvc.erhena.core.nature")) {
-								if (!resources.containsKey(project)) {
-									resources.put(project, new HashSet<IResource>());
-								}
-								resources.get(project).add(resource);
+						if (resource.getType() == IResource.PROJECT) {
+							IProject project = resource.getProject();
+							if (project.hasNature("com.unnsvc.erhena.core.nature") && project.isOpen()) {
+								resources.put(project, new HashSet<IResource>());
 							}
+							return false;
 						}
-						return true;
+						// else if (resource.getType() == IResource.FOLDER) {
+
+						// }
+
+						// IProject project = resource.getProject();
+						//
+						// if (project != null && project.isOpen()) {
+						// if
+						// (project.hasNature("com.unnsvc.erhena.core.nature"))
+						// {
+						// if (!resources.containsKey(project)) {
+						// resources.put(project, new HashSet<IResource>());
+						// }
+						//// resources.get(project).add(resource);
+						// }
+						// return false;
+						// }
 					} catch (Exception ex) {
 
 						ex.printStackTrace();
 						return false;
 					}
+
+					return true;
 				}
 			};
 
 			try {
 				delta.accept(visitor);
+				setListenerEnabled(true);
 
-				// System.err.println(getClass().getName() + " POST_CHANGE " +
-				// resources.keySet().size() + " affected projects");
 				WorkspaceJob wj = new WorkspaceJob("Building workspace") {
 
 					@Override
@@ -90,16 +106,16 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 							for (IProject affected : resources.keySet()) {
 
 								affected.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
-
-								// affected.refreshLocal(IResource.DEPTH_INFINITE,
-								// monitor);
-
 							}
-							return new Status(IStatus.OK, Activator.PLUGIN_ID, "Built workspace");
-
 						} catch (CoreException ce) {
+
 							return new Status(IStatus.ERROR, Activator.PLUGIN_ID, ce.getMessage(), ce);
+						} finally {
+
+							setListenerEnabled(false);
 						}
+
+						return new Status(IStatus.OK, Activator.PLUGIN_ID, "Built workspace");
 					}
 				};
 
@@ -110,6 +126,17 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 				e.printStackTrace();
 			}
 
+		}
+	}
+
+	private void setListenerEnabled(boolean enabled) {
+
+		if (enabled) {
+
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(PlatformResourceChangeListener.this);
+		} else {
+
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(PlatformResourceChangeListener.this);
 		}
 	}
 }
