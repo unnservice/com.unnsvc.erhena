@@ -102,14 +102,18 @@ public class RhenaService implements IRhenaService {
 		try {
 			transaction.execute(engine);
 		} finally {
-			// @TODO auto closable context so we wont need this after code refactoring
-			engine.getContext().getCache().getExecutions().clear();
-			engine.getContext().getCache().getLifecycles().clear();
 			
-			// Only remove lifecycles and executions
+			engine.getContext().close();
 			
+//			// @TODO auto closable context so we wont need this after code refactoring
+//			engine.getContext().getCache().getExecutions().clear();
+//			engine.getContext().getCache().getLifecycles().clear();
+//			
+//			// Only remove lifecycles and executions
+//			
 //			engine.getContext().getCache().getModules().clear();
 //			engine.getContext().getCache().getEdges().clear();
+//			engine.getContext().getCache().getMerged().clear();
 		}
 	}
 

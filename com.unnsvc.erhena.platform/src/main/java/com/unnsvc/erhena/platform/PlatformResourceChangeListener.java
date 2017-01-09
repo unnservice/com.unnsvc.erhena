@@ -25,6 +25,7 @@ import com.unnsvc.erhena.platform.service.RhenaService;
 import com.unnsvc.rhena.common.IRhenaEngine;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.execution.EExecutionType;
+import com.unnsvc.rhena.common.execution.IRhenaExecution;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 import com.unnsvc.rhena.common.model.IRhenaModule;
 
@@ -114,6 +115,7 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 							
 							System.err.println("Build transaction ==================================================");
 							try {
+								
 								platformService.newTransaction(new IRhenaTransaction() {
 
 									@Override
@@ -129,7 +131,7 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 
 													System.err.println("Building root: " + root);
 													IRhenaModule rootModule = engine.materialiseModel(root);
-													engine.materialiseExecution(rootModule, EExecutionType.TEST);
+													IRhenaExecution exec = engine.materialiseExecution(rootModule, EExecutionType.TEST);
 												}
 											} catch (RhenaException re) {
 												throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
@@ -155,7 +157,7 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 			} else {
 
 				// No workspace operation so we enable it immediately
-				setListenerEnabled(true);
+//				setListenerEnabled(true);
 			}
 		}
 	}
