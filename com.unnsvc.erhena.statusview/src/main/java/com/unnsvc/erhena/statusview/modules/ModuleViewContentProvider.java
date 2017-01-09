@@ -15,6 +15,11 @@ public class ModuleViewContentProvider implements IStructuredContentProvider {
 
 	public ModuleViewContentProvider() {
 
+		clear();
+	}
+
+	public void clear() {
+
 		this.activeModules = new ArrayList<AbstractModuleEntry>();
 		// this.activeModules.add(new AllEntry());
 		this.activeModules.add(new CoreEntry());
@@ -53,10 +58,10 @@ public class ModuleViewContentProvider implements IStructuredContentProvider {
 
 	public boolean containsModule(ModuleIdentifier identifier) {
 
-		for(AbstractModuleEntry entry : activeModules) {
-			if(entry instanceof ModuleEntry) {
+		for (AbstractModuleEntry entry : activeModules) {
+			if (entry instanceof ModuleEntry) {
 				ModuleEntry me = (ModuleEntry) entry;
-				if(me.getIdentifier().equals(identifier)) {
+				if (me.getIdentifier().equals(identifier)) {
 					return true;
 				}
 			}

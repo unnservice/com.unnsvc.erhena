@@ -15,6 +15,12 @@ public class ModuleViewTable {
 	private ModuleLabelProvider labelProvider;
 	private ModuleViewContentProvider moduleViewContentProvider;
 
+	public void clear() {
+
+		moduleViewContentProvider.clear();
+//		tableViewer.setInput(null);
+	}
+
 	public ModuleViewTable(Composite composite) {
 
 		this.labelProvider = new ModuleLabelProvider();
@@ -48,12 +54,12 @@ public class ModuleViewTable {
 
 		IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
 		AbstractModuleEntry selected = (AbstractModuleEntry) selection.getFirstElement();
-		
+
 		/**
 		 * @TODO this is highly inefficient, figure out some faster way later
 		 */
-		if(logEvent.getIdentifier() != null && !moduleViewContentProvider.containsModule(logEvent.getIdentifier())) {
-			
+		if (logEvent.getIdentifier() != null && !moduleViewContentProvider.containsModule(logEvent.getIdentifier())) {
+
 			ModuleEntry moduleEntry = new ModuleEntry(logEvent.getIdentifier());
 			moduleEntry.setActivity(true);
 			moduleViewContentProvider.addElement(moduleEntry);

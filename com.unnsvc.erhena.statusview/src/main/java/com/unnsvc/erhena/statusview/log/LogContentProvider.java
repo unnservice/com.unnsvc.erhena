@@ -11,7 +11,7 @@ public class LogContentProvider implements IStructuredContentProvider {
 
 	public LogContentProvider() {
 
-		logEvents = new LogEvent[0];
+		clear();
 	}
 
 	@Override
@@ -32,6 +32,11 @@ public class LogContentProvider implements IStructuredContentProvider {
 	public LogEvent[] getLogEvents() {
 
 		return logEvents;
+	}
+
+	public void clear() {
+
+		logEvents = new LogEvent[0];
 	}
 
 }

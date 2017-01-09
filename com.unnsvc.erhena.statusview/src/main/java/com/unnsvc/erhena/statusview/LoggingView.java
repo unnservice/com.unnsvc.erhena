@@ -21,8 +21,11 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 import org.osgi.framework.BundleContext;
@@ -52,7 +55,7 @@ public class LoggingView extends ViewPart {
 		parent.setLayout(new FillLayout());
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout gl = new GridLayout();
-		gl.numColumns = 2;
+		gl.numColumns = 3;
 		container.setLayout(gl);
 
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -89,11 +92,28 @@ public class LoggingView extends ViewPart {
 		});
 		loglevel.setLayoutData(loglevelData);
 
-		
+		GridData clearButtonData = new GridData();
+		clearButtonData.horizontalSpan = 1;
+		Button clearButton = new Button(container, SWT.PUSH);
+		clearButton.setText("Clear");
+		clearButton.setLayoutData(clearButtonData);
+		clearButton.addListener(SWT.Selection, new Listener() {
+
+			public void handleEvent(Event e) {
+
+				if (e.type == SWT.Selection) {
+					moduleViewTable.clear();
+					logViewTable.clear();
+					moduleViewTable.refresh();
+					logViewTable.refresh();
+					System.out.println("Cleared log");
+				}
+			}
+		});
 
 		Composite seashContainer = new Composite(container, SWT.NONE);
 		GridData data2 = new GridData(GridData.FILL_BOTH);
-		data2.horizontalSpan = 2;
+		data2.horizontalSpan = 3;
 		// data2.grabExcessHorizontalSpace = true;
 		// data2.grabExcessVerticalSpace = true;
 		seashContainer.setLayoutData(data2);
@@ -103,9 +123,7 @@ public class LoggingView extends ViewPart {
 		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
 		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
 		ContextInjectionFactory.inject(this, eclipseContext);
-		
-		
-		
+
 		// Do this last
 		loglevel.select(2);
 	}
@@ -141,10 +159,14 @@ public class LoggingView extends ViewPart {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				AbstractModuleEntry entry = (AbstractModuleEntry) selection.getFirstElement();
 
-				entry.reset();
+				// Might become null if it is removed, this event will still
+				// fire
+				if (entry != null) {
+					entry.reset();
 
-				logViewTable.setFilter(entry);
-				moduleViewTable.refresh();
+					logViewTable.setFilter(entry);
+					moduleViewTable.refresh();
+				}
 			}
 		});
 

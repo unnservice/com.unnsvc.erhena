@@ -18,6 +18,12 @@ public class LoggingViewTable {
 	private LogViewFilter viewFilter;
 	private LogContentProvider contentProvider;
 
+	public void clear() {
+
+		contentProvider.clear();
+//		tableViewer.setInput(null);
+	}
+
 	public LoggingViewTable(Composite parent) {
 
 		tableViewer = new TableViewer(parent, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
@@ -56,10 +62,10 @@ public class LoggingViewTable {
 		tableViewer.setInput(contentProvider.getLogEvents());
 	}
 
-//	public void refresh() {
-//
-//		tableViewer.refresh();
-//	}
+	// public void refresh() {
+	//
+	// tableViewer.refresh();
+	// }
 
 	public TableViewer getTableViewer() {
 
@@ -79,8 +85,13 @@ public class LoggingViewTable {
 	}
 
 	public void addLogEvent(LogEvent logEvent) {
-		
+
 		contentProvider.addElement(logEvent);
+		tableViewer.refresh();
+	}
+
+	public void refresh() {
+		
 		tableViewer.refresh();
 	}
 }
