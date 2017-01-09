@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.di.annotations.Creatable;
 
 import com.unnsvc.rhena.common.Utils;
@@ -39,6 +40,11 @@ public class ProjectService implements IProjectService {
 			managedProjects.put(projectLocation, identifier);
 		}
 		return identifier;
+	}
+
+	public ModuleIdentifier manageProject(IProject project) throws RhenaException {
+
+		return manageProject(project.getLocationURI());
 	}
 
 	// public IRhenaModule newWorkspaceEntryPoint(URI projectLocation) throws

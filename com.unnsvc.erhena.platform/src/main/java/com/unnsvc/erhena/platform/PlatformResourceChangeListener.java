@@ -12,17 +12,21 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 
+import com.unnsvc.erhena.platform.service.IRhenaTransaction;
 import com.unnsvc.erhena.platform.service.ProjectService;
 import com.unnsvc.erhena.platform.service.RhenaService;
+import com.unnsvc.rhena.common.IRhenaEngine;
+import com.unnsvc.rhena.common.exceptions.RhenaException;
+import com.unnsvc.rhena.common.execution.EExecutionType;
+import com.unnsvc.rhena.common.identity.ModuleIdentifier;
+import com.unnsvc.rhena.common.model.IRhenaModule;
 
 public class PlatformResourceChangeListener implements IResourceChangeListener {
 
@@ -38,9 +42,14 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 	}
 
 	@Override
-	public void resourceChanged(IResourceChangeEvent event) {
+	public synchronized void resourceChanged(IResourceChangeEvent event) {
 
 		// post resource change...
+
+		// setListenerEnabled(false);
+
+		// Modifications performed after disabling the listener, will be lost so
+		// another build isn't scheduled...
 
 		if (event.getDelta() != null) {
 
@@ -90,53 +99,75 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 
 			try {
 				delta.accept(visitor);
-				setListenerEnabled(true);
-
-				WorkspaceJob wj = new WorkspaceJob("Building workspace") {
-
-					@Override
-					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-
-						if (!resources.isEmpty()) {
-							System.err.println("Dropping caches");
-							platformService.dropCaches();
-						}
-
-						try {
-							for (IProject affected : resources.keySet()) {
-
-								affected.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
-							}
-						} catch (CoreException ce) {
-
-							return new Status(IStatus.ERROR, Activator.PLUGIN_ID, ce.getMessage(), ce);
-						} finally {
-
-							setListenerEnabled(false);
-						}
-
-						return new Status(IStatus.OK, Activator.PLUGIN_ID, "Built workspace");
-					}
-				};
-
-				wj.schedule();
-
 			} catch (CoreException e) {
 
 				e.printStackTrace();
 			}
 
+			if (!resources.isEmpty()) {
+				WorkspaceJob wj = new WorkspaceJob("Building workspace") {
+
+					@Override
+					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+
+						synchronized (PlatformResourceChangeListener.this) {
+							
+							System.err.println("Build transaction ==================================================");
+							try {
+								platformService.newTransaction(new IRhenaTransaction() {
+
+									@Override
+									public void execute(IRhenaEngine engine) throws CoreException {
+
+										for (IProject affected : resources.keySet()) {
+
+											// affected.build(IncrementalProjectBuilder.FULL_BUILD,
+											// monitor);
+											try {
+												ModuleIdentifier affectedIdentifier = projectService.manageProject(affected);
+												for (ModuleIdentifier root : platformService.getEngine().findRoots(affectedIdentifier, EExecutionType.TEST)) {
+
+													System.err.println("Building root: " + root);
+													IRhenaModule rootModule = engine.materialiseModel(root);
+													engine.materialiseExecution(rootModule, EExecutionType.TEST);
+												}
+											} catch (RhenaException re) {
+												throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
+											}
+										}
+									}
+								});
+
+							} catch (Throwable t) {
+
+								return new Status(IStatus.ERROR, Activator.PLUGIN_ID, t.getMessage(), t);
+							} finally {
+
+								// setListenerEnabled(true);
+							}
+						}
+
+						return new Status(IStatus.OK, Activator.PLUGIN_ID, "Finished build workspace");
+					}
+				};
+
+				wj.schedule();
+			} else {
+
+				// No workspace operation so we enable it immediately
+				setListenerEnabled(true);
+			}
 		}
 	}
 
-	private void setListenerEnabled(boolean enabled) {
+	private synchronized void setListenerEnabled(boolean enabled) {
 
 		if (enabled) {
 
-			ResourcesPlugin.getWorkspace().removeResourceChangeListener(PlatformResourceChangeListener.this);
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(PlatformResourceChangeListener.this);
 		} else {
 
-			ResourcesPlugin.getWorkspace().addResourceChangeListener(PlatformResourceChangeListener.this);
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(PlatformResourceChangeListener.this);
 		}
 	}
 }

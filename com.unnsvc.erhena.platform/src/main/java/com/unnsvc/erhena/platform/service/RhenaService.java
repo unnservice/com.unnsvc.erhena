@@ -13,6 +13,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 
 import com.unnsvc.erhena.common.ErhenaConstants;
 import com.unnsvc.rhena.common.IRhenaConfiguration;
+import com.unnsvc.rhena.common.IRhenaContext;
 import com.unnsvc.rhena.common.IRhenaEngine;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.execution.EExecutionType;
@@ -22,6 +23,7 @@ import com.unnsvc.rhena.common.listener.IContextListener;
 import com.unnsvc.rhena.common.logging.ILogger;
 import com.unnsvc.rhena.common.model.IRhenaModule;
 import com.unnsvc.rhena.core.RhenaConfiguration;
+import com.unnsvc.rhena.core.RhenaContext;
 import com.unnsvc.rhena.core.RhenaEngine;
 import com.unnsvc.rhena.core.events.LogEvent;
 import com.unnsvc.rhena.core.resolution.LocalCacheRepository;
@@ -41,23 +43,26 @@ public class RhenaService implements IRhenaService {
 	 * Single context throughout the application
 	 */
 	private IRhenaConfiguration config;
+	private IRhenaContext context;
 	private IRhenaEngine engine;
 	// module => projectName tracking
 
 	@Inject
 	public RhenaService(IEventBroker eventBorker) {
 
-		config = new RhenaConfiguration();
+		this.config = new RhenaConfiguration();
 		config.setRhenaHome(new File(System.getProperty("user.home"), ".rhena"));
-		config.addWorkspaceRepository(new WorkspaceRepository(config, new File("../../")));
-		config.addWorkspaceRepository(new WorkspaceRepository(config, new File("../")));
-		config.setLocalRepository(new LocalCacheRepository(config));
 		config.setRunTest(true);
 		config.setRunItest(true);
 		config.setParallel(false);
 		config.setPackageWorkspace(false);
 		config.setInstallLocal(true);
-		config.getListenerConfig().addListener(new IContextListener<LogEvent>() {
+
+		this.context = new RhenaContext(config);
+		context.addWorkspaceRepository(new WorkspaceRepository(context, new File("../../")));
+		context.addWorkspaceRepository(new WorkspaceRepository(context, new File("../")));
+		context.setLocalRepository(new LocalCacheRepository(context));
+		context.getListenerConfig().addListener(new IContextListener<LogEvent>() {
 
 			@Override
 			public Class<LogEvent> getType() {
@@ -76,9 +81,36 @@ public class RhenaService implements IRhenaService {
 
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		File workspacePath = new File(workspaceRoot.getLocationURI());
-		config.addWorkspaceRepository(new WorkspaceRepository(config, workspacePath));
+		context.addWorkspaceRepository(new WorkspaceRepository(context, workspacePath));
 
-		engine = new RhenaEngine(config);
+		engine = new RhenaEngine(context);
+	}
+
+	/**
+	 * A fake transaction until transaction method is established; this will
+	 * take care of cleaning the caches
+	 * 
+	 * @param transaction
+	 * @throws Throwable
+	 *             Any exception
+	 */
+	public void newTransaction(IRhenaTransaction transaction) throws Throwable {
+
+		/**
+		 * @TODO context is AutoClosable so use it like that in try(Context)
+		 */
+		try {
+			transaction.execute(engine);
+		} finally {
+			// @TODO auto closable context so we wont need this after code refactoring
+			engine.getContext().getCache().getExecutions().clear();
+			engine.getContext().getCache().getLifecycles().clear();
+			
+			// Only remove lifecycles and executions
+			
+//			engine.getContext().getCache().getModules().clear();
+//			engine.getContext().getCache().getEdges().clear();
+		}
 	}
 
 	public IRhenaExecution buildProject(ModuleIdentifier identifier) throws RhenaException {
@@ -95,14 +127,6 @@ public class RhenaService implements IRhenaService {
 
 	public ILogger getRhenaLogger() {
 
-		return config.getLogger();
+		return context.getLogger();
 	}
-
-	public void dropCaches() {
-
-		engine.getCache().getExecutions().clear();
-		engine.getCache().getLifecycles().clear();
-		engine.getCache().getModules().clear();
-	}
-
 }
