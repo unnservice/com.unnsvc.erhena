@@ -17,6 +17,7 @@ import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 
 import com.unnsvc.erhena.platform.service.IRhenaTransaction;
@@ -132,6 +133,7 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 													System.err.println("Building root: " + root);
 													IRhenaModule rootModule = engine.materialiseModel(root);
 													IRhenaExecution exec = engine.materialiseExecution(rootModule, EExecutionType.TEST);
+													affected.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 												}
 											} catch (RhenaException re) {
 												throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));

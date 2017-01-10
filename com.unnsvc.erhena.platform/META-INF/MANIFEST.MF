@@ -22,6 +22,7 @@ Require-Bundle: com.unnsvc.erhena.common,
  org.eclipse.wst.xml.core
 Export-Package: com.unnsvc.erhena.platform.service,
  com.unnsvc.rhena.common,
+ com.unnsvc.rhena.common.annotation,
  com.unnsvc.rhena.common.exceptions,
  com.unnsvc.rhena.common.execution,
  com.unnsvc.rhena.common.identity,
@@ -29,9 +30,17 @@ Export-Package: com.unnsvc.erhena.platform.service,
  com.unnsvc.rhena.common.logging,
  com.unnsvc.rhena.common.model,
  com.unnsvc.rhena.common.model.lifecycle,
+ com.unnsvc.rhena.common.visitors,
+ com.unnsvc.rhena.core,
  com.unnsvc.rhena.core.events,
  com.unnsvc.rhena.core.execution,
- com.unnsvc.rhena.core.logging
+ com.unnsvc.rhena.core.lifecycle,
+ com.unnsvc.rhena.core.logging,
+ com.unnsvc.rhena.core.model,
+ com.unnsvc.rhena.core.resolution,
+ com.unnsvc.rhena.core.visitors,
+ com.unnsvc.rhena.lifecycle,
+ com.unnsvc.rhena.lifecycle.helpers
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: com.unnsvc.erhena.platform.Activator
 Bundle-Vendor: UNNSVC
