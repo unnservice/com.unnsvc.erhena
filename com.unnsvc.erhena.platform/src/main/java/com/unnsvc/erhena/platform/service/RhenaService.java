@@ -2,12 +2,19 @@
 package com.unnsvc.erhena.platform.service;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
 
@@ -57,25 +64,34 @@ public class RhenaService implements IRhenaService {
 		config.setParallel(false);
 		config.setPackageWorkspace(false);
 		config.setInstallLocal(true);
+		config.setAgentClasspath(buildAgentClasspath());
 
 		this.context = new RhenaContext(config);
+		/**
+		 * Workaround for ensuring that the rmi registry receives the right
+		 * classpath
+		 */
+		rmiRegistryClasspathWorkaround(context);
 		context.addWorkspaceRepository(new WorkspaceRepository(context, new File("../../")));
 		context.addWorkspaceRepository(new WorkspaceRepository(context, new File("../")));
 		context.setLocalRepository(new LocalCacheRepository(context));
-		context.getListenerConfig().addListener(new IContextListener<LogEvent>() {
-
-			@Override
-			public Class<LogEvent> getType() {
-
-				return LogEvent.class;
-			}
-
-			@Override
-			public void onEvent(LogEvent evt) throws RhenaException {
-
-				eventBorker.post(ErhenaConstants.TOPIC_LOGEVENT, evt);
-			}
-		});
+		// context.getListenerConfig().addListener(new
+		// IContextListener<LogEvent>() {
+		//
+		// private static final long serialVersionUID = 1L;
+		//
+		// @Override
+		// public Class<LogEvent> getType() {
+		//
+		// return LogEvent.class;
+		// }
+		//
+		// @Override
+		// public void onEvent(LogEvent evt) throws RhenaException {
+		//
+		// eventBorker.post(ErhenaConstants.TOPIC_LOGEVENT, evt);
+		// }
+		// });
 
 		// context.addListener(new ProjectConfigurationHandler(this, context));
 
@@ -84,6 +100,81 @@ public class RhenaService implements IRhenaService {
 		context.addWorkspaceRepository(new WorkspaceRepository(context, workspacePath));
 
 		engine = new RhenaEngine(context);
+	}
+
+	/**
+	 * @TODO might need to find a different approach for this because this is
+	 *       very ugly
+	 * @param ctx
+	 */
+	@SuppressWarnings("unchecked")
+	private void rmiRegistryClasspathWorkaround(IRhenaContext ctx) {
+
+		System.err.println("Current classloader is: " + Thread.currentThread().getContextClassLoader());
+		try {
+
+			doWithClassLoader(ctx.getClass().getClassLoader(), new Callable() {
+
+				@Override
+				public Object call() throws Exception {
+
+					String original = System.getProperty("java.rmi.server.codebase");
+					System.setProperty("java.rmi.server.codebase",
+							"file:/data/storage/sources/com.unnsvc/com.unnsvc.rhena/com.unnsvc.rhena.common/target/classes/");
+					ctx.getLifecycleAgent();
+					if (original != null) {
+						System.setProperty("java.rmi.server.codebase", original);
+					}
+
+					return null;
+				}
+			});
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+	}
+
+	public static <V> V doWithClassLoader(final ClassLoader classLoader, final Callable<V> callable) throws Exception {
+
+		Thread currentThread = null;
+		ClassLoader backupClassLoader = null;
+		try {
+			if (classLoader != null) {
+				currentThread = Thread.currentThread();
+				backupClassLoader = currentThread.getContextClassLoader();
+				currentThread.setContextClassLoader(classLoader);
+			}
+			return callable.call();
+		} finally {
+			if (classLoader != null) {
+				currentThread.setContextClassLoader(backupClassLoader);
+			}
+		}
+	}
+
+	private String buildAgentClasspath() {
+
+		try {
+			List<String> paths = new ArrayList<String>();
+			paths.add(new File(FileLocator.resolve(new URL("platform:/plugin/com.unnsvc.rhena.agent/META-INF/MARKER")).toURI()).getAbsolutePath());
+			paths.add(new File(FileLocator.resolve(new URL("platform:/plugin/com.unnsvc.rhena.common/META-INF/MARKER")).toURI()).getAbsolutePath());
+			paths.add(new File(FileLocator.resolve(new URL("platform:/plugin/com.unnsvc.rhena.core/META-INF/MARKER")).toURI()).getAbsolutePath());
+			paths.add(new File(FileLocator.resolve(new URL("platform:/plugin/com.unnsvc.rhena.lifecycle/META-INF/MARKER")).toURI()).getAbsolutePath());
+
+			StringBuilder sb = new StringBuilder();
+			for (String path : paths) {
+				path = path.substring(0, path.length() - "/META-INF/MARKER".length()) + "/";
+				System.err.println("Appending to classpath " + path);
+				sb.append(path).append(File.pathSeparatorChar);
+			}
+
+			return sb.toString().substring(0, sb.toString().length() - 1);
+		} catch (URISyntaxException | IOException e) {
+
+			e.printStackTrace();
+			return System.getProperty("java.class.path");
+		}
 	}
 
 	/**
@@ -102,18 +193,19 @@ public class RhenaService implements IRhenaService {
 		try {
 			transaction.execute(engine);
 		} finally {
-			
-			engine.getContext().close();
-			
-//			// @TODO auto closable context so we wont need this after code refactoring
-//			engine.getContext().getCache().getExecutions().clear();
-//			engine.getContext().getCache().getLifecycles().clear();
-//			
-//			// Only remove lifecycles and executions
-//			
-//			engine.getContext().getCache().getModules().clear();
-//			engine.getContext().getCache().getEdges().clear();
-//			engine.getContext().getCache().getMerged().clear();
+
+			// engine.getContext().close();
+
+			// @TODO auto closable context so we wont need this after code
+			// refactoring
+			engine.getContext().getCache().getExecutions().clear();
+			engine.getContext().getCache().getLifecycles().clear();
+
+			// Only remove lifecycles and executions
+
+			engine.getContext().getCache().getModules().clear();
+			engine.getContext().getCache().getEdges().clear();
+			engine.getContext().getCache().getMerged().clear();
 		}
 	}
 

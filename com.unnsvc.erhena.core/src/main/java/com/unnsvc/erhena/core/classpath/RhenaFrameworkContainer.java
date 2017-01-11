@@ -25,13 +25,13 @@ public class RhenaFrameworkContainer implements IClasspathContainer {
 
 		try {
 			URL coreLib = FileLocator.resolve(new URL("platform:/plugin/com.unnsvc.erhena.platform/embedded/com.unnsvc.rhena.core-0.0.1-SNAPSHOT.jar"));
-			URL frameworkLib = FileLocator.resolve(new URL("platform:/plugin/com.unnsvc.erhena.platform/embedded/com.unnsvc.rhena.lifecycle-0.0.1-SNAPSHOT.jar"));
-			URL commonLib = FileLocator.resolve(new URL("platform:/plugin/com.unnsvc.erhena.platform/embedded/com.unnsvc.rhena.common-0.0.1-SNAPSHOT.jar"));
+//			URL frameworkLib = FileLocator.resolve(new URL("platform:/plugin/com.unnsvc.erhena.platform/embedded/com.unnsvc.rhena.lifecycle-0.0.1-SNAPSHOT.jar"));
+//			URL commonLib = FileLocator.resolve(new URL("platform:/plugin/com.unnsvc.erhena.platform/embedded/com.unnsvc.rhena.common-0.0.1-SNAPSHOT.jar"));
 
 			return new IClasspathEntry[] { 
-					JavaCore.newLibraryEntry(new Path(frameworkLib.getFile()), null, null),
-					JavaCore.newLibraryEntry(new Path(coreLib.getFile()), null, null),
-					JavaCore.newLibraryEntry(new Path(commonLib.getFile()), null, null)
+//					JavaCore.newLibraryEntry(new Path(frameworkLib.getFile()), null, null)
+					JavaCore.newLibraryEntry(new Path(coreLib.getFile()), null, null)
+//					JavaCore.newLibraryEntry(new Path(commonLib.getFile()), null, null)
 			};
 		} catch (IOException ioe) {
 			/**
