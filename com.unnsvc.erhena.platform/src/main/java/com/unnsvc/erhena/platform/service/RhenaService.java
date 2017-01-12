@@ -120,6 +120,7 @@ public class RhenaService implements IRhenaService {
 					System.setProperty("java.rmi.server.codebase",
 							"file:/data/storage/sources/com.unnsvc/com.unnsvc.rhena/com.unnsvc.rhena.common/target/classes/");
 					// ctx.getLifecycleAgentManager();
+
 					IRhenaContext context = new RhenaContext(config);
 					if (original != null) {
 						System.setProperty("java.rmi.server.codebase", original);

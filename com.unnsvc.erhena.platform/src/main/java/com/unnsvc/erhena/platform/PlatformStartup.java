@@ -80,8 +80,17 @@ public class PlatformStartup implements IStartup {
 						} catch (RhenaException re) {
 							throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
 						}
-						
-						 project.build(IncrementalProjectBuilder.FULL_BUILD, null);
+
+						new WorkspaceJob("Building " + project.getName()) {
+
+							@Override
+							public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+
+								project.build(IncrementalProjectBuilder.FULL_BUILD, null);
+
+								return new Status(IStatus.OK, Activator.PLUGIN_ID, "Built");
+							}
+						}.schedule();
 
 					}
 				}
