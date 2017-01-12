@@ -21,10 +21,12 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
@@ -58,13 +60,34 @@ public class LoggingView extends ViewPart {
 		gl.numColumns = 3;
 		container.setLayout(gl);
 
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.grabExcessHorizontalSpace = true;
-		data.horizontalSpan = 1;
-		Text text = new Text(container, SWT.SEARCH);
-		text.setText("Search is not implemented yet");
-		text.setEnabled(false);
-		text.setLayoutData(data);
+		createTopBar(container);
+
+		Composite seashContainer = new Composite(container, SWT.NONE);
+		GridData seashContainerData = new GridData(GridData.FILL_BOTH);
+		seashContainerData.horizontalSpan = 3;
+		// data2.grabExcessHorizontalSpace = true;
+		// data2.grabExcessVerticalSpace = true;
+		seashContainer.setLayoutData(seashContainerData);
+		createLoggingtables(seashContainer);
+
+
+		createLifecycleAgentStatusBar(container);
+		
+		// We don't want events until the entire UI is created..
+		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
+		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
+		ContextInjectionFactory.inject(this, eclipseContext);
+	}
+
+	private void createTopBar(Composite container) {
+		
+		GridData searchFieldData = new GridData(GridData.FILL_HORIZONTAL);
+		searchFieldData.grabExcessHorizontalSpace = true;
+		searchFieldData.horizontalSpan = 1;
+		Text searchField = new Text(container, SWT.SEARCH);
+		searchField.setText("Search is not implemented yet");
+		searchField.setEnabled(false);
+		searchField.setLayoutData(searchFieldData);
 
 		GridData loglevelData = new GridData();
 		loglevelData.horizontalSpan = 1;
@@ -110,22 +133,55 @@ public class LoggingView extends ViewPart {
 				}
 			}
 		});
-
-		Composite seashContainer = new Composite(container, SWT.NONE);
-		GridData data2 = new GridData(GridData.FILL_BOTH);
-		data2.horizontalSpan = 3;
-		// data2.grabExcessHorizontalSpace = true;
-		// data2.grabExcessVerticalSpace = true;
-		seashContainer.setLayoutData(data2);
-		createLoggingtables(seashContainer);
-
-		// We don't want events until the entire UI is created..
-		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
-		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
-		ContextInjectionFactory.inject(this, eclipseContext);
-
+		
 		// Do this last
 		loglevel.select(2);
+	}
+
+	private void createLifecycleAgentStatusBar(Composite container) {
+
+		Composite statusBar = new Composite(container, SWT.NONE);
+		GridData statusBarData = new GridData(GridData.FILL_HORIZONTAL);
+		statusBarData.horizontalSpan = 3;
+//		statusBarData.grabExcessHorizontalSpace = true;
+//		statusBarData.grabExcessVerticalSpace = false;
+		statusBar.setLayoutData(statusBarData);
+		
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 5;
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		statusBar.setLayout(layout);
+
+		Label label = new Label(statusBar, SWT.NULL);
+		label.setText("Running");
+
+		GridData separatorData = new GridData();
+		separatorData.horizontalIndent = 5;
+		Label separator = new Label(statusBar, SWT.SEPARATOR);
+		separator.setLayoutData(separatorData);
+		
+		
+		GridData agentStatusData = new GridData();
+		agentStatusData.grabExcessHorizontalSpace = true;
+		agentStatusData.horizontalIndent = 5;
+		Label agentStatus = new Label(statusBar, SWT.NULL);
+		agentStatus.setText("Classes: 3300, Lifecycles: 10, Latency: 10ms");
+		agentStatus.setLayoutData(agentStatusData);
+		
+		Button reset = new Button(statusBar, SWT.PUSH);
+		reset.setText("Restart");
+		GridData resetData = new GridData();
+		resetData.horizontalIndent = 5;
+		reset.setLayoutData(resetData);
+		
+		Button dump = new Button(statusBar, SWT.PUSH);
+		dump.setText("Dump");
+		GridData dumpData = new GridData();
+		dumpData.horizontalIndent = 5;
+		dump.setLayoutData(dumpData);
 	}
 
 	private void createLoggingtables(Composite parent) {
