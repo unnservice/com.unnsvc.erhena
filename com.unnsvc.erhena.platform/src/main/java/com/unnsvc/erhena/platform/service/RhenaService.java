@@ -66,32 +66,30 @@ public class RhenaService implements IRhenaService {
 		config.setInstallLocal(true);
 		config.setAgentClasspath(buildAgentClasspath());
 
-		this.context = new RhenaContext(config);
 		/**
 		 * Workaround for ensuring that the rmi registry receives the right
 		 * classpath
 		 */
-		rmiRegistryClasspathWorkaround(context);
+		this.context = rmiRegistryClasspathWorkaround(config);
 		context.addWorkspaceRepository(new WorkspaceRepository(context, new File("../../")));
 		context.addWorkspaceRepository(new WorkspaceRepository(context, new File("../")));
 		context.setLocalRepository(new LocalCacheRepository(context));
-		// context.getListenerConfig().addListener(new
-		// IContextListener<LogEvent>() {
-		//
-		// private static final long serialVersionUID = 1L;
-		//
-		// @Override
-		// public Class<LogEvent> getType() {
-		//
-		// return LogEvent.class;
-		// }
-		//
-		// @Override
-		// public void onEvent(LogEvent evt) throws RhenaException {
-		//
-		// eventBorker.post(ErhenaConstants.TOPIC_LOGEVENT, evt);
-		// }
-		// });
+		context.getListenerConfig().addListener(new IContextListener<LogEvent>() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public Class<LogEvent> getType() {
+
+				return LogEvent.class;
+			}
+
+			@Override
+			public void onEvent(LogEvent evt) throws RhenaException {
+
+				eventBorker.post(ErhenaConstants.TOPIC_LOGEVENT, evt);
+			}
+		});
 
 		// context.addListener(new ProjectConfigurationHandler(this, context));
 
@@ -107,32 +105,34 @@ public class RhenaService implements IRhenaService {
 	 *       very ugly
 	 * @param ctx
 	 */
-	@SuppressWarnings("unchecked")
-	private void rmiRegistryClasspathWorkaround(IRhenaContext ctx) {
+	private IRhenaContext rmiRegistryClasspathWorkaround(IRhenaConfiguration configuration) {
 
 		System.err.println("Current classloader is: " + Thread.currentThread().getContextClassLoader());
+		IRhenaContext context = null;
 		try {
 
-			doWithClassLoader(ctx.getClass().getClassLoader(), new Callable() {
+			context = doWithClassLoader(configuration.getClass().getClassLoader(), new Callable<IRhenaContext>() {
 
 				@Override
-				public Object call() throws Exception {
+				public IRhenaContext call() throws Exception {
 
 					String original = System.getProperty("java.rmi.server.codebase");
 					System.setProperty("java.rmi.server.codebase",
 							"file:/data/storage/sources/com.unnsvc/com.unnsvc.rhena/com.unnsvc.rhena.common/target/classes/");
-					ctx.getLifecycleAgent();
+					// ctx.getLifecycleAgentManager();
+					IRhenaContext context = new RhenaContext(config);
 					if (original != null) {
 						System.setProperty("java.rmi.server.codebase", original);
 					}
 
-					return null;
+					return context;
 				}
 			});
+			return context;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-
+		return context;
 	}
 
 	public static <V> V doWithClassLoader(final ClassLoader classLoader, final Callable<V> callable) throws Exception {

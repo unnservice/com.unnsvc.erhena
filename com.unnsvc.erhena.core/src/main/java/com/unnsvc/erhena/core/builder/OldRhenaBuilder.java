@@ -37,10 +37,10 @@ import com.unnsvc.rhena.common.IRhenaEngine;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.execution.IRhenaExecution;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
-import com.unnsvc.rhena.common.model.lifecycle.IExecutionContext;
-import com.unnsvc.rhena.common.model.lifecycle.ILifecycle;
-import com.unnsvc.rhena.common.model.lifecycle.IProcessor;
-import com.unnsvc.rhena.common.model.lifecycle.IResource;
+import com.unnsvc.rhena.common.lifecycle.IExecutionContext;
+import com.unnsvc.rhena.common.lifecycle.ILifecycle;
+import com.unnsvc.rhena.common.lifecycle.IProcessor;
+import com.unnsvc.rhena.common.lifecycle.IResource;
 
 public class OldRhenaBuilder extends IncrementalProjectBuilder {
 	// @Inject
