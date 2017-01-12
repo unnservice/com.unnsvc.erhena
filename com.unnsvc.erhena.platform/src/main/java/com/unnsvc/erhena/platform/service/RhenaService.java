@@ -19,6 +19,7 @@ import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
 
 import com.unnsvc.erhena.common.ErhenaConstants;
+import com.unnsvc.erhena.events.AgentProcessStartExitEvent;
 import com.unnsvc.rhena.common.IRhenaConfiguration;
 import com.unnsvc.rhena.common.IRhenaContext;
 import com.unnsvc.rhena.common.IRhenaEngine;
@@ -29,6 +30,7 @@ import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 import com.unnsvc.rhena.common.listener.IContextListener;
 import com.unnsvc.rhena.common.logging.ILogger;
 import com.unnsvc.rhena.common.model.IRhenaModule;
+import com.unnsvc.rhena.common.process.IProcessListener;
 import com.unnsvc.rhena.core.RhenaConfiguration;
 import com.unnsvc.rhena.core.RhenaContext;
 import com.unnsvc.rhena.core.RhenaEngine;
@@ -65,6 +67,22 @@ public class RhenaService implements IRhenaService {
 		config.setPackageWorkspace(false);
 		config.setInstallLocal(true);
 		config.setAgentClasspath(buildAgentClasspath());
+		config.getAgentStartListeners().add(new IProcessListener() {
+
+			@Override
+			public void onProcess(Process process) {
+
+				eventBorker.post(AgentProcessStartExitEvent.TOPIC, new AgentProcessStartExitEvent(AgentProcessStartExitEvent.EStartStop.START));
+			}
+		});
+		config.getAgentExitListeners().add(new IProcessListener() {
+
+			@Override
+			public void onProcess(Process process) {
+
+				eventBorker.post(AgentProcessStartExitEvent.TOPIC, new AgentProcessStartExitEvent(AgentProcessStartExitEvent.EStartStop.STOP));
+			}
+		});
 
 		/**
 		 * Workaround for ensuring that the rmi registry receives the right

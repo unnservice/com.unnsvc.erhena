@@ -21,7 +21,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -34,6 +33,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.common.ErhenaConstants;
+import com.unnsvc.erhena.events.AgentProcessStartExitEvent;
 import com.unnsvc.erhena.statusview.log.LoggingViewTable;
 import com.unnsvc.erhena.statusview.modules.AbstractModuleEntry;
 import com.unnsvc.erhena.statusview.modules.ModuleViewTable;
@@ -46,6 +46,9 @@ public class LoggingView extends ViewPart {
 	// private IEventBroker broker;
 	private ModuleViewTable moduleViewTable;
 	private LoggingViewTable logViewTable;
+	private Label agentStatusLabel;
+	private Button resetAgentButton;
+	private Button dumpAgentButton;
 
 	public LoggingView() {
 
@@ -70,9 +73,8 @@ public class LoggingView extends ViewPart {
 		seashContainer.setLayoutData(seashContainerData);
 		createLoggingtables(seashContainer);
 
-
 		createLifecycleAgentStatusBar(container);
-		
+
 		// We don't want events until the entire UI is created..
 		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
 		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
@@ -80,7 +82,7 @@ public class LoggingView extends ViewPart {
 	}
 
 	private void createTopBar(Composite container) {
-		
+
 		GridData searchFieldData = new GridData(GridData.FILL_HORIZONTAL);
 		searchFieldData.grabExcessHorizontalSpace = true;
 		searchFieldData.horizontalSpan = 1;
@@ -133,7 +135,7 @@ public class LoggingView extends ViewPart {
 				}
 			}
 		});
-		
+
 		// Do this last
 		loglevel.select(2);
 	}
@@ -143,10 +145,10 @@ public class LoggingView extends ViewPart {
 		Composite statusBar = new Composite(container, SWT.NONE);
 		GridData statusBarData = new GridData(GridData.FILL_HORIZONTAL);
 		statusBarData.horizontalSpan = 3;
-//		statusBarData.grabExcessHorizontalSpace = true;
-//		statusBarData.grabExcessVerticalSpace = false;
+		// statusBarData.grabExcessHorizontalSpace = true;
+		// statusBarData.grabExcessVerticalSpace = false;
 		statusBar.setLayoutData(statusBarData);
-		
+
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 5;
 		layout.horizontalSpacing = 0;
@@ -155,33 +157,35 @@ public class LoggingView extends ViewPart {
 		layout.marginWidth = 0;
 		statusBar.setLayout(layout);
 
-		Label label = new Label(statusBar, SWT.NULL);
-		label.setText("Running");
+		GridData agentStatusLabelData = new GridData();
+		agentStatusLabelData.widthHint = 70;
+		this.agentStatusLabel = new Label(statusBar, SWT.NULL);
+		agentStatusLabel.setText("...");
+		agentStatusLabel.setLayoutData(agentStatusLabelData);
 
 		GridData separatorData = new GridData();
 		separatorData.horizontalIndent = 5;
 		Label separator = new Label(statusBar, SWT.SEPARATOR);
 		separator.setLayoutData(separatorData);
-		
-		
+
 		GridData agentStatusData = new GridData();
 		agentStatusData.grabExcessHorizontalSpace = true;
 		agentStatusData.horizontalIndent = 5;
 		Label agentStatus = new Label(statusBar, SWT.NULL);
 		agentStatus.setText("Classes: 3300, Lifecycles: 10, Latency: 10ms");
 		agentStatus.setLayoutData(agentStatusData);
-		
-		Button reset = new Button(statusBar, SWT.PUSH);
-		reset.setText("Restart");
+
+		this.resetAgentButton = new Button(statusBar, SWT.PUSH);
+		resetAgentButton.setText("Restart");
 		GridData resetData = new GridData();
 		resetData.horizontalIndent = 5;
-		reset.setLayoutData(resetData);
-		
-		Button dump = new Button(statusBar, SWT.PUSH);
-		dump.setText("Dump");
+		resetAgentButton.setLayoutData(resetData);
+
+		this.dumpAgentButton = new Button(statusBar, SWT.PUSH);
+		dumpAgentButton.setText("Dump");
 		GridData dumpData = new GridData();
 		dumpData.horizontalIndent = 5;
-		dump.setLayoutData(dumpData);
+		dumpAgentButton.setLayoutData(dumpData);
 	}
 
 	private void createLoggingtables(Composite parent) {
@@ -242,6 +246,21 @@ public class LoggingView extends ViewPart {
 
 		moduleViewTable.onLogEvent(logEvent);
 		logViewTable.addLogEvent(logEvent);
+	}
+
+	@Inject
+	@Optional
+	private void subscribeAgentProcessStartExitEvent(@UIEventTopic(AgentProcessStartExitEvent.TOPIC) AgentProcessStartExitEvent agentProcessStartExit) {
+
+		if (agentProcessStartExit.getStartStop().equals(AgentProcessStartExitEvent.EStartStop.START)) {
+
+			dumpAgentButton.setEnabled(true);
+			agentStatusLabel.setText("Started");
+		} else if (agentProcessStartExit.getStartStop().equals(AgentProcessStartExitEvent.EStartStop.STOP)) {
+
+			dumpAgentButton.setEnabled(false);
+			agentStatusLabel.setText("Stopped");
+		}
 	}
 }
 
