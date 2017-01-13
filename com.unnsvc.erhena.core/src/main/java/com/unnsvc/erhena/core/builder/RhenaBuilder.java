@@ -44,6 +44,7 @@ import com.unnsvc.rhena.common.execution.EExecutionType;
 import com.unnsvc.rhena.common.execution.IRhenaExecution;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 import com.unnsvc.rhena.common.lifecycle.IResource;
+import com.unnsvc.rhena.common.model.ERhenaModuleType;
 import com.unnsvc.rhena.common.model.IRhenaModule;
 import com.unnsvc.rhena.core.execution.WorkspaceExecution;
 
@@ -122,10 +123,10 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 		/**
 		 * Drop the model and execution after we're done?
 		 */
-		configureProject(javaProject, execution);
+		configureProject(javaProject, module, execution);
 	}
 
-	private void configureProject(IJavaProject javaProject, WorkspaceExecution execution) throws CoreException {
+	private void configureProject(IJavaProject javaProject, IRhenaModule module, WorkspaceExecution execution) throws CoreException {
 
 		// Source paths
 		List<IClasspathEntry> sourcePaths = new ArrayList<IClasspathEntry>();
@@ -160,8 +161,10 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 		sourcePaths.add(containerEntry);
 
 		// rhena framework library
-		IClasspathEntry frameworkContainer = JavaCore.newContainerEntry(new Path(RhenaFrameworkClasspathContainer.CONTAINER_ID));
-		sourcePaths.add(frameworkContainer);
+		if (module.getModuleType().equals(ERhenaModuleType.FRAMEWORK)) {
+			IClasspathEntry frameworkContainer = JavaCore.newContainerEntry(new Path(RhenaFrameworkClasspathContainer.CONTAINER_ID));
+			sourcePaths.add(frameworkContainer);
+		}
 
 		javaProject.setRawClasspath(sourcePaths.toArray(new IClasspathEntry[sourcePaths.size()]), new NullProgressMonitor());
 
