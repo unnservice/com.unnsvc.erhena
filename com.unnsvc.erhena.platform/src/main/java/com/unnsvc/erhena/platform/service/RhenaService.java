@@ -3,6 +3,7 @@ package com.unnsvc.erhena.platform.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,7 @@ import com.unnsvc.rhena.core.RhenaEngine;
 import com.unnsvc.rhena.core.events.LogEvent;
 import com.unnsvc.rhena.core.resolution.LocalCacheRepository;
 import com.unnsvc.rhena.core.resolution.WorkspaceRepository;
+import com.unnsvc.rhena.profiling.report.IDiagnosticReport;
 
 /**
  * @TODO As the platform service handlest most eRhena oepartions, test it
@@ -83,6 +85,12 @@ public class RhenaService implements IRhenaService {
 			}
 		});
 
+		try {
+			config.setProfilerClasspath(buildProfilerClasspath());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
 		/**
 		 * Workaround for ensuring that the rmi registry receives the right
 		 * classpath
@@ -115,6 +123,22 @@ public class RhenaService implements IRhenaService {
 		context.addWorkspaceRepository(new WorkspaceRepository(context, workspacePath));
 
 		engine = new RhenaEngine(context);
+	}
+
+	private String buildProfilerClasspath() throws MalformedURLException, URISyntaxException, IOException {
+
+		String path = ErhenaUtils.locateClasspath("com.unnsvc.rhena.profiling");
+		File pathLocation = new File(path);
+		/**
+		 * One-off where when we run erhena from the IDE, it uses exploded
+		 * directories so we need to point it to the jar
+		 */
+		if (pathLocation.isDirectory()) {
+			path = new File(pathLocation, "../com.unnsvc.rhena.profiling-0.0.1-SNAPSHOT.jar").getCanonicalFile().getAbsolutePath();
+			System.err.println("javaagent classpath was directory, one-off hack setting to " + path);
+		}
+
+		return path;
 	}
 
 	/**
@@ -196,8 +220,6 @@ public class RhenaService implements IRhenaService {
 		}
 	}
 
-
-
 	/**
 	 * A fake transaction until transaction method is established; this will
 	 * take care of cleaning the caches
@@ -245,5 +267,17 @@ public class RhenaService implements IRhenaService {
 	public ILogger getRhenaLogger() {
 
 		return context.getLogger();
+	}
+
+	public IDiagnosticReport getDiagnostics() throws RhenaException {
+
+		try {
+			IDiagnosticReport report = context.getLifecycleAgentManager().getAgentReport();
+			System.err.println("Got report " + report);
+			return report;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			throw new RhenaException(ex.getMessage(), ex);
+		}
 	}
 }

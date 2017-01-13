@@ -22,6 +22,7 @@ Require-Bundle: javax.inject,
  org.eclipse.e4.core.di,
  org.eclipse.ui.workbench.texteditor,
  com.unnsvc.rhena.common,
- com.unnsvc.rhena.core
+ com.unnsvc.rhena.core,
+ com.unnsvc.rhena.profiling
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

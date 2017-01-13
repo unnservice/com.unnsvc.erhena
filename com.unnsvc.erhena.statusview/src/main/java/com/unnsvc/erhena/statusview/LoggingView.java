@@ -6,6 +6,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -29,11 +32,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.common.ErhenaConstants;
 import com.unnsvc.erhena.common.events.AgentProcessStartExitEvent;
+import com.unnsvc.erhena.common.events.ProfilerDiagnosticsEvent;
 import com.unnsvc.erhena.statusview.log.LoggingViewTable;
 import com.unnsvc.erhena.statusview.modules.AbstractModuleEntry;
 import com.unnsvc.erhena.statusview.modules.ModuleViewTable;
@@ -49,6 +54,8 @@ public class LoggingView extends ViewPart {
 	private Label agentStatusLabel;
 	private Button resetAgentButton;
 	private Button dumpAgentButton;
+	private Combo loglevel;
+	private Label agentStatus;
 
 	public LoggingView() {
 
@@ -75,10 +82,30 @@ public class LoggingView extends ViewPart {
 
 		createLifecycleAgentStatusBar(container);
 
-		// We don't want events until the entire UI is created..
-		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
-		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
-		ContextInjectionFactory.inject(this, eclipseContext);
+		new UIJob(parent.getDisplay(), "Injecting logging view") {
+
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+
+				// We don't want events until the entire UI is created..
+				BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
+				IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
+				ContextInjectionFactory.inject(LoggingView.this, eclipseContext);
+				return new Status(IStatus.OK, Activator.PLUGIN_ID, "");
+			}
+
+		}.schedule();
+
+		new UIJob(loglevel.getDisplay(), "Configuring ui") {
+
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+
+				// Do this last
+				loglevel.select(2);
+				return new Status(IStatus.OK, Activator.PLUGIN_ID, "");
+			}
+		}.schedule();
 	}
 
 	private void createTopBar(Composite container) {
@@ -93,7 +120,7 @@ public class LoggingView extends ViewPart {
 
 		GridData loglevelData = new GridData();
 		loglevelData.horizontalSpan = 1;
-		final Combo loglevel = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY);
+		this.loglevel = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY);
 		List<String> logLevels = new ArrayList<String>();
 		for (ELogLevel l : ELogLevel.values()) {
 			logLevels.add(l.name().toLowerCase());
@@ -135,9 +162,6 @@ public class LoggingView extends ViewPart {
 				}
 			}
 		});
-
-		// Do this last
-		loglevel.select(2);
 	}
 
 	private void createLifecycleAgentStatusBar(Composite container) {
@@ -160,7 +184,7 @@ public class LoggingView extends ViewPart {
 		GridData agentStatusLabelData = new GridData();
 		agentStatusLabelData.widthHint = 70;
 		this.agentStatusLabel = new Label(statusBar, SWT.NULL);
-		agentStatusLabel.setText("...");
+		agentStatusLabel.setText("Running");
 		agentStatusLabel.setLayoutData(agentStatusLabelData);
 
 		GridData separatorData = new GridData();
@@ -171,8 +195,8 @@ public class LoggingView extends ViewPart {
 		GridData agentStatusData = new GridData();
 		agentStatusData.grabExcessHorizontalSpace = true;
 		agentStatusData.horizontalIndent = 5;
-		Label agentStatus = new Label(statusBar, SWT.NULL);
-		agentStatus.setText("Classes: 3300, Lifecycles: 10, Latency: 10ms");
+		this.agentStatus = new Label(statusBar, SWT.NULL);
+		agentStatus.setText("Waiting for agent diagnostics");
 		agentStatus.setLayoutData(agentStatusData);
 
 		this.resetAgentButton = new Button(statusBar, SWT.PUSH);
@@ -261,6 +285,21 @@ public class LoggingView extends ViewPart {
 			dumpAgentButton.setEnabled(false);
 			agentStatusLabel.setText("Stopped");
 		}
+	}
+
+	@Inject
+	@Optional
+	private void subscribeDiagnosticsReport(@UIEventTopic(ProfilerDiagnosticsEvent.TOPIC) ProfilerDiagnosticsEvent diagEvent) {
+
+		new UIJob(this.agentStatus.getDisplay(), "") {
+
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+
+				agentStatus.setText(diagEvent.getReport().getTotalLoadedClasses() + " classes in lifecycle runtime");
+				return new Status(IStatus.OK, Activator.PLUGIN_ID, "");
+			}
+		}.schedule();
 	}
 }
 

@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -30,6 +31,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.common.ErhenaUtils;
+import com.unnsvc.erhena.common.events.ProfilerDiagnosticsEvent;
 import com.unnsvc.erhena.core.Activator;
 import com.unnsvc.erhena.core.classpath.RhenaClasspathContainerInitializer;
 import com.unnsvc.erhena.core.classpath.RhenaFrameworkClasspathContainer;
@@ -37,6 +39,7 @@ import com.unnsvc.erhena.platform.service.IRhenaTransaction;
 import com.unnsvc.erhena.platform.service.ProjectService;
 import com.unnsvc.erhena.platform.service.RhenaService;
 import com.unnsvc.rhena.common.IRhenaEngine;
+import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.execution.EExecutionType;
 import com.unnsvc.rhena.common.execution.IRhenaExecution;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
@@ -49,17 +52,19 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 	public static final String BUILDER_ID = "com.unnsvc.erhena.core.builder.RhenaBuilder";
 
 	@Inject
+	private IEventBroker eventBroker;
+	@Inject
 	private RhenaService platformService;
 	@Inject
 	private ProjectService projectService;
-	
+
 	public RhenaBuilder() {
-		
+
 		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
 		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
 		ContextInjectionFactory.inject(this, eclipseContext);
 	}
-	
+
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 
@@ -99,7 +104,7 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 
 		ModuleIdentifier projectIdentifier = projectService.manageProject(getProject());
 		IRhenaModule module = engine.materialiseModel(projectIdentifier);
-		
+
 		// Build all parents in the workspace model
 		for (ModuleIdentifier root : platformService.getEngine().findRoots(projectIdentifier, EExecutionType.TEST)) {
 
@@ -108,10 +113,12 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 			IRhenaModule rootModule = engine.materialiseModel(root);
 			IRhenaExecution exec = engine.materialiseExecution(rootModule, EExecutionType.TEST);
 		}
-		
+
 		WorkspaceExecution execution = (WorkspaceExecution) engine.materialiseExecution(module, EExecutionType.TEST);
 		System.err.println("Produced workspace execution: " + execution);
-		
+
+		eventBroker.post(ProfilerDiagnosticsEvent.TOPIC, new ProfilerDiagnosticsEvent(platformService.getDiagnostics()));
+
 		/**
 		 * Drop the model and execution after we're done?
 		 */
@@ -145,17 +152,16 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 
 		IPath containerPath = new Path(RhenaClasspathContainerInitializer.CONTAINER_ID);
 
-		RhenaClasspathContainerInitializer initializer = (RhenaClasspathContainerInitializer) JavaCore.getClasspathContainerInitializer(containerPath.segment(0));
+		RhenaClasspathContainerInitializer initializer = (RhenaClasspathContainerInitializer) JavaCore
+				.getClasspathContainerInitializer(containerPath.segment(0));
 		initializer.addClasspathEntry(JavaCore.newLibraryEntry(new Path("/home/noname/.m2/repository/log4j/log4j/1.2.17/log4j-1.2.17.jar"), null, null));
-		
+
 		IClasspathEntry containerEntry = JavaCore.newContainerEntry(containerPath);
 		sourcePaths.add(containerEntry);
-		
-		
+
 		// rhena framework library
 		IClasspathEntry frameworkContainer = JavaCore.newContainerEntry(new Path(RhenaFrameworkClasspathContainer.CONTAINER_ID));
 		sourcePaths.add(frameworkContainer);
-		
 
 		javaProject.setRawClasspath(sourcePaths.toArray(new IClasspathEntry[sourcePaths.size()]), new NullProgressMonitor());
 
