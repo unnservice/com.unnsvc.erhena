@@ -29,6 +29,16 @@
             categoryId="com.unnsvc.erhena.core.nature.category"
             id="com.unnsvc.erhena.core.nature.configureRhenaProject">
       </command>
+      <command
+            categoryId="com.unnsvc.erhena.core.run.category"
+            defaultHandler="com.unnsvc.erhena.core.commands.RunRhenaCommand"
+            id="com.unnsvc.erhena.core.run.runCommand"
+            name="Run Rhena Command">
+      </command>
+      <category
+            id="com.unnsvc.erhena.core.run.category"
+            name="ERhena">
+      </category>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -82,6 +92,43 @@
                </with>
             </visibleWhen>
          </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <menu
+               label="ERhena Commands">
+            <dynamic
+                  class="com.unnsvc.erhena.core.commands.RunCommandDynamic"
+                  id="com.unnsvc.erhena.core.run.runCommandDynamic">
+            </dynamic>
+            <separator
+                  name="com.unnsvc.erhena.core.separator1"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="com.unnsvc.erhena.core.run.runCommand"
+                  label="Run Rhena Command"
+                  style="push">
+            </command>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <adapt
+                           type="org.eclipse.core.resources.IProject">
+                        <test
+                              property="org.eclipse.core.resources.projectNature"
+                              value="com.unnsvc.erhena.core.nature">
+                        </test>
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </menu>
       </menuContribution>
    </extension>
    <extension
