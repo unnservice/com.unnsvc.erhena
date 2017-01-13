@@ -33,7 +33,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.common.ErhenaConstants;
-import com.unnsvc.erhena.events.AgentProcessStartExitEvent;
+import com.unnsvc.erhena.common.events.AgentProcessStartExitEvent;
 import com.unnsvc.erhena.statusview.log.LoggingViewTable;
 import com.unnsvc.erhena.statusview.modules.AbstractModuleEntry;
 import com.unnsvc.erhena.statusview.modules.ModuleViewTable;

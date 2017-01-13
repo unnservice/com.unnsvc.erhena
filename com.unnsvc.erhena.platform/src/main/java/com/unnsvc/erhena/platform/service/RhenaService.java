@@ -4,7 +4,6 @@ package com.unnsvc.erhena.platform.service;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -14,12 +13,12 @@ import javax.inject.Singleton;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
 
 import com.unnsvc.erhena.common.ErhenaConstants;
-import com.unnsvc.erhena.events.AgentProcessStartExitEvent;
+import com.unnsvc.erhena.common.ErhenaUtils;
+import com.unnsvc.erhena.common.events.AgentProcessStartExitEvent;
 import com.unnsvc.rhena.common.IRhenaConfiguration;
 import com.unnsvc.rhena.common.IRhenaContext;
 import com.unnsvc.rhena.common.IRhenaEngine;
@@ -176,25 +175,28 @@ public class RhenaService implements IRhenaService {
 
 		try {
 			List<String> paths = new ArrayList<String>();
-			paths.add(new File(FileLocator.resolve(new URL("platform:/plugin/com.unnsvc.rhena.agent/META-INF/MARKER")).toURI()).getAbsolutePath());
-			paths.add(new File(FileLocator.resolve(new URL("platform:/plugin/com.unnsvc.rhena.common/META-INF/MARKER")).toURI()).getAbsolutePath());
-			paths.add(new File(FileLocator.resolve(new URL("platform:/plugin/com.unnsvc.rhena.core/META-INF/MARKER")).toURI()).getAbsolutePath());
-			paths.add(new File(FileLocator.resolve(new URL("platform:/plugin/com.unnsvc.rhena.lifecycle/META-INF/MARKER")).toURI()).getAbsolutePath());
+			paths.add(ErhenaUtils.locateClasspath("com.unnsvc.rhena.agent"));
+			paths.add(ErhenaUtils.locateClasspath("com.unnsvc.rhena.common"));
+			paths.add(ErhenaUtils.locateClasspath("com.unnsvc.rhena.core"));
+			paths.add(ErhenaUtils.locateClasspath("com.unnsvc.rhena.lifecycle"));
 
 			StringBuilder sb = new StringBuilder();
 			for (String path : paths) {
-				path = path.substring(0, path.length() - "/META-INF/MARKER".length()) + "/";
 				System.err.println("Appending to classpath " + path);
 				sb.append(path).append(File.pathSeparatorChar);
 			}
 
-			return sb.toString().substring(0, sb.toString().length() - 1);
+			String agentClasspath = sb.toString().substring(0, sb.toString().length() - 1);
+			System.err.println("Agent claspath: " + agentClasspath);
+			return agentClasspath;
 		} catch (URISyntaxException | IOException e) {
 
 			e.printStackTrace();
 			return System.getProperty("java.class.path");
 		}
 	}
+
+
 
 	/**
 	 * A fake transaction until transaction method is established; this will

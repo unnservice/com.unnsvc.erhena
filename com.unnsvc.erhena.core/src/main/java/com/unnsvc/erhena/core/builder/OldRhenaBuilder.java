@@ -26,7 +26,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
-import com.unnsvc.erhena.common.RhenaUtils;
+import com.unnsvc.erhena.common.ErhenaUtils;
 import com.unnsvc.erhena.core.Activator;
 import com.unnsvc.erhena.core.classpath.RhenaClasspathContainerInitializer;
 import com.unnsvc.erhena.core.classpath.RhenaFrameworkClasspathContainer;
@@ -90,7 +90,7 @@ public class OldRhenaBuilder extends IncrementalProjectBuilder {
 		List<IClasspathEntry> sourcePaths = new ArrayList<IClasspathEntry>();
 		for (IResource resource : resources) {
 			IFolder sourceFolder = p.getFolder(resource.getRelativePath());
-			RhenaUtils.createFolder(sourceFolder);
+			ErhenaUtils.createFolder(sourceFolder);
 			IPackageFragmentRoot fragmentRoot = project.getPackageFragmentRoot(sourceFolder);
 			IClasspathEntry entry = JavaCore.newSourceEntry(fragmentRoot.getPath());
 			sourcePaths.add(entry);

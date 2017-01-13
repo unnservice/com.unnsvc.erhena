@@ -26,7 +26,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 
-import com.unnsvc.erhena.common.RhenaUtils;
+import com.unnsvc.erhena.common.ErhenaUtils;
 import com.unnsvc.erhena.core.nature.RhenaNature;
 import com.unnsvc.rhena.common.RhenaConstants;
 
@@ -197,7 +197,7 @@ public class RhenaModuleProjectSupport {
 
 		for (String path : paths) {
 			IFolder etcFolders = newProject.getFolder(path);
-			RhenaUtils.createFolder(etcFolders);
+			ErhenaUtils.createFolder(etcFolders);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 
-package com.unnsvc.erhena.events;
+package com.unnsvc.erhena.common.events;
 
 public class AgentProcessStartExitEvent {
 
