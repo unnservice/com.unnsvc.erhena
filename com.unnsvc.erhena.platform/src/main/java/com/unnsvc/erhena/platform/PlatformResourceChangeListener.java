@@ -106,61 +106,61 @@ public class PlatformResourceChangeListener implements IResourceChangeListener {
 				e.printStackTrace();
 			}
 
-			if (!resources.isEmpty()) {
-				WorkspaceJob wj = new WorkspaceJob("Building workspace") {
-
-					@Override
-					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-
-						synchronized (PlatformResourceChangeListener.this) {
-							
-							System.err.println("Build transaction ==================================================");
-							try {
-								
-								platformService.newTransaction(new IRhenaTransaction() {
-
-									@Override
-									public void execute(IRhenaEngine engine) throws CoreException {
-
-										for (IProject affected : resources.keySet()) {
-
-											// affected.build(IncrementalProjectBuilder.FULL_BUILD,
-											// monitor);
-											try {
-												ModuleIdentifier affectedIdentifier = projectService.manageProject(affected);
-												for (ModuleIdentifier root : platformService.getEngine().findRoots(affectedIdentifier, EExecutionType.TEST)) {
-
-													System.err.println("Building root: " + root);
-													IRhenaModule rootModule = engine.materialiseModel(root);
-													IRhenaExecution exec = engine.materialiseExecution(rootModule, EExecutionType.TEST);
-													affected.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-												}
-											} catch (RhenaException re) {
-												throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
-											}
-										}
-									}
-								});
-
-							} catch (Throwable t) {
-
-								return new Status(IStatus.ERROR, Activator.PLUGIN_ID, t.getMessage(), t);
-							} finally {
-
-								// setListenerEnabled(true);
-							}
-						}
-
-						return new Status(IStatus.OK, Activator.PLUGIN_ID, "Finished build workspace");
-					}
-				};
-
-				wj.schedule();
-			} else {
-
-				// No workspace operation so we enable it immediately
-//				setListenerEnabled(true);
-			}
+//			if (!resources.isEmpty()) {
+//				WorkspaceJob wj = new WorkspaceJob("Building workspace") {
+//
+//					@Override
+//					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+//
+//						synchronized (PlatformResourceChangeListener.this) {
+//							
+//							System.err.println("Build transaction ==================================================");
+//							try {
+//								
+//								platformService.newTransaction(new IRhenaTransaction() {
+//
+//									@Override
+//									public void execute(IRhenaEngine engine) throws CoreException {
+//
+//										for (IProject affected : resources.keySet()) {
+//
+//											// affected.build(IncrementalProjectBuilder.FULL_BUILD,
+//											// monitor);
+//											try {
+//												ModuleIdentifier affectedIdentifier = projectService.manageProject(affected);
+//												for (ModuleIdentifier root : platformService.getEngine().findRoots(affectedIdentifier, EExecutionType.TEST)) {
+//
+//													System.err.println("Building root: " + root);
+//													IRhenaModule rootModule = engine.materialiseModel(root);
+//													IRhenaExecution exec = engine.materialiseExecution(rootModule, EExecutionType.TEST);
+//													affected.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+//												}
+//											} catch (RhenaException re) {
+//												throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, re.getMessage(), re));
+//											}
+//										}
+//									}
+//								});
+//
+//							} catch (Throwable t) {
+//
+//								return new Status(IStatus.ERROR, Activator.PLUGIN_ID, t.getMessage(), t);
+//							} finally {
+//
+//								// setListenerEnabled(true);
+//							}
+//						}
+//
+//						return new Status(IStatus.OK, Activator.PLUGIN_ID, "Finished build workspace");
+//					}
+//				};
+//
+//				wj.schedule();
+//			} else {
+//
+//				// No workspace operation so we enable it immediately
+////				setListenerEnabled(true);
+//			}
 		}
 	}
 

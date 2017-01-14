@@ -20,6 +20,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import com.unnsvc.erhena.common.ErhenaConstants;
 import com.unnsvc.erhena.common.ErhenaUtils;
 import com.unnsvc.erhena.common.events.AgentProcessStartExitEvent;
+import com.unnsvc.rhena.common.ICaller;
 import com.unnsvc.rhena.common.IRhenaConfiguration;
 import com.unnsvc.rhena.common.IRhenaContext;
 import com.unnsvc.rhena.common.IRhenaEngine;
@@ -31,6 +32,7 @@ import com.unnsvc.rhena.common.listener.IContextListener;
 import com.unnsvc.rhena.common.logging.ILogger;
 import com.unnsvc.rhena.common.model.IRhenaModule;
 import com.unnsvc.rhena.common.process.IProcessListener;
+import com.unnsvc.rhena.core.Caller;
 import com.unnsvc.rhena.core.RhenaConfiguration;
 import com.unnsvc.rhena.core.RhenaContext;
 import com.unnsvc.rhena.core.RhenaEngine;
@@ -255,7 +257,8 @@ public class RhenaService implements IRhenaService {
 	public IRhenaExecution buildProject(ModuleIdentifier identifier) throws RhenaException {
 
 		IRhenaModule module = engine.materialiseModel(identifier);
-		IRhenaExecution execution = engine.materialiseExecution(module, EExecutionType.TEST);
+		ICaller caller = new Caller(module, EExecutionType.TEST);
+		IRhenaExecution execution = engine.materialiseExecution(caller);
 		return execution;
 	}
 

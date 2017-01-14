@@ -39,13 +39,13 @@ import com.unnsvc.erhena.platform.service.IRhenaTransaction;
 import com.unnsvc.erhena.platform.service.ProjectService;
 import com.unnsvc.erhena.platform.service.RhenaService;
 import com.unnsvc.rhena.common.IRhenaEngine;
-import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.execution.EExecutionType;
 import com.unnsvc.rhena.common.execution.IRhenaExecution;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 import com.unnsvc.rhena.common.lifecycle.IResource;
 import com.unnsvc.rhena.common.model.ERhenaModuleType;
 import com.unnsvc.rhena.common.model.IRhenaModule;
+import com.unnsvc.rhena.core.Caller;
 import com.unnsvc.rhena.core.execution.WorkspaceExecution;
 
 public class RhenaBuilder extends IncrementalProjectBuilder {
@@ -112,10 +112,10 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 			System.err.println("Building project " + root);
 
 			IRhenaModule rootModule = engine.materialiseModel(root);
-			IRhenaExecution exec = engine.materialiseExecution(rootModule, EExecutionType.TEST);
+			IRhenaExecution exec = engine.materialiseExecution(new Caller(rootModule, EExecutionType.TEST));
 		}
 
-		WorkspaceExecution execution = (WorkspaceExecution) engine.materialiseExecution(module, EExecutionType.TEST);
+		WorkspaceExecution execution = (WorkspaceExecution) engine.materialiseExecution(new Caller(module, EExecutionType.TEST));
 		System.err.println("Produced workspace execution: " + execution);
 
 		eventBroker.post(ProfilerDiagnosticsEvent.TOPIC, new ProfilerDiagnosticsEvent(platformService.getDiagnostics()));
