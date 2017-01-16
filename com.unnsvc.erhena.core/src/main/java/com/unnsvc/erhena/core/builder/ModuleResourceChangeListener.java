@@ -4,6 +4,7 @@ package com.unnsvc.erhena.core.builder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -21,6 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -32,8 +34,8 @@ import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
-import com.unnsvc.erhena.common.ErhenaUtils;
 import com.unnsvc.erhena.core.Activator;
+import com.unnsvc.erhena.core.classpath.RhenaClasspathContainer;
 import com.unnsvc.erhena.core.classpath.RhenaClasspathContainerInitializer;
 import com.unnsvc.erhena.core.classpath.RhenaFrameworkClasspathContainer;
 import com.unnsvc.erhena.core.nature.RhenaNature;
@@ -44,10 +46,12 @@ import com.unnsvc.rhena.common.IRhenaEngine;
 import com.unnsvc.rhena.common.RhenaConstants;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.execution.EExecutionType;
+import com.unnsvc.rhena.common.execution.IRhenaExecution;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 import com.unnsvc.rhena.common.lifecycle.IResource;
 import com.unnsvc.rhena.common.model.ERhenaModuleType;
 import com.unnsvc.rhena.common.model.IRhenaModule;
+import com.unnsvc.rhena.common.visitors.IDependencies;
 import com.unnsvc.rhena.core.Caller;
 import com.unnsvc.rhena.core.execution.WorkspaceExecution;
 
@@ -117,6 +121,7 @@ public class ModuleResourceChangeListener implements IResourceChangeListener {
 
 		IJavaProject javaProject = JavaCore.create(project);
 		IRhenaModule module = engine.materialiseModel(identifier);
+
 		System.err.println("Model is: " + module);
 		System.err.println("Execution is: " + engine.materialiseExecution(new Caller(module, EExecutionType.TEST)));
 		// assume it is always a workspace execution because the module.xml
@@ -136,10 +141,15 @@ public class ModuleResourceChangeListener implements IResourceChangeListener {
 		for (IResource resource : execution.getInputs()) {
 			System.err.println(javaProject.getProject().getName() + " Adding source folder: " + resource.getRelativePath());
 			IFolder sourceFolder = project.getFolder(resource.getRelativePath());
-			ErhenaUtils.createFolder(sourceFolder);
-			IPackageFragmentRoot fragmentRoot = javaProject.getPackageFragmentRoot(sourceFolder);
-			IClasspathEntry entry = JavaCore.newSourceEntry(fragmentRoot.getPath());
-			sourcePaths.add(entry);
+			if (sourceFolder.exists()) {
+				// must be in a workspace job otherwise we get resource change
+				// modification error, so don't create it just set it when it
+				// exsts
+				// ErhenaUtils.createFolder(sourceFolder);
+				IPackageFragmentRoot fragmentRoot = javaProject.getPackageFragmentRoot(sourceFolder);
+				IClasspathEntry entry = JavaCore.newSourceEntry(fragmentRoot.getPath());
+				sourcePaths.add(entry);
+			}
 		}
 
 		// JVM entry
@@ -149,19 +159,29 @@ public class ModuleResourceChangeListener implements IResourceChangeListener {
 		IClasspathEntry jreEntry = JavaCore.newContainerEntry(vmPath);
 		sourcePaths.add(jreEntry);
 
-		//
-		// for(IClasspathEntry ce : project.getRawClasspath()) {
-		// System.err.println("Classpath in build: " + ce);
-		// }
+		// RhenaClasspathContainerInitializer initializer =
+		// (RhenaClasspathContainerInitializer)
+		// JavaCore.getClasspathContainerInitializer(containerPath.segment(0));
+		// initializer.addClasspathEntry(JavaCore.newLibraryEntry(new
+		// Path("/home/noname/.m2/repository/log4j/log4j/1.2.17/log4j-1.2.17.jar"),
+		// null, null));
 
 		IPath containerPath = new Path(RhenaClasspathContainerInitializer.CONTAINER_ID);
+		IDependencies dependencies = platformService.collectDependencies(module, EExecutionType.TEST);
 
-		RhenaClasspathContainerInitializer initializer = (RhenaClasspathContainerInitializer) JavaCore
-				.getClasspathContainerInitializer(containerPath.segment(0));
-		initializer.addClasspathEntry(JavaCore.newLibraryEntry(new Path("/home/noname/.m2/repository/log4j/log4j/1.2.17/log4j-1.2.17.jar"), null, null));
+		IPath mainPath = containerPath.append(project.getName() + "_main");
+		RhenaClasspathContainer mainTypeContainer = new RhenaClasspathContainer("eRhena Main", mainPath,
+				toList(mainPath, dependencies.getDependencies().get(EExecutionType.MAIN)));
+		JavaCore.setClasspathContainer(mainPath, new IJavaProject[] { javaProject }, new IClasspathContainer[] { mainTypeContainer }, null);
 
-		IClasspathEntry containerEntry = JavaCore.newContainerEntry(containerPath);
-		sourcePaths.add(containerEntry);
+		IPath testPath = containerPath.append(project.getName() + "_test");
+		RhenaClasspathContainer testTypeContainer = new RhenaClasspathContainer("eRhena Test", testPath,
+				toList(testPath, dependencies.getDependencies().get(EExecutionType.TEST)));
+		JavaCore.setClasspathContainer(testPath, new IJavaProject[] { javaProject }, new IClasspathContainer[] { testTypeContainer }, null);
+		
+		
+		sourcePaths.add(JavaCore.newContainerEntry(mainPath));
+		sourcePaths.add(JavaCore.newContainerEntry(testPath));
 
 		// rhena framework library
 		if (module.getModuleType().equals(ERhenaModuleType.FRAMEWORK)) {
@@ -170,14 +190,14 @@ public class ModuleResourceChangeListener implements IResourceChangeListener {
 		}
 
 		UIJob job = new UIJob("Setting classpath") {
-			
+
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				
+
 				try {
 					javaProject.setRawClasspath(sourcePaths.toArray(new IClasspathEntry[sourcePaths.size()]), new NullProgressMonitor());
 				} catch (JavaModelException e) {
-					
+
 					e.printStackTrace();
 					return Status.CANCEL_STATUS;
 				}
@@ -187,5 +207,16 @@ public class ModuleResourceChangeListener implements IResourceChangeListener {
 		};
 		job.schedule();
 
+	}
+
+	private List<IClasspathEntry> toList(IPath containerPath, List<IRhenaExecution> list) {
+
+		List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
+		for (IRhenaExecution exec : list) {
+
+			IClasspathEntry entry = JavaCore.newLibraryEntry(new Path(exec.getArtifact().getArtifactUrl().getFile()), null, null);
+			entries.add(entry);
+		}
+		return entries;
 	}
 }

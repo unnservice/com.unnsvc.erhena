@@ -14,7 +14,7 @@
          <uri
                id="http://schema.unnsvc.com/rhena/module.xsd"
                name="http://schema.unnsvc.com/rhena/module.xsd"
-               uri="platform:/plugin/com.unnsvc.erhena.platform/META-INF/schema/module.xsd">
+               uri="platform:/plugin/com.unnsvc.rhena.core/META-INF/schema/module.xsd">
          </uri>
       </catalogContribution>
    </extension>

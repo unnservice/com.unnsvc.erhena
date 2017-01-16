@@ -6,9 +6,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -32,7 +29,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
@@ -86,7 +82,7 @@ public class LoggingView extends ViewPart {
 		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
 		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
 		ContextInjectionFactory.inject(LoggingView.this, eclipseContext);
-		
+
 		// Do this last
 		loglevel.select(2);
 	}
@@ -274,15 +270,7 @@ public class LoggingView extends ViewPart {
 	@Optional
 	private void subscribeDiagnosticsReport(@UIEventTopic(ProfilerDiagnosticsEvent.TOPIC) ProfilerDiagnosticsEvent diagEvent) {
 
-		new UIJob(this.agentStatus.getDisplay(), "") {
-
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-
-				agentStatus.setText(diagEvent.getReport().getTotalLoadedClasses() + " classes in lifecycle runtime");
-				return new Status(IStatus.OK, Activator.PLUGIN_ID, "");
-			}
-		}.schedule();
+		agentStatus.setText(diagEvent.getReport().getTotalLoadedClasses() + " classes in lifecycle runtime");
 	}
 }
 

@@ -24,32 +24,31 @@ public class RhenaClasspathContainerInitializer extends ClasspathContainerInitia
 
 	@Override
 	public void initialize(IPath containerPath, IJavaProject project) throws CoreException {
-		
-		RhenaClasspathContainer container = new RhenaClasspathContainer("eRhena Main", containerPath, classpathEntries);
-		JavaCore.setClasspathContainer(containerPath, new IJavaProject[] { project }, new IClasspathContainer[] { container }, null);
+
+//		RhenaClasspathContainer container = new RhenaClasspathContainer("eRhena Main", containerPath, classpathEntries);
+//		JavaCore.setClasspathContainer(containerPath, new IJavaProject[] { project }, new IClasspathContainer[] { container }, null);
+//		System.err.println("INitializing classpath container");
 	}
+//
+//	private RhenaClasspathContainer buildClasspathContainer(IPath containerPath, IJavaProject project) {
+//
+//		return new RhenaClasspathContainer("eRhena Main", containerPath, classpathEntries);
+//	}
 
 	@Override
 	public boolean canUpdateClasspathContainer(IPath containerPath, IJavaProject project) {
 
-		return false;
+		return true;
 	}
 
 	@Override
 	public void requestClasspathContainerUpdate(IPath containerPath, IJavaProject project, IClasspathContainer containerSuggestion) throws CoreException {
 
-		// initialize(containerPath, project);
+		System.err.println("Requesting classpath container update");
+
+		initialize(containerPath, project);
 
 		// JavaCore.setClasspathContainer(containerPath, new IJavaProject[] {
 		// project }, new IClasspathContainer[] { containerSuggestion }, null);
-
 	}
-
-	public void addClasspathEntry(IClasspathEntry classpathEntry) {
-
-		if(!classpathEntries.contains(classpathEntry)) {
-			classpathEntries.add(classpathEntry);
-		}
-	}
-
 }
