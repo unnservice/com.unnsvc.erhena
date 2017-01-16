@@ -1,9 +1,15 @@
 
 package com.unnsvc.erhena.platform;
 
+import org.eclipse.e4.core.di.InjectorFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
+import com.unnsvc.erhena.platform.service.IProjectService;
+import com.unnsvc.erhena.platform.service.IRhenaService;
+import com.unnsvc.erhena.platform.service.ProjectService;
+import com.unnsvc.erhena.platform.service.RhenaService;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -19,11 +25,12 @@ public class Activator extends AbstractUIPlugin {
 	private static BundleContext context;
 	// private IWorkspace workspace = ResourcesPlugin.getWorkspace();
 	// private IResourceChangeListener listener;
- 
+
 	/**
 	 * The constructor
 	 */
 	public Activator() {
+
 	}
 
 	/*
@@ -32,13 +39,17 @@ public class Activator extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.
 	 * BundleContext)
 	 */
+	@SuppressWarnings("restriction")
 	public void start(BundleContext context) throws Exception {
 
 		super.start(context);
 		plugin = this;
-//		this.context = context;
+		// this.context = context;
 		// listener = new RhenaModuleChangeListener();
-		// workspace.addResourceChangeListener(listener);		
+		// workspace.addResourceChangeListener(listener);
+
+		InjectorFactory.getDefault().addBinding(IRhenaService.class).implementedBy(RhenaService.class);
+		InjectorFactory.getDefault().addBinding(IProjectService.class).implementedBy(ProjectService.class);
 	}
 
 	/*
@@ -51,7 +62,7 @@ public class Activator extends AbstractUIPlugin {
 
 		plugin = null;
 		super.stop(context);
-//		this.context = context;
+		// this.context = context;
 
 		// if (workspace != null) {
 		// workspace.removeResourceChangeListener(listener);

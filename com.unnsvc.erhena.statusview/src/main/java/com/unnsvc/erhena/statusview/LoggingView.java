@@ -82,30 +82,13 @@ public class LoggingView extends ViewPart {
 
 		createLifecycleAgentStatusBar(container);
 
-		new UIJob(parent.getDisplay(), "Injecting logging view") {
-
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-
-				// We don't want events until the entire UI is created..
-				BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
-				IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
-				ContextInjectionFactory.inject(LoggingView.this, eclipseContext);
-				return new Status(IStatus.OK, Activator.PLUGIN_ID, "");
-			}
-
-		}.schedule();
-
-		new UIJob(loglevel.getDisplay(), "Configuring ui") {
-
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-
-				// Do this last
-				loglevel.select(2);
-				return new Status(IStatus.OK, Activator.PLUGIN_ID, "");
-			}
-		}.schedule();
+		// We don't want events until the entire UI is created..
+		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
+		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
+		ContextInjectionFactory.inject(LoggingView.this, eclipseContext);
+		
+		// Do this last
+		loglevel.select(2);
 	}
 
 	private void createTopBar(Composite container) {

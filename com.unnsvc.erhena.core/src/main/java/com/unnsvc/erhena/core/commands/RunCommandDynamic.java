@@ -23,8 +23,10 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.core.Activator;
-import com.unnsvc.erhena.platform.service.ProjectService;
-import com.unnsvc.erhena.platform.service.RhenaService;
+import com.unnsvc.erhena.platform.service.IProjectService;
+import com.unnsvc.erhena.platform.service.IRhenaService;
+import com.unnsvc.erhena.platform.service.IRhenaTransaction;
+import com.unnsvc.rhena.common.IRhenaEngine;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.execution.EExecutionType;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
@@ -37,9 +39,9 @@ import com.unnsvc.rhena.core.CommandCaller;
 public class RunCommandDynamic extends ContributionItem {
 
 	@Inject
-	private RhenaService platformService;
+	private IRhenaService platformService;
 	@Inject
-	private ProjectService projectService;
+	private IProjectService projectService;
 
 	public RunCommandDynamic() {
 
@@ -63,60 +65,58 @@ public class RunCommandDynamic extends ContributionItem {
 	@Override
 	public void fill(Menu menu, int index) {
 
-		try {
-			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-			IStructuredSelection selection = (IStructuredSelection) page.getSelection();
+		platformService.newTransaction(new IRhenaTransaction() {
 
-			Object selObject = selection.getFirstElement();
-			IProject resource = (IProject) Platform.getAdapterManager().getAdapter(selObject, IProject.class);
+			@Override
+			public void execute(IRhenaEngine engine) throws Throwable {
 
-			ModuleIdentifier identifier = projectService.manageProject(resource);
-			IRhenaModule module = platformService.getEngine().materialiseModel(identifier);
+				try {
+					IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+					IStructuredSelection selection = (IStructuredSelection) page.getSelection();
 
-			ILifecycleReference reference = module.getLifecycleDeclarations().get(module.getLifecycleName());
-			if (!reference.getCommands().isEmpty()) {
-				for (ILifecycleCommandReference command : reference.getCommands()) {
-					MenuItem menuItem = new MenuItem(menu, SWT.NONE, index);
-					menuItem.setText("lifecycle[" + reference.getName() + "]->" + command.getCommandName());
-					menuItem.addSelectionListener(new SelectionAdapter() {
+					Object selObject = selection.getFirstElement();
+					IProject resource = (IProject) Platform.getAdapterManager().getAdapter(selObject, IProject.class);
 
-						@Override
-						public void widgetSelected(SelectionEvent e) {
+					ModuleIdentifier identifier = projectService.manageProject(resource);
+					IRhenaModule module = engine.materialiseModel(identifier);
 
-							MenuItem item = (MenuItem) e.getSource();
-							String command = item.getText().split(Pattern.quote("]->"), 2)[1];
+					ILifecycleReference reference = module.getLifecycleDeclarations().get(module.getLifecycleName());
+					if (!reference.getCommands().isEmpty()) {
+						for (ILifecycleCommandReference command : reference.getCommands()) {
+							MenuItem menuItem = new MenuItem(menu, SWT.NONE, index);
+							menuItem.setText("lifecycle[" + reference.getName() + "]->" + command.getCommandName());
+							menuItem.addSelectionListener(new SelectionAdapter() {
 
-							try {
-								platformService.getEngine().getContext().getCache().getExecutions().remove(module.getIdentifier());
-								platformService.getEngine().materialiseExecution(new CommandCaller(module, EExecutionType.TEST, command));
-							} catch (RhenaException exception) {
-								
-								try {
-									platformService.getRhenaLogger().fireLogEvent(ELogLevel.ERROR, RunCommandDynamic.class, identifier, exception.getMessage(), exception);
-								} catch (RhenaException e1) {
-									e1.printStackTrace();
+								@Override
+								public void widgetSelected(SelectionEvent e) {
+
+									MenuItem item = (MenuItem) e.getSource();
+									String command = item.getText().split(Pattern.quote("]->"), 2)[1];
+
+									try {
+										engine.getContext().getCache().getExecutions().remove(module.getIdentifier());
+										engine.materialiseExecution(new CommandCaller(module, EExecutionType.TEST, command));
+									} catch (RhenaException exception) {
+
+										try {
+											platformService.getRhenaLogger().fireLogEvent(ELogLevel.ERROR, getClass(), identifier, exception.getMessage(),
+													exception);
+										} catch (RhenaException e1) {
+
+											e1.printStackTrace();
+										}
+									}
+
 								}
-							}
+							});
 						}
-					});
+					}
+				} catch (Exception ex) {
+
+					ex.printStackTrace();
 				}
 			}
-
-			// super.fill(menu, index);
-			// MenuItem menuItem = new MenuItem(menu, SWT.CHECK, index);
-			// menuItem.setText("My menu item (" + new Date() + ")");
-			// menuItem.addSelectionListener(new SelectionAdapter() {
-			//
-			// public void widgetSelected(SelectionEvent e) {
-			//
-			// // what to do when menu is subsequently selected.
-			// System.err.println("Dynamic menu selected");
-			// }
-			// });
-		} catch (Exception ex) {
-
-			ex.printStackTrace();
-		}
+		});
 	}
 
 }

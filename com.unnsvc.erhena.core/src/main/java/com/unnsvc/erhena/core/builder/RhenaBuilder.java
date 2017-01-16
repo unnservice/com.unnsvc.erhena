@@ -1,52 +1,36 @@
 
 package com.unnsvc.erhena.core.builder;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
-import com.unnsvc.erhena.common.ErhenaUtils;
-import com.unnsvc.erhena.common.events.ProfilerDiagnosticsEvent;
 import com.unnsvc.erhena.core.Activator;
-import com.unnsvc.erhena.core.classpath.RhenaClasspathContainerInitializer;
-import com.unnsvc.erhena.core.classpath.RhenaFrameworkClasspathContainer;
+import com.unnsvc.erhena.platform.service.IProjectService;
+import com.unnsvc.erhena.platform.service.IRhenaService;
 import com.unnsvc.erhena.platform.service.IRhenaTransaction;
-import com.unnsvc.erhena.platform.service.ProjectService;
-import com.unnsvc.erhena.platform.service.RhenaService;
 import com.unnsvc.rhena.common.IRhenaEngine;
 import com.unnsvc.rhena.common.execution.EExecutionType;
 import com.unnsvc.rhena.common.execution.IRhenaExecution;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
-import com.unnsvc.rhena.common.lifecycle.IResource;
-import com.unnsvc.rhena.common.model.ERhenaModuleType;
 import com.unnsvc.rhena.common.model.IRhenaModule;
 import com.unnsvc.rhena.core.Caller;
-import com.unnsvc.rhena.core.execution.WorkspaceExecution;
 
 public class RhenaBuilder extends IncrementalProjectBuilder {
 
@@ -55,9 +39,9 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 	@Inject
 	private IEventBroker eventBroker;
 	@Inject
-	private RhenaService platformService;
+	private IRhenaService platformService;
 	@Inject
-	private ProjectService projectService;
+	private IProjectService projectService;
 
 	public RhenaBuilder() {
 
@@ -73,32 +57,45 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 		IJavaProject javaProject = JavaCore.create(project);
 
 		try {
-			System.err.println("Project service is " + projectService);
 			platformService.newTransaction(new IRhenaTransaction() {
 
 				@Override
 				public void execute(IRhenaEngine engine) throws Throwable {
 
-					if (kind == IncrementalProjectBuilder.FULL_BUILD) {
-						// full builds
-
-						fullBuild(javaProject, engine);
-
-					} else if (kind == IncrementalProjectBuilder.CLEAN_BUILD) {
+					if (kind == IncrementalProjectBuilder.CLEAN_BUILD) {
 						// clean build
 
 					} else {
-						// incremental and auto builds
-						// has delta getDelta(getProject())
-						fullBuild(javaProject, engine);
+						// incremental, full, and auto
+						// only care about relevant changes (that aren't to the output directory or to module.xml)
+						BuildDeltaTracker tracker = isRelevantDelta(getDelta(getProject()));
+						if (!tracker.getResources().isEmpty()) {
+							fullBuild(javaProject, engine);
+						}
 					}
 				}
 			});
 		} catch (Throwable t) {
+
 			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, t.getMessage(), t));
 		}
 
 		return null;
+	}
+
+	private BuildDeltaTracker isRelevantDelta(IResourceDelta delta) throws CoreException {
+
+		/**
+		 * @TODO evaluate if we can allow dynamic lookup of output directories
+		 */
+
+		BuildDeltaTracker tracker = new BuildDeltaTracker(getProject());
+
+		if (delta != null) {
+			delta.accept(tracker);
+		}
+
+		return tracker;
 	}
 
 	private void fullBuild(IJavaProject javaProject, IRhenaEngine engine) throws Throwable {
@@ -107,7 +104,7 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 		IRhenaModule module = engine.materialiseModel(projectIdentifier);
 
 		// Build all parents in the workspace model
-		for (ModuleIdentifier root : platformService.getEngine().findRoots(projectIdentifier, EExecutionType.TEST)) {
+		for (ModuleIdentifier root : engine.findRoots(projectIdentifier, EExecutionType.TEST)) {
 
 			System.err.println("Building project " + root);
 
@@ -115,59 +112,17 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 			IRhenaExecution exec = engine.materialiseExecution(new Caller(rootModule, EExecutionType.TEST));
 		}
 
-		WorkspaceExecution execution = (WorkspaceExecution) engine.materialiseExecution(new Caller(module, EExecutionType.TEST));
-		System.err.println("Produced workspace execution: " + execution);
-
-		eventBroker.post(ProfilerDiagnosticsEvent.TOPIC, new ProfilerDiagnosticsEvent(platformService.getDiagnostics()));
-
-		/**
-		 * Drop the model and execution after we're done?
-		 */
-		configureProject(javaProject, module, execution);
+//		WorkspaceExecution execution = (WorkspaceExecution) engine.materialiseExecution(new Caller(module, EExecutionType.TEST));
+//		System.err.println("Produced workspace execution: " + execution);
+//
+//		eventBroker.post(ProfilerDiagnosticsEvent.TOPIC, new ProfilerDiagnosticsEvent(platformService.getDiagnostics()));
+//
+//		/**
+//		 * Drop the model and execution after we're done?
+//		 */
+//		configureProject(javaProject, module, execution);
 	}
 
-	private void configureProject(IJavaProject javaProject, IRhenaModule module, WorkspaceExecution execution) throws CoreException {
 
-		// Source paths
-		List<IClasspathEntry> sourcePaths = new ArrayList<IClasspathEntry>();
-		for (IResource resource : execution.getInputs()) {
-			System.err.println(javaProject.getProject().getName() + " Adding source folder: " + resource.getRelativePath());
-			IFolder sourceFolder = getProject().getFolder(resource.getRelativePath());
-			ErhenaUtils.createFolder(sourceFolder);
-			IPackageFragmentRoot fragmentRoot = javaProject.getPackageFragmentRoot(sourceFolder);
-			IClasspathEntry entry = JavaCore.newSourceEntry(fragmentRoot.getPath());
-			sourcePaths.add(entry);
-		}
-
-		// JVM entry
-		IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
-		IPath jreContainerPath = new Path(JavaRuntime.JRE_CONTAINER);
-		IPath vmPath = jreContainerPath.append(vmInstall.getVMInstallType().getId()).append(vmInstall.getName());
-		IClasspathEntry jreEntry = JavaCore.newContainerEntry(vmPath);
-		sourcePaths.add(jreEntry);
-
-		//
-		// for(IClasspathEntry ce : project.getRawClasspath()) {
-		// System.err.println("Classpath in build: " + ce);
-		// }
-
-		IPath containerPath = new Path(RhenaClasspathContainerInitializer.CONTAINER_ID);
-
-		RhenaClasspathContainerInitializer initializer = (RhenaClasspathContainerInitializer) JavaCore
-				.getClasspathContainerInitializer(containerPath.segment(0));
-		initializer.addClasspathEntry(JavaCore.newLibraryEntry(new Path("/home/noname/.m2/repository/log4j/log4j/1.2.17/log4j-1.2.17.jar"), null, null));
-
-		IClasspathEntry containerEntry = JavaCore.newContainerEntry(containerPath);
-		sourcePaths.add(containerEntry);
-
-		// rhena framework library
-		if (module.getModuleType().equals(ERhenaModuleType.FRAMEWORK)) {
-			IClasspathEntry frameworkContainer = JavaCore.newContainerEntry(new Path(RhenaFrameworkClasspathContainer.CONTAINER_ID));
-			sourcePaths.add(frameworkContainer);
-		}
-
-		javaProject.setRawClasspath(sourcePaths.toArray(new IClasspathEntry[sourcePaths.size()]), new NullProgressMonitor());
-
-	}
 
 }

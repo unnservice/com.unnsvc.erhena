@@ -10,23 +10,19 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.e4.core.di.annotations.Creatable;
 
 import com.unnsvc.rhena.common.Utils;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 
 @Singleton
-@Creatable
 public class ProjectService implements IProjectService {
 
 	private Map<URI, ModuleIdentifier> managedProjects;
-	private RhenaService rhena;
 
 	@Inject
-	public ProjectService(RhenaService rhena) {
+	public ProjectService() {
 
-		this.rhena = rhena;
 		managedProjects = new HashMap<URI, ModuleIdentifier>();
 	}
 
@@ -42,6 +38,7 @@ public class ProjectService implements IProjectService {
 		return identifier;
 	}
 
+	@Override
 	public ModuleIdentifier manageProject(IProject project) throws RhenaException {
 
 		return manageProject(project.getLocationURI());

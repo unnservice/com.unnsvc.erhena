@@ -14,7 +14,6 @@ import javax.inject.Singleton;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
 
 import com.unnsvc.erhena.common.ErhenaConstants;
@@ -43,12 +42,12 @@ import com.unnsvc.rhena.profiling.report.IDiagnosticReport;
 
 /**
  * @TODO As the platform service handlest most eRhena oepartions, test it
- * 
+ * @DEVNOTE services aren't @Creatable anymore because they need to be injected
+ *          by interface
  * @author noname
  *
  */
 @Singleton
-@Creatable
 public class RhenaService implements IRhenaService {
 
 	/**
@@ -62,7 +61,12 @@ public class RhenaService implements IRhenaService {
 	@Inject
 	public RhenaService(IEventBroker eventBorker) {
 
-		this.config = new RhenaConfiguration();
+		configureContext(eventBorker);
+	}
+
+	private void configureContext(IEventBroker eventBorker) {
+
+		config = new RhenaConfiguration();
 		config.setRhenaHome(new File(System.getProperty("user.home"), ".rhena"));
 		config.setRunTest(true);
 		config.setRunItest(true);
@@ -97,7 +101,7 @@ public class RhenaService implements IRhenaService {
 		 * Workaround for ensuring that the rmi registry receives the right
 		 * classpath
 		 */
-		this.context = rmiRegistryClasspathWorkaround(config);
+		context = rmiRegistryClasspathWorkaround(config);
 		context.addWorkspaceRepository(new WorkspaceRepository(context, new File("../../")));
 		context.addWorkspaceRepository(new WorkspaceRepository(context, new File("../")));
 		context.setLocalRepository(new LocalCacheRepository(context));
@@ -118,7 +122,8 @@ public class RhenaService implements IRhenaService {
 			}
 		});
 
-		// context.addListener(new ProjectConfigurationHandler(this, context));
+		// context.addListener(new ProjectConfigurationHandler(this,
+		// context));
 
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		File workspacePath = new File(workspaceRoot.getLocationURI());
@@ -230,18 +235,20 @@ public class RhenaService implements IRhenaService {
 	 * @throws Throwable
 	 *             Any exception
 	 */
-	public void newTransaction(IRhenaTransaction transaction) throws Throwable {
+	@Override
+	public void newTransaction(IRhenaTransaction transaction) {
 
-		/**
-		 * @TODO context is AutoClosable so use it like that in try(Context)
-		 */
 		try {
 			transaction.execute(engine);
+		} catch (Throwable e) {
+
+			e.printStackTrace();
 		} finally {
 
 			// engine.getContext().close();
 
-			// @TODO auto closable context so we wont need this after code
+			// @TODO auto closable context so we wont need this
+			// after code
 			// refactoring
 			engine.getContext().getCache().getExecutions().clear();
 			engine.getContext().getCache().getLifecycles().clear();
@@ -252,6 +259,7 @@ public class RhenaService implements IRhenaService {
 			engine.getContext().getCache().getEdges().clear();
 			engine.getContext().getCache().getMerged().clear();
 		}
+
 	}
 
 	public IRhenaExecution buildProject(ModuleIdentifier identifier) throws RhenaException {
@@ -262,11 +270,7 @@ public class RhenaService implements IRhenaService {
 		return execution;
 	}
 
-	public IRhenaEngine getEngine() {
-
-		return engine;
-	}
-
+	@Override
 	public ILogger getRhenaLogger() {
 
 		return context.getLogger();
