@@ -14,11 +14,18 @@ import javax.inject.Singleton;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.services.events.IEventBroker;
 
 import com.unnsvc.erhena.common.ErhenaConstants;
 import com.unnsvc.erhena.common.ErhenaUtils;
 import com.unnsvc.erhena.common.events.AgentProcessStartExitEvent;
+import com.unnsvc.erhena.common.events.ProfilerDiagnosticsEvent;
+import com.unnsvc.erhena.platform.Activator;
 import com.unnsvc.rhena.common.ICaller;
 import com.unnsvc.rhena.common.IRhenaConfiguration;
 import com.unnsvc.rhena.common.IRhenaContext;
@@ -37,7 +44,6 @@ import com.unnsvc.rhena.core.RhenaConfiguration;
 import com.unnsvc.rhena.core.RhenaContext;
 import com.unnsvc.rhena.core.RhenaEngine;
 import com.unnsvc.rhena.core.events.LogEvent;
-import com.unnsvc.rhena.core.resolution.Dependencies;
 import com.unnsvc.rhena.core.resolution.LocalCacheRepository;
 import com.unnsvc.rhena.core.resolution.WorkspaceRepository;
 import com.unnsvc.rhena.core.visitors.URLDependencyTreeVisitor;
@@ -60,11 +66,13 @@ public class RhenaService implements IRhenaService {
 	private IRhenaContext context;
 	private IRhenaEngine engine;
 	// module => projectName tracking
+	private IEventBroker eventBroker;
 
 	@Inject
-	public RhenaService(IEventBroker eventBorker) {
+	public RhenaService(IEventBroker eventBroker) {
 
-		configureContext(eventBorker);
+		this.eventBroker = eventBroker;
+		configureContext(eventBroker);
 	}
 
 	private void configureContext(IEventBroker eventBorker) {
@@ -243,6 +251,19 @@ public class RhenaService implements IRhenaService {
 
 		try {
 			transaction.execute(engine);
+			new WorkspaceJob("Sending diagnostics") {
+
+				@Override
+				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+
+					try {
+						eventBroker.send(ProfilerDiagnosticsEvent.TOPIC, new ProfilerDiagnosticsEvent(getDiagnostics()));
+					} catch (Exception ex) {
+						throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, ex.getMessage(), ex));
+					}
+					return Status.OK_STATUS;
+				}
+			}.schedule();
 		} catch (Throwable e) {
 
 			e.printStackTrace();
@@ -296,7 +317,7 @@ public class RhenaService implements IRhenaService {
 
 		URLDependencyTreeVisitor deptree = new URLDependencyTreeVisitor(engine.getContext().getCache(), type);
 		module.visit(deptree);
-		System.err.println("Collected dependencies for "+ module.getIdentifier() + " to " + deptree.getDependencies());
+		System.err.println("Collected dependencies for " + module.getIdentifier() + " to " + deptree.getDependencies());
 		return deptree.getDependencies();
 	}
 }
