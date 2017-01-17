@@ -29,7 +29,6 @@ import com.unnsvc.rhena.common.execution.IRhenaExecution;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 import com.unnsvc.rhena.common.listener.IContextListener;
 import com.unnsvc.rhena.common.logging.ILogger;
-import com.unnsvc.rhena.common.model.IRhenaEdge;
 import com.unnsvc.rhena.common.model.IRhenaModule;
 import com.unnsvc.rhena.common.process.IProcessListener;
 import com.unnsvc.rhena.common.visitors.IDependencies;
@@ -38,10 +37,10 @@ import com.unnsvc.rhena.core.RhenaConfiguration;
 import com.unnsvc.rhena.core.RhenaContext;
 import com.unnsvc.rhena.core.RhenaEngine;
 import com.unnsvc.rhena.core.events.LogEvent;
+import com.unnsvc.rhena.core.resolution.Dependencies;
 import com.unnsvc.rhena.core.resolution.LocalCacheRepository;
 import com.unnsvc.rhena.core.resolution.WorkspaceRepository;
-import com.unnsvc.rhena.core.visitors.Dependencies;
-import com.unnsvc.rhena.core.visitors.DependencyCollectionVisitor;
+import com.unnsvc.rhena.core.visitors.URLDependencyTreeVisitor;
 import com.unnsvc.rhena.profiling.report.IDiagnosticReport;
 
 /**
@@ -295,17 +294,9 @@ public class RhenaService implements IRhenaService {
 	@Override
 	public IDependencies collectDependencies(IRhenaModule module, EExecutionType type) throws RhenaException {
 
-		IDependencies deps = new Dependencies(type);
-		for (IRhenaEdge edge : module.getDependencies()) {
-			IRhenaModule depmod = engine.getContext().getCache().getModule(edge.getEntryPoint().getTarget());
-			DependencyCollectionVisitor coll = new DependencyCollectionVisitor(engine.getContext().getCache(), edge);
-			depmod.visit(coll);
-
-			for (IRhenaExecution exec : coll.getDependencies()) {
-
-				deps.addDependency(edge.getEntryPoint().getExecutionType(), exec);
-			}
-		}
-		return deps;
+		URLDependencyTreeVisitor deptree = new URLDependencyTreeVisitor(engine.getContext().getCache(), type);
+		module.visit(deptree);
+		System.err.println("Collected dependencies for "+ module.getIdentifier() + " to " + deptree.getDependencies());
+		return deptree.getDependencies();
 	}
 }

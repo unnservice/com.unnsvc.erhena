@@ -4,7 +4,6 @@ package com.unnsvc.erhena.core.builder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -12,6 +11,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -30,7 +30,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
@@ -170,16 +169,13 @@ public class ModuleResourceChangeListener implements IResourceChangeListener {
 		IDependencies dependencies = platformService.collectDependencies(module, EExecutionType.TEST);
 
 		IPath mainPath = containerPath.append(project.getName() + "_main");
-		RhenaClasspathContainer mainTypeContainer = new RhenaClasspathContainer("eRhena Main", mainPath,
-				toList(mainPath, dependencies.getDependencies().get(EExecutionType.MAIN)));
+		RhenaClasspathContainer mainTypeContainer = new RhenaClasspathContainer("eRhena Main", mainPath, toList(mainPath, dependencies.getDependencies(EExecutionType.MAIN)));
 		JavaCore.setClasspathContainer(mainPath, new IJavaProject[] { javaProject }, new IClasspathContainer[] { mainTypeContainer }, null);
 
 		IPath testPath = containerPath.append(project.getName() + "_test");
-		RhenaClasspathContainer testTypeContainer = new RhenaClasspathContainer("eRhena Test", testPath,
-				toList(testPath, dependencies.getDependencies().get(EExecutionType.TEST)));
+		RhenaClasspathContainer testTypeContainer = new RhenaClasspathContainer("eRhena Test", testPath, toList(testPath, dependencies.getDependencies(EExecutionType.TEST)));
 		JavaCore.setClasspathContainer(testPath, new IJavaProject[] { javaProject }, new IClasspathContainer[] { testTypeContainer }, null);
-		
-		
+
 		sourcePaths.add(JavaCore.newContainerEntry(mainPath));
 		sourcePaths.add(JavaCore.newContainerEntry(testPath));
 
@@ -189,10 +185,10 @@ public class ModuleResourceChangeListener implements IResourceChangeListener {
 			sourcePaths.add(frameworkContainer);
 		}
 
-		UIJob job = new UIJob("Setting classpath") {
+		WorkspaceJob job = new WorkspaceJob("Setting classpath") {
 
 			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
+			public IStatus runInWorkspace(IProgressMonitor monitor) {
 
 				try {
 					javaProject.setRawClasspath(sourcePaths.toArray(new IClasspathEntry[sourcePaths.size()]), new NullProgressMonitor());
@@ -217,6 +213,7 @@ public class ModuleResourceChangeListener implements IResourceChangeListener {
 			IClasspathEntry entry = JavaCore.newLibraryEntry(new Path(exec.getArtifact().getArtifactUrl().getFile()), null, null);
 			entries.add(entry);
 		}
+		System.err.println("Setting classpath entries for " + containerPath + " to: " + entries + " from " + list);
 		return entries;
 	}
 }

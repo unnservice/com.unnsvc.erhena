@@ -94,7 +94,15 @@ public class RunCommandDynamic extends ContributionItem {
 									String command = item.getText().split(Pattern.quote("]->"), 2)[1];
 
 									try {
+										// Need to get the module again because
+										// by the time we enter this listener,
+										// the transaction is completed and the
+										// context is cleared, so the module
+										// reference doesn't have a lifecycle
+										// from the cache, so we need to get it
+										// again
 										engine.getContext().getCache().getExecutions().remove(module.getIdentifier());
+										IRhenaModule module = engine.materialiseModel(identifier);
 										engine.materialiseExecution(new CommandCaller(module, EExecutionType.TEST, command));
 									} catch (RhenaException exception) {
 
