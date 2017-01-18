@@ -29,12 +29,14 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import com.unnsvc.erhena.core.classpath.RhenaClasspathContainer;
 import com.unnsvc.erhena.core.classpath.RhenaClasspathContainerInitializer;
 import com.unnsvc.erhena.core.classpath.RhenaFrameworkClasspathContainer;
-import com.unnsvc.erhena.platform.service.IProjectService;
 import com.unnsvc.erhena.platform.service.IPlatformService;
+import com.unnsvc.erhena.platform.service.IProjectService;
 import com.unnsvc.erhena.platform.service.IRhenaTransaction;
 import com.unnsvc.rhena.common.IRhenaEngine;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.execution.EExecutionType;
+import com.unnsvc.rhena.common.execution.IArtifactDescriptor;
+import com.unnsvc.rhena.common.execution.IExplodedArtifactDescriptor;
 import com.unnsvc.rhena.common.execution.IRhenaExecution;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 import com.unnsvc.rhena.common.lifecycle.IResource;
@@ -172,8 +174,16 @@ public class ProjectReconfigurationService implements IProjectReconfigurationSer
 		List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
 		for (IRhenaExecution exec : list) {
 
-			IClasspathEntry entry = JavaCore.newLibraryEntry(new Path(exec.getArtifact().getArtifactUrl().getFile()), null, null);
-			entries.add(entry);
+			for (IArtifactDescriptor descriptor : exec.getArtifacts()) {
+				if (descriptor instanceof IExplodedArtifactDescriptor) {
+					IExplodedArtifactDescriptor exploded = (IExplodedArtifactDescriptor) descriptor;
+					IClasspathEntry entry = JavaCore.newLibraryEntry(new Path(exploded.getArtifactUrl().getPath()), new Path(exploded.getArtifactSourceUrl().getPath()), null);
+					entries.add(entry);
+				} else {
+					IClasspathEntry entry = JavaCore.newLibraryEntry(new Path(descriptor.getArtifactUrl().getPath()), null, null);
+					entries.add(entry);
+				}
+			}
 		}
 		System.err.println("Setting classpath entries for " + containerPath + " to: " + entries + " from " + list);
 		return entries;

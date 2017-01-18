@@ -30,11 +30,13 @@ public class RhenaFrameworkContainer implements IClasspathContainer {
 			URL commonLib = new File(ErhenaUtils.locateClasspath("com.unnsvc.rhena.common")).toURI().toURL();
 			URL coreLib = new File(ErhenaUtils.locateClasspath("com.unnsvc.rhena.core")).toURI().toURL();
 			URL lifecycleLib = new File(ErhenaUtils.locateClasspath("com.unnsvc.rhena.lifecycle")).toURI().toURL();
+			URL agentLib = new File(ErhenaUtils.locateClasspath("com.unnsvc.rhena.agent")).toURI().toURL();
 			
 			return new IClasspathEntry[] { 
 					JavaCore.newLibraryEntry(new Path(commonLib.getFile()), null, null),
 					JavaCore.newLibraryEntry(new Path(coreLib.getFile()), null, null),
-					JavaCore.newLibraryEntry(new Path(lifecycleLib.getFile()), null, null)
+					JavaCore.newLibraryEntry(new Path(lifecycleLib.getFile()), null, null),
+					JavaCore.newLibraryEntry(new Path(agentLib.getFile()), null, null)
 			};
 		} catch (IOException | URISyntaxException ioe) {
 			/**
