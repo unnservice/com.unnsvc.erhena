@@ -166,8 +166,9 @@ public class ModuleResourceChangeListener implements IResourceChangeListener {
 		// null, null));
 
 		IPath containerPath = new Path(RhenaClasspathContainerInitializer.CONTAINER_ID);
+		
 		IDependencies dependencies = platformService.collectDependencies(module, EExecutionType.TEST);
-
+		
 		IPath mainPath = containerPath.append(project.getName() + "_main");
 		RhenaClasspathContainer mainTypeContainer = new RhenaClasspathContainer("eRhena Main", mainPath, toList(mainPath, dependencies.getDependencies(EExecutionType.MAIN)));
 		JavaCore.setClasspathContainer(mainPath, new IJavaProject[] { javaProject }, new IClasspathContainer[] { mainTypeContainer }, null);

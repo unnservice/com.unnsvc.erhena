@@ -36,6 +36,7 @@ import com.unnsvc.rhena.common.execution.IRhenaExecution;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 import com.unnsvc.rhena.common.listener.IContextListener;
 import com.unnsvc.rhena.common.logging.ILogger;
+import com.unnsvc.rhena.common.model.ESelectionType;
 import com.unnsvc.rhena.common.model.IRhenaModule;
 import com.unnsvc.rhena.common.process.IProcessListener;
 import com.unnsvc.rhena.common.visitors.IDependencies;
@@ -315,9 +316,9 @@ public class RhenaService implements IRhenaService {
 	@Override
 	public IDependencies collectDependencies(IRhenaModule module, EExecutionType type) throws RhenaException {
 
-		URLDependencyTreeVisitor deptree = new URLDependencyTreeVisitor(engine.getContext().getCache(), type);
+		URLDependencyTreeVisitor deptree = new URLDependencyTreeVisitor(engine.getContext().getCache(), type, ESelectionType.SCOPE);
 		module.visit(deptree);
-		System.err.println("Collected dependencies for " + module.getIdentifier() + " to " + deptree.getDependencies());
+//		System.err.println("Collected dependencies for " + module.getIdentifier() + " to " + deptree.getDependencies());
 		return deptree.getDependencies();
 	}
 }
