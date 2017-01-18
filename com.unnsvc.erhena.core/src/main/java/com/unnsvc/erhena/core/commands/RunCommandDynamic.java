@@ -24,7 +24,7 @@ import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.core.Activator;
 import com.unnsvc.erhena.platform.service.IProjectService;
-import com.unnsvc.erhena.platform.service.IRhenaService;
+import com.unnsvc.erhena.platform.service.IPlatformService;
 import com.unnsvc.erhena.platform.service.IRhenaTransaction;
 import com.unnsvc.rhena.common.IRhenaEngine;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
@@ -39,7 +39,7 @@ import com.unnsvc.rhena.core.CommandCaller;
 public class RunCommandDynamic extends ContributionItem {
 
 	@Inject
-	private IRhenaService platformService;
+	private IPlatformService platformService;
 	@Inject
 	private IProjectService projectService;
 

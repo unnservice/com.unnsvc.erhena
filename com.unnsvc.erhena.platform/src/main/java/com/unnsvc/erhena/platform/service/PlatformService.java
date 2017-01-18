@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.ui.progress.UIJob;
 
 import com.unnsvc.erhena.common.ErhenaConstants;
 import com.unnsvc.erhena.common.ErhenaUtils;
@@ -35,6 +36,7 @@ import com.unnsvc.rhena.common.execution.EExecutionType;
 import com.unnsvc.rhena.common.execution.IRhenaExecution;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 import com.unnsvc.rhena.common.listener.IContextListener;
+import com.unnsvc.rhena.common.logging.ELogLevel;
 import com.unnsvc.rhena.common.logging.ILogger;
 import com.unnsvc.rhena.common.model.ESelectionType;
 import com.unnsvc.rhena.common.model.IRhenaModule;
@@ -58,7 +60,7 @@ import com.unnsvc.rhena.profiling.report.IDiagnosticReport;
  *
  */
 @Singleton
-public class RhenaService implements IRhenaService {
+public class PlatformService implements IPlatformService {
 
 	/**
 	 * Single context throughout the application
@@ -70,7 +72,7 @@ public class RhenaService implements IRhenaService {
 	private IEventBroker eventBroker;
 
 	@Inject
-	public RhenaService(IEventBroker eventBroker) {
+	public PlatformService(IEventBroker eventBroker) {
 
 		this.eventBroker = eventBroker;
 		configureContext(eventBroker);
@@ -267,7 +269,19 @@ public class RhenaService implements IRhenaService {
 			}.schedule();
 		} catch (Throwable e) {
 
-			e.printStackTrace();
+			try {
+				getRhenaLogger().fireLogEvent(ELogLevel.ERROR, getClass(), null, e.getMessage(), e);
+			} catch (RhenaException ex) {
+
+				new UIJob("Exception in rhena module change listener") {
+
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+
+						return new Status(IStatus.ERROR, Activator.PLUGIN_ID, ex.getMessage(), e);
+					}
+				}.schedule();
+			}
 		} finally {
 
 			// engine.getContext().close();
@@ -318,7 +332,8 @@ public class RhenaService implements IRhenaService {
 
 		URLDependencyTreeVisitor deptree = new URLDependencyTreeVisitor(engine.getContext().getCache(), type, ESelectionType.SCOPE);
 		module.visit(deptree);
-//		System.err.println("Collected dependencies for " + module.getIdentifier() + " to " + deptree.getDependencies());
+		// System.err.println("Collected dependencies for " +
+		// module.getIdentifier() + " to " + deptree.getDependencies());
 		return deptree.getDependencies();
 	}
 }

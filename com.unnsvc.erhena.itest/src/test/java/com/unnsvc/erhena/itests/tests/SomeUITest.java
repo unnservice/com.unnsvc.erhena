@@ -14,13 +14,13 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.itests.Activator;
-import com.unnsvc.erhena.platform.service.IRhenaService;
+import com.unnsvc.erhena.platform.service.IPlatformService;
 
 
 public class SomeUITest {
 	
 	@Inject
-	private IRhenaService platformService;
+	private IPlatformService platformService;
 
 	@Test
 	public void someTest() throws Exception {

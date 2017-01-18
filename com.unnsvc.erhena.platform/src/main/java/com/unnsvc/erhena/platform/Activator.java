@@ -7,9 +7,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import com.unnsvc.erhena.platform.service.IProjectService;
-import com.unnsvc.erhena.platform.service.IRhenaService;
+import com.unnsvc.erhena.platform.service.IPlatformService;
 import com.unnsvc.erhena.platform.service.ProjectService;
-import com.unnsvc.erhena.platform.service.RhenaService;
+import com.unnsvc.erhena.platform.service.PlatformService;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -42,14 +42,14 @@ public class Activator extends AbstractUIPlugin {
 	@SuppressWarnings("restriction")
 	public void start(BundleContext context) throws Exception {
 
+		InjectorFactory.getDefault().addBinding(IPlatformService.class).implementedBy(PlatformService.class);
+		InjectorFactory.getDefault().addBinding(IProjectService.class).implementedBy(ProjectService.class);
+		
 		super.start(context);
 		plugin = this;
 		// this.context = context;
 		// listener = new RhenaModuleChangeListener();
 		// workspace.addResourceChangeListener(listener);
-
-		InjectorFactory.getDefault().addBinding(IRhenaService.class).implementedBy(RhenaService.class);
-		InjectorFactory.getDefault().addBinding(IProjectService.class).implementedBy(ProjectService.class);
 	}
 
 	/*

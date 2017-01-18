@@ -7,7 +7,7 @@ import com.unnsvc.rhena.common.logging.ILogger;
 import com.unnsvc.rhena.common.model.IRhenaModule;
 import com.unnsvc.rhena.common.visitors.IDependencies;
 
-public interface IRhenaService {
+public interface IPlatformService {
 
 	public void newTransaction(IRhenaTransaction transaction);
 
