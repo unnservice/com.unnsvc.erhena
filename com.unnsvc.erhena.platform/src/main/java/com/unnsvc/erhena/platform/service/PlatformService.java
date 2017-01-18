@@ -82,8 +82,6 @@ public class PlatformService implements IPlatformService {
 
 		config = new RhenaConfiguration();
 		config.setRhenaHome(new File(System.getProperty("user.home"), ".rhena"));
-		config.setRunTest(true);
-		config.setRunItest(true);
 		config.setParallel(false);
 		config.setPackageWorkspace(false);
 		config.setInstallLocal(true);
