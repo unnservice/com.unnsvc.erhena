@@ -43,27 +43,4 @@ public class ProjectService implements IProjectService {
 
 		return manageProject(project.getLocationURI());
 	}
-
-	// public IRhenaModule newWorkspaceEntryPoint(URI projectLocation) throws
-	// RhenaException {
-	//
-	// ModuleIdentifier identifier = entryPoints.get(projectLocation);
-	// if (identifier == null) {
-	// File moduleLocation = new File(projectLocation);
-	// identifier = Utils.readModuleIdentifier(moduleLocation);
-	// }
-	//
-	// IRhenaModule module = rhena.getEngine().materialiseModel(identifier);
-	// if (!entryPoints.containsKey(module.getIdentifier())) {
-	// entryPoints.put(projectLocation, module.getIdentifier());
-	// }
-	//
-	// return module;
-	// }
-	//
-	// public ModuleIdentifier getEntryPointIdentifier(String
-	// workspaceProjectName) {
-	//
-	// return entryPoints.get(workspaceProjectName);
-	// }
 }
