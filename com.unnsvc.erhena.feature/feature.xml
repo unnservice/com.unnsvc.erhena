@@ -2,7 +2,7 @@
 <feature
       id="com.unnsvc.erhena.feature"
       label="Feature"
-      version="1.0.0.qualifier"
+      version="0.2.0.qualifier"
       provider-name="UNNSVC">
 
    <description url="http://www.example.com/description">
