@@ -3,16 +3,19 @@ package com.unnsvc.erhena.wizards;
 
 import java.net.URI;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkingSet;
 
 public class RhenaModuleWizard extends Wizard implements INewWizard {
 
@@ -39,7 +42,7 @@ public class RhenaModuleWizard extends Wizard implements INewWizard {
 
 	@Override
 	public boolean performFinish() {
-		
+
 		try {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			IWorkspaceRunnable operation = new IWorkspaceRunnable() {
@@ -50,7 +53,22 @@ public class RhenaModuleWizard extends Wizard implements INewWizard {
 					String projectName = page.getProjectName();
 					URI location = page.getProjectLocationURI();
 
-					RhenaModuleProjectSupport.createProject(componentName, projectName, location, monitor);
+					IProject created = RhenaModuleProjectSupport.createProject(componentName, projectName, location, monitor);
+
+					for(IWorkingSet workingSet : page.getWorkingSets()) {
+						
+						IAdaptable[] existing = workingSet.getElements();
+						IAdaptable[] newExisting = new IAdaptable[existing.length + 1];
+						System.arraycopy(existing, 0, newExisting, 0, existing.length);
+						newExisting[existing.length] = created;
+						workingSet.setElements(newExisting);
+					}
+					
+
+					// IWorkingSetManager workingSetManager =
+					// PlatformUI.getWorkbench().getWorkingSetManager();
+					// workingSetManager.createWorkingSet("my working set",
+					// elements);
 				}
 			};
 			workspace.run(operation, new NullProgressMonitor());
