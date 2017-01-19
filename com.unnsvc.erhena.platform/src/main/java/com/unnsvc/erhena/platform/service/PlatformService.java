@@ -80,68 +80,76 @@ public class PlatformService implements IPlatformService {
 
 	private void configureContext(IEventBroker eventBorker) {
 
-		config = new RhenaConfiguration();
-		config.setRhenaHome(new File(System.getProperty("user.home"), ".rhena"));
-		config.setParallel(false);
-		config.setPackageWorkspace(false);
-		config.setInstallLocal(true);
-		config.setAgentClasspath(buildAgentClasspath());
-		config.getAgentStartListeners().add(new IProcessListener() {
-
-			@Override
-			public void onProcess(Process process) {
-
-				eventBorker.post(AgentProcessStartExitEvent.TOPIC, new AgentProcessStartExitEvent(AgentProcessStartExitEvent.EStartStop.START));
-			}
-		});
-		config.getAgentExitListeners().add(new IProcessListener() {
-
-			@Override
-			public void onProcess(Process process) {
-
-				eventBorker.post(AgentProcessStartExitEvent.TOPIC, new AgentProcessStartExitEvent(AgentProcessStartExitEvent.EStartStop.STOP));
-			}
-		});
-
 		try {
+			config = new RhenaConfiguration();
+			config.setRhenaHome(new File(System.getProperty("user.home"), ".rhena"));
+			config.setParallel(false);
+			config.setPackageWorkspace(false);
+			config.setInstallLocal(true);
+			config.setAgentClasspath(buildAgentClasspath());
+			config.getAgentStartListeners().add(new IProcessListener() {
+
+				@Override
+				public void onProcess(Process process) {
+
+					eventBorker.post(AgentProcessStartExitEvent.TOPIC, new AgentProcessStartExitEvent(AgentProcessStartExitEvent.EStartStop.START));
+				}
+			});
+			config.getAgentExitListeners().add(new IProcessListener() {
+
+				@Override
+				public void onProcess(Process process) {
+
+					eventBorker.post(AgentProcessStartExitEvent.TOPIC, new AgentProcessStartExitEvent(AgentProcessStartExitEvent.EStartStop.STOP));
+				}
+			});
+
 			config.setProfilerClasspath(buildProfilerClasspath());
+
+			/**
+			 * Workaround for ensuring that the rmi registry receives the right
+			 * classpath
+			 */
+			context = rmiRegistryClasspathWorkaround(config);
+			context.addWorkspaceRepository(new WorkspaceRepository(context, new File("../../")));
+			context.addWorkspaceRepository(new WorkspaceRepository(context, new File("../")));
+			context.setLocalRepository(new LocalCacheRepository(context));
+			context.getListenerConfig().addListener(new IContextListener<LogEvent>() {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public Class<LogEvent> getType() {
+
+					return LogEvent.class;
+				}
+
+				@Override
+				public void onEvent(LogEvent evt) throws RhenaException {
+
+					eventBorker.post(ErhenaConstants.TOPIC_LOGEVENT, evt);
+				}
+			});
+
+			// context.addListener(new ProjectConfigurationHandler(this,
+			// context));
+
+			IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+			File workspacePath = new File(workspaceRoot.getLocationURI());
+			context.addWorkspaceRepository(new WorkspaceRepository(context, workspacePath));
+
+			engine = new RhenaEngine(context);
+			
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			new WorkspaceJob("Throwing exception while constructing configuration") {
+
+				@Override
+				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+
+					return new Status(IStatus.ERROR, Activator.PLUGIN_ID, ex.getMessage(), ex);
+				}
+			}.schedule();
 		}
-
-		/**
-		 * Workaround for ensuring that the rmi registry receives the right
-		 * classpath
-		 */
-		context = rmiRegistryClasspathWorkaround(config);
-		context.addWorkspaceRepository(new WorkspaceRepository(context, new File("../../")));
-		context.addWorkspaceRepository(new WorkspaceRepository(context, new File("../")));
-		context.setLocalRepository(new LocalCacheRepository(context));
-		context.getListenerConfig().addListener(new IContextListener<LogEvent>() {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public Class<LogEvent> getType() {
-
-				return LogEvent.class;
-			}
-
-			@Override
-			public void onEvent(LogEvent evt) throws RhenaException {
-
-				eventBorker.post(ErhenaConstants.TOPIC_LOGEVENT, evt);
-			}
-		});
-
-		// context.addListener(new ProjectConfigurationHandler(this,
-		// context));
-
-		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		File workspacePath = new File(workspaceRoot.getLocationURI());
-		context.addWorkspaceRepository(new WorkspaceRepository(context, workspacePath));
-
-		engine = new RhenaEngine(context);
 	}
 
 	private String buildProfilerClasspath() throws MalformedURLException, URISyntaxException, IOException {
