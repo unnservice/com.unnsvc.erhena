@@ -3,7 +3,6 @@ package com.unnsvc.erhena.common;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -27,11 +26,20 @@ public class ErhenaUtils {
 	
 	public static String locateClasspath(String bundleName) throws MalformedURLException, URISyntaxException, IOException {
 
-		URI fileUri = FileLocator.resolve(new URL("platform:/plugin/" + bundleName + "/META-INF/" + bundleName)).toURI();
-		File file = new File(fileUri);
-		String fileStr = file.getAbsolutePath();
-
-		String path = fileStr.substring(0, fileStr.length() - ("/META-INF/" + bundleName).length()) + "/";
+		String path = locateClasspathUrl(bundleName).getPath();
 		return path;
+	}
+	
+	public static URL locateClasspathUrl(String bundleName) throws MalformedURLException, IOException {
+		
+		URL fileUrl = FileLocator.resolve(new URL("platform:/plugin/" + bundleName + "/META-INF/" + bundleName));
+		if(fileUrl.getProtocol().equals("jar")) {
+
+			URL ret = new File(fileUrl.getPath().substring("file:".length(), fileUrl.getPath().lastIndexOf("!"))).toURI().toURL();
+			return ret;
+		}
+
+		String fileUrlStr = fileUrl.toString();
+		return new URL(fileUrlStr.substring(0, fileUrlStr.length() - ("/META-INF/" + bundleName).length()) + "/");
 	}
 }

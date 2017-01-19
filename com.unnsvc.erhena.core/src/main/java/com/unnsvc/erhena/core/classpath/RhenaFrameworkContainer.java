@@ -1,9 +1,7 @@
 
 package com.unnsvc.erhena.core.classpath;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.IPath;
@@ -27,10 +25,10 @@ public class RhenaFrameworkContainer implements IClasspathContainer {
 	public IClasspathEntry[] getClasspathEntries() {
 
 		try {
-			URL commonLib = new File(ErhenaUtils.locateClasspath("com.unnsvc.rhena.common")).toURI().toURL();
-			URL coreLib = new File(ErhenaUtils.locateClasspath("com.unnsvc.rhena.core")).toURI().toURL();
-			URL lifecycleLib = new File(ErhenaUtils.locateClasspath("com.unnsvc.rhena.lifecycle")).toURI().toURL();
-			URL agentLib = new File(ErhenaUtils.locateClasspath("com.unnsvc.rhena.agent")).toURI().toURL();
+			URL commonLib = ErhenaUtils.locateClasspathUrl("com.unnsvc.rhena.common");
+			URL coreLib = ErhenaUtils.locateClasspathUrl("com.unnsvc.rhena.core");
+			URL lifecycleLib = ErhenaUtils.locateClasspathUrl("com.unnsvc.rhena.lifecycle");
+			URL agentLib = ErhenaUtils.locateClasspathUrl("com.unnsvc.rhena.agent");
 			
 			return new IClasspathEntry[] { 
 					JavaCore.newLibraryEntry(new Path(commonLib.getFile()), null, null),
@@ -38,7 +36,7 @@ public class RhenaFrameworkContainer implements IClasspathContainer {
 					JavaCore.newLibraryEntry(new Path(lifecycleLib.getFile()), null, null),
 					JavaCore.newLibraryEntry(new Path(agentLib.getFile()), null, null)
 			};
-		} catch (IOException | URISyntaxException ioe) {
+		} catch (IOException ioe) {
 			/**
 			 * @TODO pass the entries into the container instead of creating
 			 *       them here, then we don't need to catch this exception
