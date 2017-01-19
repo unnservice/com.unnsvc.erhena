@@ -99,8 +99,8 @@ public class ProjectReconfigurationService implements IProjectReconfigurationSer
 		// Source paths
 		List<IClasspathEntry> sourcePaths = new ArrayList<IClasspathEntry>();
 		for (IResource resource : execution.getInputs()) {
-			System.err.println(javaProject.getProject().getName() + " Adding source folder: " + resource.getRelativeSourcePath());
-			IFolder sourceFolder = project.getFolder(resource.getRelativeSourcePath());
+			System.err.println(javaProject.getProject().getName() + " Adding source folder: " + resource.getOriginalRelativeSourcePath());
+			IFolder sourceFolder = project.getFolder(resource.getOriginalRelativeSourcePath());
 			if (sourceFolder.exists()) {
 				// must be in a workspace job otherwise we get resource change
 				// modification error, so don't create it just set it when it
