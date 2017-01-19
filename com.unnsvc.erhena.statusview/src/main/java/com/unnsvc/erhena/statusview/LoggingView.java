@@ -171,8 +171,8 @@ public class LoggingView extends ViewPart {
 		Label separator = new Label(statusBar, SWT.SEPARATOR);
 		separator.setLayoutData(separatorData);
 
-		GridData agentStatusData = new GridData();
-		agentStatusData.grabExcessHorizontalSpace = true;
+		GridData agentStatusData = new GridData(GridData.FILL_HORIZONTAL);
+//		agentStatusData.grabExcessHorizontalSpace = true;
 		agentStatusData.horizontalIndent = 5;
 		this.agentStatus = new Label(statusBar, SWT.NULL);
 		agentStatus.setText("Waiting for agent diagnostics");
@@ -183,12 +183,14 @@ public class LoggingView extends ViewPart {
 		GridData resetData = new GridData();
 		resetData.horizontalIndent = 5;
 		resetAgentButton.setLayoutData(resetData);
+		resetAgentButton.setEnabled(false);
 
 		this.dumpAgentButton = new Button(statusBar, SWT.PUSH);
 		dumpAgentButton.setText("Dump");
 		GridData dumpData = new GridData();
 		dumpData.horizontalIndent = 5;
 		dumpAgentButton.setLayoutData(dumpData);
+		dumpAgentButton.setEnabled(false);
 	}
 
 	private void createLoggingtables(Composite parent) {
