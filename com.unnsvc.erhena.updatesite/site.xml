@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/com.unnsvc.erhena.feature_0.2.0.201701190937.jar" id="com.unnsvc.erhena.feature" version="0.2.0.201701190937">
-      <category name="com.unnsvc.erhena.category"/>
-   </feature>
+   <feature url="features/com.unnsvc.erhena.feature_0.2.0.201701191114.jar" id="com.unnsvc.erhena.feature" version="0.2.0.201701191114"/>
    <category-def name="com.unnsvc.erhena.category" label="Rhena integration for Eclipse"/>
 </site>
