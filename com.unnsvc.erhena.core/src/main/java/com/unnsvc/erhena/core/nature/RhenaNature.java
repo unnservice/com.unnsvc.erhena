@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -15,37 +13,30 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.events.IEventBroker;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.prefs.BackingStoreException;
 
 import com.unnsvc.erhena.core.Activator;
 import com.unnsvc.erhena.core.builder.RhenaBuilder;
-import com.unnsvc.erhena.platform.service.IPlatformService;
 
 public class RhenaNature implements IProjectNature {
 
 	public static final String NATURE_ID = "com.unnsvc.erhena.core.nature";
 	private IProject project;
 
-	@Inject
-	private IEventBroker eventBroker;
-
-	@Inject
-	private IEclipseContext eclipseContext;
-
-	@Inject
-	private IPlatformService rhenaPlatformService;
+//	@Inject
+//	private IEventBroker eventBroker;
+//
+//	@Inject
+//	private IEclipseContext eclipseContext;
+//
+//	@Inject
+//	private IPlatformService rhenaPlatformService;
 
 	public RhenaNature() {
 
-		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
-		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
-		ContextInjectionFactory.inject(this, eclipseContext);
+//		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
+//		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
+//		ContextInjectionFactory.inject(this, eclipseContext);
 	}
 
 	@Override

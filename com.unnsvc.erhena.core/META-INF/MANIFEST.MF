@@ -18,11 +18,11 @@ Require-Bundle: com.unnsvc.erhena.platform,
  org.eclipse.jdt,
  org.eclipse.jdt.launching,
  org.eclipse.jdt.core,
+ org.eclipse.core.expressions,
+ com.unnsvc.rhena.agent,
  com.unnsvc.rhena.common,
  com.unnsvc.rhena.core,
- com.unnsvc.rhena.profiling,
- org.eclipse.core.expressions,
- com.unnsvc.rhena.agent
+ com.unnsvc.rhena.profiling
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Activator: com.unnsvc.erhena.core.Activator
 Export-Package: com.unnsvc.erhena.core.nature

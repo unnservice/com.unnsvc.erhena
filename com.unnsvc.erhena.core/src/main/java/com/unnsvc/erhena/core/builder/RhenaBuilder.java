@@ -15,19 +15,17 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.core.Activator;
-import com.unnsvc.erhena.platform.service.IProjectService;
 import com.unnsvc.erhena.platform.service.IPlatformService;
+import com.unnsvc.erhena.platform.service.IProjectService;
 import com.unnsvc.erhena.platform.service.IRhenaTransaction;
 import com.unnsvc.rhena.common.IRhenaEngine;
 import com.unnsvc.rhena.common.execution.EExecutionType;
-import com.unnsvc.rhena.common.execution.IRhenaExecution;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 import com.unnsvc.rhena.common.model.IRhenaModule;
 import com.unnsvc.rhena.core.Caller;
@@ -36,8 +34,8 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 
 	public static final String BUILDER_ID = "com.unnsvc.erhena.core.builder.RhenaBuilder";
 
-	@Inject
-	private IEventBroker eventBroker;
+//	@Inject
+//	private IEventBroker eventBroker;
 	@Inject
 	private IPlatformService platformService;
 	@Inject
@@ -101,7 +99,7 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 	private void fullBuild(IJavaProject javaProject, IRhenaEngine engine) throws Throwable {
 
 		ModuleIdentifier projectIdentifier = projectService.manageProject(getProject());
-		IRhenaModule module = engine.materialiseModel(projectIdentifier);
+		engine.materialiseModel(projectIdentifier);
 
 		// Build all parents in the workspace model
 		for (ModuleIdentifier root : engine.findRoots(projectIdentifier, EExecutionType.TEST)) {
@@ -109,7 +107,7 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 			System.err.println("Building project " + root);
 
 			IRhenaModule rootModule = engine.materialiseModel(root);
-			IRhenaExecution exec = engine.materialiseExecution(new Caller(rootModule, EExecutionType.TEST));
+			engine.materialiseExecution(new Caller(rootModule, EExecutionType.TEST));
 		}
 
 //		WorkspaceExecution execution = (WorkspaceExecution) engine.materialiseExecution(new Caller(module, EExecutionType.TEST));

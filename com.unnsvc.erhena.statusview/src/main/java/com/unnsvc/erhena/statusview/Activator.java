@@ -32,7 +32,7 @@ public class Activator extends AbstractUIPlugin {
 
 		super.start(context);
 		plugin = this;
-		this.context = context;
+		Activator.context = context;
 	}
 
 	/*
@@ -44,7 +44,7 @@ public class Activator extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 
 		plugin = null;
-		this.context = null;
+		Activator.context = null;
 		super.stop(context);
 	}
 

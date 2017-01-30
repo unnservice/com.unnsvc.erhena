@@ -15,10 +15,10 @@ Require-Bundle: com.unnsvc.erhena.common,
  org.eclipse.e4.ui.di,
  org.eclipse.jface,
  org.eclipse.ui,
+ com.unnsvc.rhena.agent,
  com.unnsvc.rhena.common,
  com.unnsvc.rhena.core,
  com.unnsvc.rhena.lifecycle,
- com.unnsvc.rhena.agent,
  com.unnsvc.rhena.profiling
 Export-Package: com.unnsvc.erhena.platform.service
 Bundle-Activator: com.unnsvc.erhena.platform.Activator

@@ -23,7 +23,6 @@ import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jdt.internal.corext.util.Messages;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.packageview.PackageExplorerPart;
-import org.eclipse.jdt.internal.ui.viewsupport.BasicElementLabels;
 import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
@@ -52,6 +51,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.dialogs.WorkingSetConfigurationBlock;
 
+@SuppressWarnings("restriction")
 public class RhenaModuleWizardPage extends WizardPage {
 
 	private final NameGroup fNameGroup;
@@ -60,6 +60,7 @@ public class RhenaModuleWizardPage extends WizardPage {
 	private final WorkingSetGroup fWorkingSetGroup;
 
 	public RhenaModuleWizardPage() {
+
 		super("rhenaWizard");
 		setPageComplete(false);
 		setTitle("New Rhena Module");
@@ -115,7 +116,6 @@ public class RhenaModuleWizardPage extends WizardPage {
 
 	private static final IWorkingSet[] EMPTY_WORKING_SET_ARRAY = new IWorkingSet[0];
 
-	@SuppressWarnings("restriction")
 	private IWorkingSet[] getSelectedWorkingSet(IStructuredSelection selection, IWorkbenchPart activePart) {
 
 		IWorkingSet[] selected = getSelectedWorkingSet(selection);
@@ -310,7 +310,6 @@ public class RhenaModuleWizardPage extends WizardPage {
 		fLocationGroup.setLocation(path);
 	}
 
-	@SuppressWarnings("restriction")
 	private class NameGroup extends Observable implements IDialogFieldListener {
 
 		private StringDialogField fGroupField;
@@ -369,10 +368,10 @@ public class RhenaModuleWizardPage extends WizardPage {
 			fNameField.setText(name);
 		}
 
-		public void setGroup(String group) {
-
-			fGroupField.setText(group);
-		}
+//		public void setGroup(String group) {
+//
+//			fGroupField.setText(group);
+//		}
 
 		@Override
 		public void dialogFieldChanged(DialogField field) {
@@ -391,6 +390,7 @@ public class RhenaModuleWizardPage extends WizardPage {
 		private static final String DIALOGSTORE_LAST_EXTERNAL_LOC = JavaUI.ID_PLUGIN + ".last.external.project"; //$NON-NLS-1$
 
 		public LocationGroup() {
+
 			fUseDefaults = new SelectionButtonDialogField(SWT.CHECK);
 			fUseDefaults.setDialogFieldListener(this);
 			fUseDefaults.setLabelText(NewWizardMessages.NewJavaProjectWizardPageOne_LocationGroup_location_desc);
@@ -518,6 +518,7 @@ public class RhenaModuleWizardPage extends WizardPage {
 		private WorkingSetConfigurationBlock fWorkingSetBlock;
 
 		public WorkingSetGroup() {
+
 			String[] workingSetIds = new String[] { IWorkingSetIDs.JAVA, IWorkingSetIDs.RESOURCE };
 			fWorkingSetBlock = new WorkingSetConfigurationBlock(workingSetIds, JavaPlugin.getDefault().getDialogSettings());
 			// fWorkingSetBlock.setDialogMessage(NewWizardMessages.NewJavaProjectWizardPageOne_WorkingSetSelection_message);
@@ -562,7 +563,7 @@ public class RhenaModuleWizardPage extends WizardPage {
 				setPageComplete(false);
 				return;
 			}
-			
+
 			// check whether the project name field is empty
 			if (name.length() == 0) {
 				setErrorMessage(null);
@@ -570,8 +571,7 @@ public class RhenaModuleWizardPage extends WizardPage {
 				setPageComplete(false);
 				return;
 			}
-			
-			
+
 			String projectName = group + "." + name;
 
 			// check whether the project name is valid
@@ -602,8 +602,7 @@ public class RhenaModuleWizardPage extends WizardPage {
 
 				String existingName = projectLocation.lastSegment();
 				if (!existingName.equals(fNameGroup.getGroup() + "." + fNameGroup.getName())) {
-					setErrorMessage(Messages.format(NewWizardMessages.NewJavaProjectWizardPageOne_Message_invalidProjectNameForWorkspaceRoot,
-							BasicElementLabels.getResourceName(existingName)));
+					setErrorMessage(Messages.format(NewWizardMessages.NewJavaProjectWizardPageOne_Message_invalidProjectNameForWorkspaceRoot, existingName));
 					setPageComplete(false);
 					return;
 				}

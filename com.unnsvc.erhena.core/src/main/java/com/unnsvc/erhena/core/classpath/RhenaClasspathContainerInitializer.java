@@ -1,25 +1,20 @@
 
 package com.unnsvc.erhena.core.classpath;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.ClasspathContainerInitializer;
 import org.eclipse.jdt.core.IClasspathContainer;
-import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 
 public class RhenaClasspathContainerInitializer extends ClasspathContainerInitializer {
 
 	public static final String CONTAINER_ID = "com.unnsvc.erhena.core.classpathContainer";
-	private List<IClasspathEntry> classpathEntries;
+//	private List<IClasspathEntry> classpathEntries;
 
 	public RhenaClasspathContainerInitializer() {
 
-		this.classpathEntries = new ArrayList<IClasspathEntry>();
+//		this.classpathEntries = new ArrayList<IClasspathEntry>();
 	}
 
 	@Override

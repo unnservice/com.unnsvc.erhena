@@ -21,7 +21,7 @@ import com.unnsvc.erhena.core.nature.RhenaNature;
 
 public class ConfigureRhenaProject extends AbstractHandler {
 
-	private ISelection selection;
+//	private ISelection selection;
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
