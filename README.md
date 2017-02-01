@@ -1,3 +1,7 @@
+```
+This project is under active development and has not reached version 1.0
+```
+
 Rhena integration for Eclipse
 
 # License
