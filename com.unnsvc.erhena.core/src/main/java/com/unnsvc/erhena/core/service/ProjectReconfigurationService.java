@@ -42,7 +42,7 @@ import com.unnsvc.rhena.common.identity.ModuleIdentifier;
 import com.unnsvc.rhena.common.lifecycle.IResource;
 import com.unnsvc.rhena.common.model.ERhenaModuleType;
 import com.unnsvc.rhena.common.model.IRhenaModule;
-import com.unnsvc.rhena.common.visitors.IDependencies;
+import com.unnsvc.rhena.common.search.IDependencies;
 import com.unnsvc.rhena.core.Caller;
 import com.unnsvc.rhena.core.execution.WorkspaceExecution;
 

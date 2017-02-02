@@ -41,7 +41,8 @@ import com.unnsvc.rhena.common.logging.ILogger;
 import com.unnsvc.rhena.common.model.ESelectionType;
 import com.unnsvc.rhena.common.model.IRhenaModule;
 import com.unnsvc.rhena.common.process.IProcessListener;
-import com.unnsvc.rhena.common.visitors.IDependencies;
+import com.unnsvc.rhena.common.search.IDependencies;
+import com.unnsvc.rhena.common.search.URLDependencyTreeVisitor;
 import com.unnsvc.rhena.core.Caller;
 import com.unnsvc.rhena.core.RhenaConfiguration;
 import com.unnsvc.rhena.core.RhenaContext;
@@ -49,7 +50,6 @@ import com.unnsvc.rhena.core.RhenaEngine;
 import com.unnsvc.rhena.core.events.LogEvent;
 import com.unnsvc.rhena.core.resolution.LocalCacheRepository;
 import com.unnsvc.rhena.core.resolution.WorkspaceRepository;
-import com.unnsvc.rhena.core.visitors.URLDependencyTreeVisitor;
 import com.unnsvc.rhena.profiling.report.IDiagnosticReport;
 
 /**
@@ -302,7 +302,6 @@ public class PlatformService implements IPlatformService {
 
 			engine.getContext().getCache().getModules().clear();
 			engine.getContext().getCache().getEdges().clear();
-			engine.getContext().getCache().getMerged().clear();
 		}
 
 	}

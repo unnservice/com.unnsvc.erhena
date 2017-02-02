@@ -5,7 +5,7 @@ import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.execution.EExecutionType;
 import com.unnsvc.rhena.common.logging.ILogger;
 import com.unnsvc.rhena.common.model.IRhenaModule;
-import com.unnsvc.rhena.common.visitors.IDependencies;
+import com.unnsvc.rhena.common.search.IDependencies;
 
 public interface IPlatformService {
 

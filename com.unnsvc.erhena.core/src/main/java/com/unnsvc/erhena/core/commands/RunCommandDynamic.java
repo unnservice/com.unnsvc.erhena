@@ -80,7 +80,7 @@ public class RunCommandDynamic extends ContributionItem {
 					ModuleIdentifier identifier = projectService.manageProject(resource);
 					IRhenaModule module = engine.materialiseModel(identifier);
 
-					ILifecycleReference reference = module.getLifecycleDeclarations().get(module.getLifecycleName());
+					ILifecycleReference reference = module.getMergedLifecycleDeclarations(engine.getContext().getCache()).get(module.getLifecycleName());
 					if (!reference.getCommands().isEmpty()) {
 						for (ILifecycleCommandReference command : reference.getCommands()) {
 							MenuItem menuItem = new MenuItem(menu, SWT.NONE, index);
