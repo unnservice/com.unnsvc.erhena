@@ -4,13 +4,11 @@ Bundle-Name: Core
 Bundle-SymbolicName: com.unnsvc.erhena.core;singleton:=true
 Bundle-Version: 0.2.0.qualifier
 Bundle-Vendor: UNNSVC
-Require-Bundle: com.unnsvc.erhena.platform,
- org.eclipse.ui,
+Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  com.unnsvc.erhena.common,
  org.eclipse.core.resources,
  org.eclipse.ui.ide,
- com.unnsvc.erhena.statusview,
  org.eclipse.e4.core.services,
  org.eclipse.e4.core.di,
  org.eclipse.e4.ui.di,
@@ -21,8 +19,7 @@ Require-Bundle: com.unnsvc.erhena.platform,
  org.eclipse.core.expressions,
  com.unnsvc.rhena.agent,
  com.unnsvc.rhena.common,
- com.unnsvc.rhena.core,
- com.unnsvc.rhena.profiling
+ com.unnsvc.rhena.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Activator: com.unnsvc.erhena.core.Activator
 Export-Package: com.unnsvc.erhena.core.nature

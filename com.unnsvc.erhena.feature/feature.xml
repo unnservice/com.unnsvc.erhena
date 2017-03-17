@@ -746,21 +746,7 @@ Public License instead of this License.  But first, please read
          unpack="false"/>
 
    <plugin
-         id="com.unnsvc.rhena.profiling"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="com.unnsvc.erhena.branding"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="com.unnsvc.erhena.statusview"
          download-size="0"
          install-size="0"
          version="0.0.0"
