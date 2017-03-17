@@ -8,6 +8,12 @@
             id="com.unnsvc.erhena.preferences.rhenaconfig.RhenaConfigurationPage"
             name="Rhena">
       </page>
+      <page
+            category="com.unnsvc.erhena.preferences.rhenaconfig.RhenaConfigurationPage"
+            class="com.unnsvc.erhena.preferences.rhenaconfig.RhenaBuildConfigurationPage"
+            id="com.unnsvc.erhena.preferences.rhenaconfig.RhenaBuildConfigurationPage"
+            name="Build">
+      </page>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">

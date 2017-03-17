@@ -18,6 +18,7 @@ public class RhenaConfigurationPreferencesInitializer extends AbstractPreference
 
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		store.setDefault(RhenaConfigurationConstants.P_RHENA_HOME, "/opt/rhena/latest");
+		store.setDefault(RhenaConfigurationConstants.P_RHENA_BUILD_PACKAGE, true);
 		// store.setDefault(PreferenceConstants.P_BOOLEAN, true);
 		// store.setDefault(PreferenceConstants.P_CHOICE, "choice2");
 		// store.setDefault(PreferenceConstants.P_STRING, "Default value");

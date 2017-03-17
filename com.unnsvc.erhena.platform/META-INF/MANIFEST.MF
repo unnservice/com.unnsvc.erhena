@@ -1,11 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Platform
-Bundle-SymbolicName: com.unnsvc.erhena.platform
+Bundle-SymbolicName: com.unnsvc.erhena.platform;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: com.unnsvc.erhena.platform.Activator
 Bundle-Vendor: UNNSVC
 Require-Bundle: org.eclipse.core.runtime,
- com.unnsvc.erhena.preferences
+ com.unnsvc.erhena.preferences,
+ org.eclipse.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

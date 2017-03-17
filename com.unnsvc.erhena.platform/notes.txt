@@ -1,0 +1,1 @@
+Keeps track of agents, only activate agent when requested, only activate context when requested
