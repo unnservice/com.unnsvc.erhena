@@ -6,7 +6,15 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: com.unnsvc.erhena.platform.Activator
 Bundle-Vendor: UNNSVC
 Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ com.unnsvc.erhena.common,
  com.unnsvc.erhena.preferences,
- org.eclipse.ui
+ org.eclipse.ui,
+ org.eclipse.e4.core.di,
+ org.eclipse.e4.core.contexts,
+ org.eclipse.e4.core.services,
+ org.eclipse.e4.ui.di,
+ org.eclipse.e4.core.di.extensions
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
+Export-Package: com.unnsvc.erhena.platform.service

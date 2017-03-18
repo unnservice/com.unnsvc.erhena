@@ -1,36 +1,21 @@
 
 package com.unnsvc.erhena.itests.tests;
 
-import javax.inject.Inject;
-
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.Before;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.itests.Activator;
-import com.unnsvc.erhena.platform.service.IPlatformService;
 
+public abstract class AbstractTest {
 
-public class SomeUITest {
-	
-	@Inject
-	private IPlatformService platformService;
+	@Before
+	public void before() {
 
-	@Test
-	public void someTest() throws Exception {
-		
 		inject();
-
-		IWorkspace ws = ResourcesPlugin.getWorkspace();
-		Assert.assertNotNull(ws);
-		
-		Assert.assertNotNull(platformService);
 	}
 
 	private void inject() {
