@@ -6,7 +6,8 @@ Bundle-Version: 0.2.0.qualifier
 Bundle-Vendor: UNNSVC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: com.unnsvc.erhena.common,
- com.unnsvc.erhena.common.events
+ com.unnsvc.erhena.common.events,
+ com.unnsvc.erhena.common.services
 Require-Bundle: org.eclipse.e4.core.di,
  org.eclipse.e4.core.services,
  org.eclipse.core.resources,
