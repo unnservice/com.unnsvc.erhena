@@ -3,32 +3,20 @@ package com.unnsvc.erhena.core.builder;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.core.Activator;
-import com.unnsvc.erhena.platform.service.IPlatformService;
-import com.unnsvc.erhena.platform.service.IProjectService;
-import com.unnsvc.erhena.platform.service.IRhenaTransaction;
 import com.unnsvc.rhena.common.IRhenaEngine;
-import com.unnsvc.rhena.common.execution.EExecutionType;
-import com.unnsvc.rhena.common.identity.ModuleIdentifier;
-import com.unnsvc.rhena.common.model.IRhenaModule;
-import com.unnsvc.rhena.core.Caller;
 
 public class RhenaBuilder extends IncrementalProjectBuilder {
 
@@ -36,10 +24,10 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 
 //	@Inject
 //	private IEventBroker eventBroker;
-	@Inject
-	private IPlatformService platformService;
-	@Inject
-	private IProjectService projectService;
+//	@Inject
+//	private IPlatformService platformService;
+//	@Inject
+//	private IProjectService projectService;
 
 	public RhenaBuilder() {
 
@@ -51,32 +39,32 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 
-		IProject project = getProject();
-		IJavaProject javaProject = JavaCore.create(project);
-
-		try {
-			platformService.newTransaction(new IRhenaTransaction() {
-
-				@Override
-				public void execute(IRhenaEngine engine) throws Throwable {
-
-					if (kind == IncrementalProjectBuilder.CLEAN_BUILD) {
-						// clean build
-
-					} else {
-						// incremental, full, and auto
-						// only care about relevant changes (that aren't to the output directory or to module.xml)
-						BuildDeltaTracker tracker = isRelevantDelta(getDelta(getProject()));
-						if (!tracker.getResources().isEmpty()) {
-							fullBuild(javaProject, engine);
-						}
-					}
-				}
-			});
-		} catch (Throwable t) {
-
-			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, t.getMessage(), t));
-		}
+//		IProject project = getProject();
+//		IJavaProject javaProject = JavaCore.create(project);
+//
+//		try {
+//			platformService.newTransaction(new IRhenaTransaction() {
+//
+//				@Override
+//				public void execute(IRhenaEngine engine) throws Throwable {
+//
+//					if (kind == IncrementalProjectBuilder.CLEAN_BUILD) {
+//						// clean build
+//
+//					} else {
+//						// incremental, full, and auto
+//						// only care about relevant changes (that aren't to the output directory or to module.xml)
+//						BuildDeltaTracker tracker = isRelevantDelta(getDelta(getProject()));
+//						if (!tracker.getResources().isEmpty()) {
+//							fullBuild(javaProject, engine);
+//						}
+//					}
+//				}
+//			});
+//		} catch (Throwable t) {
+//
+//			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, t.getMessage(), t));
+//		}
 
 		return null;
 	}
@@ -98,17 +86,17 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 
 	private void fullBuild(IJavaProject javaProject, IRhenaEngine engine) throws Throwable {
 
-		ModuleIdentifier projectIdentifier = projectService.manageProject(getProject());
-		engine.materialiseModel(projectIdentifier);
-
-		// Build all parents in the workspace model
-		for (ModuleIdentifier root : engine.findRoots(projectIdentifier, EExecutionType.TEST)) {
-
-			System.err.println("Building project " + root);
-
-			IRhenaModule rootModule = engine.materialiseModel(root);
-			engine.materialiseExecution(new Caller(rootModule, EExecutionType.TEST));
-		}
+//		ModuleIdentifier projectIdentifier = projectService.manageProject(getProject());
+//		engine.materialiseModel(projectIdentifier);
+//
+//		// Build all parents in the workspace model
+//		for (ModuleIdentifier root : engine.findRoots(projectIdentifier, EExecutionType.TEST)) {
+//
+//			System.err.println("Building project " + root);
+//
+//			IRhenaModule rootModule = engine.materialiseModel(root);
+//			engine.materialiseExecution(new Caller(rootModule, EExecutionType.TEST));
+//		}
 
 //		WorkspaceExecution execution = (WorkspaceExecution) engine.materialiseExecution(new Caller(module, EExecutionType.TEST));
 //		System.err.println("Produced workspace execution: " + execution);

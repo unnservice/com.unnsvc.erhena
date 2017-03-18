@@ -3,6 +3,8 @@ package com.unnsvc.erhena.wizards;
 
 import java.net.URI;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -17,9 +19,13 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSet;
 
+import com.unnsvc.erhena.wizards.service.ProjectCreationService;
+
 public class RhenaModuleWizard extends Wizard implements INewWizard {
 
 	private RhenaModuleWizardPage page;
+	@Inject
+	private ProjectCreationService projectCreation;
 
 	public RhenaModuleWizard() {
 
@@ -53,7 +59,7 @@ public class RhenaModuleWizard extends Wizard implements INewWizard {
 					String projectName = page.getProjectName();
 					URI location = page.getProjectLocationURI();
 
-					IProject created = RhenaModuleProjectSupport.createProject(componentName, projectName, location, monitor);
+					IProject created = projectCreation.createProject(componentName, projectName, location, monitor);
 
 					for(IWorkingSet workingSet : page.getWorkingSets()) {
 						

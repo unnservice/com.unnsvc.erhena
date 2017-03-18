@@ -1,12 +1,16 @@
 
-package com.unnsvc.erhena.wizards;
+package com.unnsvc.erhena.wizards.service;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.regex.Pattern;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -16,8 +20,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -27,6 +33,8 @@ import org.eclipse.jdt.launching.JavaRuntime;
 
 import com.unnsvc.erhena.common.ErhenaUtils;
 import com.unnsvc.erhena.core.nature.RhenaNature;
+import com.unnsvc.erhena.platform.service.PlatformService;
+import com.unnsvc.erhena.wizards.Activator;
 import com.unnsvc.rhena.common.RhenaConstants;
 
 /**
@@ -34,7 +42,16 @@ import com.unnsvc.rhena.common.RhenaConstants;
  * @author noname
  *
  */
-public class RhenaModuleProjectSupport {
+@Creatable
+@Singleton
+public class ProjectCreationService {
+
+	@Inject
+	private PlatformService platformService;
+
+	public ProjectCreationService() {
+
+	}
 
 	/**
 	 * For this marvelous project we need to: - create the default Eclipse
@@ -47,7 +64,7 @@ public class RhenaModuleProjectSupport {
 	 * @throws CoreException
 	 */
 
-	public static IProject createProject(String componentName, String projectName, URI location, IProgressMonitor monitor) throws CoreException {
+	public IProject createProject(String componentName, String projectName, URI projectLocation, IProgressMonitor monitor) throws CoreException {
 
 		// URIUtil.toPath(location).
 
@@ -70,14 +87,14 @@ public class RhenaModuleProjectSupport {
 		// }
 		// }
 
-		IProject project = createBaseProject(componentName + "." + projectName, location, monitor);
+		IProject project = createBaseProject(componentName + "." + projectName, projectLocation, monitor);
 
 		// create default descriptor
 		IFile moduleDescriptor = project.getFile(RhenaConstants.MODULE_DESCRIPTOR_FILENAME);
 		if (!moduleDescriptor.exists()) {
 			moduleDescriptor.create(getModuleTemplate(componentName, projectName), false, monitor);
 		}
-		
+
 		// add nature
 		IProjectDescription description = project.getDescription();
 		description.setNatureIds(new String[] { JavaCore.NATURE_ID, RhenaNature.NATURE_ID });
@@ -132,7 +149,7 @@ public class RhenaModuleProjectSupport {
 		return project;
 	}
 
-	private static InputStream getModuleTemplate(String componentName, String projectName) throws CoreException {
+	private InputStream getModuleTemplate(String componentName, String projectName) throws CoreException {
 
 		URL moduleTemplate = Activator.class.getResource("/templates/module.xml.tpl");
 		try (InputStream is = moduleTemplate.openStream()) {
@@ -157,27 +174,20 @@ public class RhenaModuleProjectSupport {
 	 * @param projectName
 	 * @throws CoreException
 	 */
-	private static IProject createBaseProject(String projectName, URI location, IProgressMonitor monitor) {
+	private IProject createBaseProject(String projectName, URI projectLocation, IProgressMonitor monitor) throws CoreException {
 
 		// it is acceptable to use the ResourcesPlugin class
 		IProject newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 
 		if (!newProject.exists()) {
-			URI projectLocation = location;
 			IProjectDescription desc = newProject.getWorkspace().newProjectDescription(newProject.getName());
-			if (location != null && ResourcesPlugin.getWorkspace().getRoot().getLocationURI().equals(location)) {
-				projectLocation = null;
-			}
 
 			desc.setLocationURI(projectLocation);
-			try {
 
-				newProject.create(desc, monitor);
-				if (!newProject.isOpen()) {
-					newProject.open(monitor);
-				}
-			} catch (CoreException e) {
-				e.printStackTrace();
+			newProject.create(desc, monitor);
+
+			if (!newProject.isOpen()) {
+				newProject.open(monitor);
 			}
 		}
 
@@ -192,7 +202,7 @@ public class RhenaModuleProjectSupport {
 	 * @param paths
 	 * @throws CoreException
 	 */
-	private static void addToProjectStructure(IProject newProject, String[] paths) throws CoreException {
+	private void addToProjectStructure(IProject newProject, String[] paths) throws CoreException {
 
 		for (String path : paths) {
 			IFolder etcFolders = newProject.getFolder(path);
