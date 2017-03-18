@@ -5,7 +5,6 @@ import java.net.URI;
 
 import javax.inject.Inject;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -19,6 +18,7 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSet;
 
+import com.unnsvc.erhena.common.IRhenaProject;
 import com.unnsvc.erhena.wizards.service.ProjectCreationService;
 
 public class RhenaModuleWizard extends Wizard implements INewWizard {
@@ -59,14 +59,14 @@ public class RhenaModuleWizard extends Wizard implements INewWizard {
 					String projectName = page.getProjectName();
 					URI location = page.getProjectLocationURI();
 
-					IProject created = projectCreation.createProject(componentName, projectName, location, monitor);
+					IRhenaProject created = projectCreation.createProject(componentName, projectName, location, monitor);
 
 					for(IWorkingSet workingSet : page.getWorkingSets()) {
 						
 						IAdaptable[] existing = workingSet.getElements();
 						IAdaptable[] newExisting = new IAdaptable[existing.length + 1];
 						System.arraycopy(existing, 0, newExisting, 0, existing.length);
-						newExisting[existing.length] = created;
+						newExisting[existing.length] = created.getJavaProject();
 						workingSet.setElements(newExisting);
 					}
 					

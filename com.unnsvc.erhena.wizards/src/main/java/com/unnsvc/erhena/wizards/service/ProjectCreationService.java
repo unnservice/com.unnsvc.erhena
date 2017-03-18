@@ -19,7 +19,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.di.annotations.Creatable;
@@ -31,7 +30,9 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 
 import com.unnsvc.erhena.common.ErhenaUtils;
+import com.unnsvc.erhena.common.IRhenaProject;
 import com.unnsvc.erhena.core.nature.RhenaNature;
+import com.unnsvc.erhena.core.nature.RhenaProject;
 import com.unnsvc.erhena.platform.service.PlatformService;
 import com.unnsvc.erhena.wizards.Activator;
 import com.unnsvc.rhena.common.RhenaConstants;
@@ -63,7 +64,7 @@ public class ProjectCreationService {
 	 * @throws CoreException
 	 */
 
-	public IProject createProject(String componentName, String projectName, URI projectLocation, IProgressMonitor monitor) throws CoreException {
+	public IRhenaProject createProject(String componentName, String projectName, URI projectLocation, IProgressMonitor monitor) throws CoreException {
 
 		// URIUtil.toPath(location).
 
@@ -145,7 +146,7 @@ public class ProjectCreationService {
 			javaProject.setRawClasspath(newEntries, monitor);
 		}
 
-		return project;
+		return new RhenaProject(javaProject);
 	}
 
 	private InputStream getModuleTemplate(String componentName, String projectName) throws CoreException {
@@ -209,8 +210,8 @@ public class ProjectCreationService {
 		}
 	}
 
-	public void deleteProject(IProject project, IProgressMonitor monitor) throws CoreException {
+	public void deleteProject(IRhenaProject project, IProgressMonitor monitor) throws CoreException {
 
-		project.delete(false, monitor);
+		project.getProject().delete(false, monitor);
 	}
 }

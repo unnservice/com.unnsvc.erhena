@@ -13,7 +13,8 @@ Require-Bundle: org.eclipse.core.runtime,
  com.unnsvc.erhena.platform,
  com.unnsvc.erhena.common,
  com.unnsvc.erhena.wizards,
- com.unnsvc.erhena.core
+ com.unnsvc.erhena.core,
+ org.eclipse.jdt.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: com.unnsvc.erhena.wizards.service
