@@ -2,7 +2,6 @@
 package com.unnsvc.erhena.wizards.service;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -20,7 +19,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.di.annotations.Creatable;
@@ -208,5 +207,10 @@ public class ProjectCreationService {
 			IFolder etcFolders = newProject.getFolder(path);
 			ErhenaUtils.createFolder(etcFolders);
 		}
+	}
+
+	public void deleteProject(IProject project, IProgressMonitor monitor) throws CoreException {
+
+		project.delete(false, monitor);
 	}
 }

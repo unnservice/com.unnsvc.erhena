@@ -35,6 +35,9 @@ public class TestCreateProject extends AbstractTest {
 
 		Assert.assertNotNull(project.getNature(RhenaNature.NATURE_ID));
 		Assert.assertEquals(projectLocation, project.getLocationURI());
+		
+		
+		projectCreationService.deleteProject(project, new NullProgressMonitor());
 	}
 
 }
