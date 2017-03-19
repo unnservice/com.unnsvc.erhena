@@ -7,6 +7,7 @@ Bundle-Vendor: UNNSVC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: com.unnsvc.erhena.common,
  com.unnsvc.erhena.common.events,
+ com.unnsvc.erhena.common.exceptions,
  com.unnsvc.erhena.common.services
 Require-Bundle: org.eclipse.e4.core.di,
  org.eclipse.e4.core.services,
@@ -14,4 +15,6 @@ Require-Bundle: org.eclipse.e4.core.di,
  org.eclipse.e4.ui.di,
  org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.jdt.core
+ org.eclipse.jdt.core,
+ com.unnsvc.rhena.common
+Import-Package: com.unnsvc.rhena.common.exceptions

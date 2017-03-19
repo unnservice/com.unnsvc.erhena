@@ -6,6 +6,11 @@ import org.eclipse.jdt.core.IJavaProject;
 
 import com.unnsvc.erhena.common.IRhenaProject;
 
+/**
+ * @TODO This class needs to eventually perform all classpath operations and have an update() method
+ * @author noname
+ *
+ */
 public class RhenaProject implements IRhenaProject {
 
 	private IProject project;

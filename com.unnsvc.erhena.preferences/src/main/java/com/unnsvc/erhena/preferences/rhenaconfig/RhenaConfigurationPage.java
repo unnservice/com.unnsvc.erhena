@@ -5,14 +5,14 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import com.unnsvc.erhena.preferences.Activator;
+import com.unnsvc.erhena.preferences.PreferencesActivator;
 
 public class RhenaConfigurationPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	public RhenaConfigurationPage() {
 
 		super(GRID);
-		setPreferenceStore(Activator.getDefault().getPreferenceStore());
+		setPreferenceStore(PreferencesActivator.getDefault().getPreferenceStore());
 		setDescription("Rhena Configuration");
 	}
 

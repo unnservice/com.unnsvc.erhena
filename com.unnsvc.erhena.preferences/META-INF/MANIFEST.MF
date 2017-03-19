@@ -3,9 +3,11 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Preferences
 Bundle-SymbolicName: com.unnsvc.erhena.preferences;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: com.unnsvc.erhena.preferences.Activator
+Bundle-Activator: com.unnsvc.erhena.preferences.PreferencesActivator
 Bundle-Vendor: UNNSVC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
+Export-Package: com.unnsvc.erhena.preferences,
+ com.unnsvc.erhena.preferences.rhenaconfig
