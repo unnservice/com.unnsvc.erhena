@@ -16,5 +16,6 @@ Require-Bundle: org.eclipse.e4.core.di,
  org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.jdt.core,
- com.unnsvc.rhena.common
+ com.unnsvc.rhena.common,
+ org.eclipse.e4.core.contexts
 Import-Package: com.unnsvc.rhena.common.exceptions
