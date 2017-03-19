@@ -12,11 +12,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSet;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.common.IRhenaProject;
 import com.unnsvc.erhena.wizards.service.ProjectCreationService;
@@ -30,8 +35,15 @@ public class RhenaModuleWizard extends Wizard implements INewWizard {
 	public RhenaModuleWizard() {
 
 		super();
+		inject();
 		setNeedsProgressMonitor(true);
+	}
+	
+	private void inject() {
 
+		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
+		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
+		ContextInjectionFactory.inject(this, eclipseContext);
 	}
 
 	@Override
