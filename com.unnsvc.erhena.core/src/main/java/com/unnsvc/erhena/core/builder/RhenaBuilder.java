@@ -22,12 +22,12 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 
 	public static final String BUILDER_ID = "com.unnsvc.erhena.core.builder.RhenaBuilder";
 
-//	@Inject
-//	private IEventBroker eventBroker;
-//	@Inject
-//	private IPlatformService platformService;
-//	@Inject
-//	private IProjectService projectService;
+	// @Inject
+	// private IEventBroker eventBroker;
+	// @Inject
+	// private IPlatformService platformService;
+	// @Inject
+	// private IProjectService projectService;
 
 	public RhenaBuilder() {
 
@@ -39,32 +39,36 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 
-//		IProject project = getProject();
-//		IJavaProject javaProject = JavaCore.create(project);
-//
-//		try {
-//			platformService.newTransaction(new IRhenaTransaction() {
-//
-//				@Override
-//				public void execute(IRhenaEngine engine) throws Throwable {
-//
-//					if (kind == IncrementalProjectBuilder.CLEAN_BUILD) {
-//						// clean build
-//
-//					} else {
-//						// incremental, full, and auto
-//						// only care about relevant changes (that aren't to the output directory or to module.xml)
-//						BuildDeltaTracker tracker = isRelevantDelta(getDelta(getProject()));
-//						if (!tracker.getResources().isEmpty()) {
-//							fullBuild(javaProject, engine);
-//						}
-//					}
-//				}
-//			});
-//		} catch (Throwable t) {
-//
-//			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, t.getMessage(), t));
-//		}
+		System.err.println("Executing build on project with monitor: " + monitor.hashCode());
+
+		// IProject project = getProject();
+		// IJavaProject javaProject = JavaCore.create(project);
+		//
+		// try {
+		// platformService.newTransaction(new IRhenaTransaction() {
+		//
+		// @Override
+		// public void execute(IRhenaEngine engine) throws Throwable {
+		//
+		// if (kind == IncrementalProjectBuilder.CLEAN_BUILD) {
+		// // clean build
+		//
+		// } else {
+		// // incremental, full, and auto
+		// // only care about relevant changes (that aren't to the output
+		// directory or to module.xml)
+		// BuildDeltaTracker tracker = isRelevantDelta(getDelta(getProject()));
+		// if (!tracker.getResources().isEmpty()) {
+		// fullBuild(javaProject, engine);
+		// }
+		// }
+		// }
+		// });
+		// } catch (Throwable t) {
+		//
+		// throw new CoreException(new Status(IStatus.ERROR,
+		// Activator.PLUGIN_ID, t.getMessage(), t));
+		// }
 
 		return null;
 	}
@@ -86,29 +90,32 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 
 	private void fullBuild(IJavaProject javaProject, IRhenaEngine engine) throws Throwable {
 
-//		ModuleIdentifier projectIdentifier = projectService.manageProject(getProject());
-//		engine.materialiseModel(projectIdentifier);
-//
-//		// Build all parents in the workspace model
-//		for (ModuleIdentifier root : engine.findRoots(projectIdentifier, EExecutionType.TEST)) {
-//
-//			System.err.println("Building project " + root);
-//
-//			IRhenaModule rootModule = engine.materialiseModel(root);
-//			engine.materialiseExecution(new Caller(rootModule, EExecutionType.TEST));
-//		}
+		// ModuleIdentifier projectIdentifier =
+		// projectService.manageProject(getProject());
+		// engine.materialiseModel(projectIdentifier);
+		//
+		// // Build all parents in the workspace model
+		// for (ModuleIdentifier root : engine.findRoots(projectIdentifier,
+		// EExecutionType.TEST)) {
+		//
+		// System.err.println("Building project " + root);
+		//
+		// IRhenaModule rootModule = engine.materialiseModel(root);
+		// engine.materialiseExecution(new Caller(rootModule,
+		// EExecutionType.TEST));
+		// }
 
-//		WorkspaceExecution execution = (WorkspaceExecution) engine.materialiseExecution(new Caller(module, EExecutionType.TEST));
-//		System.err.println("Produced workspace execution: " + execution);
-//
-//		eventBroker.post(ProfilerDiagnosticsEvent.TOPIC, new ProfilerDiagnosticsEvent(platformService.getDiagnostics()));
-//
-//		/**
-//		 * Drop the model and execution after we're done?
-//		 */
-//		configureProject(javaProject, module, execution);
+		// WorkspaceExecution execution = (WorkspaceExecution)
+		// engine.materialiseExecution(new Caller(module, EExecutionType.TEST));
+		// System.err.println("Produced workspace execution: " + execution);
+		//
+		// eventBroker.post(ProfilerDiagnosticsEvent.TOPIC, new
+		// ProfilerDiagnosticsEvent(platformService.getDiagnostics()));
+		//
+		// /**
+		// * Drop the model and execution after we're done?
+		// */
+		// configureProject(javaProject, module, execution);
 	}
-
-
 
 }
