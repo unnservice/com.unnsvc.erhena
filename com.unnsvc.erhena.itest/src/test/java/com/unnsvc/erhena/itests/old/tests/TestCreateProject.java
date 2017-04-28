@@ -1,5 +1,5 @@
 
-package com.unnsvc.erhena.itests.tests;
+package com.unnsvc.erhena.itests.old.tests;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.junit.Assert;

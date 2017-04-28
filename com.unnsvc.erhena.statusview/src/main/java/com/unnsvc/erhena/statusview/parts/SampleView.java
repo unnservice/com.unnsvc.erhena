@@ -1,22 +1,25 @@
+
 package com.unnsvc.erhena.statusview.parts;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 public class SampleView {
+
 	private Label myLabelInView;
 
 	@PostConstruct
 	public void createPartControl(Composite parent) {
+
 		System.out.println("Enter in SampleE4View postConstruct");
 
 		myLabelInView = new Label(parent, SWT.BORDER);
@@ -26,32 +29,8 @@ public class SampleView {
 
 	@Focus
 	public void setFocus() {
+
 		myLabelInView.setFocus();
-
-	}
-
-	/**
-	 * This method is kept for E3 compatiblity. You can remove it if you do not
-	 * mix E3 and E4 code. <br/>
-	 * With E4 code you will set directly the selection in ESelectionService and
-	 * you do not receive a ISelection
-	 * 
-	 * @param s
-	 *            the selection received from JFace (E3 mode)
-	 */
-	@Inject
-	@Optional
-	public void setSelection(@Named(IServiceConstants.ACTIVE_SELECTION) ISelection s) {
-		if (s==null || s.isEmpty())
-			return;
-
-		if (s instanceof IStructuredSelection) {
-			IStructuredSelection iss = (IStructuredSelection) s;
-			if (iss.size() == 1)
-				setSelection(iss.getFirstElement());
-			else
-				setSelection(iss.toArray());
-		}
 	}
 
 	/**
@@ -73,8 +52,9 @@ public class SampleView {
 			return;
 
 		// Test if label exists (inject methods are called before PostConstruct)
-		if (myLabelInView != null)
+		if (myLabelInView != null) {
 			myLabelInView.setText("Current single selection class is : " + o.getClass());
+		}
 	}
 
 	/**
@@ -83,7 +63,8 @@ public class SampleView {
 	 * your specific selection
 	 * 
 	 * @param o
-	 *            : the current array of objects received in case of multiple selection
+	 *            : the current array of objects received in case of multiple
+	 *            selection
 	 */
 	@Inject
 	@Optional

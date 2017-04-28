@@ -20,13 +20,13 @@ import org.eclipse.ui.IWorkingSet;
 
 import com.unnsvc.erhena.common.IRhenaProject;
 import com.unnsvc.erhena.common.InjectionHelper;
-import com.unnsvc.erhena.wizards.service.ProjectCreationService;
+import com.unnsvc.erhena.wizards.service.old.OldProjectCreationService;
 
 public class RhenaModuleWizard extends Wizard implements INewWizard {
 
 	private RhenaModuleWizardPage page;
 	@Inject
-	private ProjectCreationService projectCreation;
+	private OldProjectCreationService projectCreation;
 
 	public RhenaModuleWizard() {
 

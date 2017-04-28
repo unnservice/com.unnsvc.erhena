@@ -1,5 +1,5 @@
 
-package com.unnsvc.erhena.itests.tests;
+package com.unnsvc.erhena.itests.old.tests;
 
 import java.net.URI;
 
@@ -12,12 +12,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import com.unnsvc.erhena.common.IRhenaProject;
-import com.unnsvc.erhena.wizards.service.ProjectCreationService;
+import com.unnsvc.erhena.wizards.service.old.OldProjectCreationService;
 
 public abstract class AbstractProjectCreationTest extends AbstractTest {
 
 	@Inject
-	private ProjectCreationService projectCreationService;
+	private OldProjectCreationService projectCreationService;
 
 	protected IWorkspaceRoot getWorkspaceRoot() {
 
@@ -31,7 +31,7 @@ public abstract class AbstractProjectCreationTest extends AbstractTest {
 		return project;
 	}
 
-	public ProjectCreationService getProjectCreationService() {
+	public OldProjectCreationService getProjectCreationService() {
 
 		return projectCreationService;
 	}

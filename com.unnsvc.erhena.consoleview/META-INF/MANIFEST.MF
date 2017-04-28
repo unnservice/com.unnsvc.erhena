@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Consoleview
+Bundle-SymbolicName: com.unnsvc.erhena.consoleview
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: com.unnsvc.erhena.consoleview.Activator
+Bundle-Vendor: UNNSVC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.console
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy

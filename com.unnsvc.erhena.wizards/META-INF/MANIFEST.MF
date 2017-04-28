@@ -26,4 +26,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.e4.core.di
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Export-Package: com.unnsvc.erhena.wizards.service
+Export-Package: com.unnsvc.erhena.wizards.service,
+ com.unnsvc.erhena.wizards.service.old
+Service-Component: OSGI-INF/projectCreationService.xml
