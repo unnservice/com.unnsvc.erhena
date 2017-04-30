@@ -4,17 +4,21 @@ package com.unnsvc.erhena.wizards.service;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.JavaCore;
 import org.osgi.service.component.annotations.Component;
 
 import com.unnsvc.erhena.common.exceptions.ErhenaException;
+import com.unnsvc.erhena.core.nature.RhenaNature;
+import com.unnsvc.rhena.common.RhenaConstants;
 
 @Component(name = "projectCreationService", service = IProjectCreationService.class)
-public class ProjectCreationService implements IProjectCreationService {
+public class ProjectCreationService extends AbstractProjectCreationService implements IProjectCreationService {
 
 	@Override
 	public IProject createProject(String projectName, IProgressMonitor monitor) throws ErhenaException {
@@ -25,6 +29,32 @@ public class ProjectCreationService implements IProjectCreationService {
 		} catch (URISyntaxException use) {
 			throw new ErhenaException(use);
 		}
+	}
+
+	@Override
+	public IProject createRhenaProject(String component, String module, IProgressMonitor monitor) throws ErhenaException {
+
+		IProject project = createProject(component + "." + module, monitor);
+		try {
+			// create default descriptor
+			IFile moduleDescriptor = project.getFile(RhenaConstants.MODULE_DESCRIPTOR_FILENAME);
+			if (!moduleDescriptor.exists()) {
+
+				moduleDescriptor.create(getModuleTemplate(component, module), false, monitor);
+
+				/**
+				 * Configure nature
+				 */
+				IProjectDescription description = project.getDescription();
+				description.setNatureIds(new String[] { JavaCore.NATURE_ID, RhenaNature.NATURE_ID });
+				project.setDescription(description, monitor);
+			}
+		} catch (CoreException ce) {
+
+			throw new ErhenaException(ce);
+		}
+
+		return project;
 	}
 
 	/**

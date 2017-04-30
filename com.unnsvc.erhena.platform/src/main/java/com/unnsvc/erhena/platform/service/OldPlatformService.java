@@ -17,6 +17,7 @@ import com.unnsvc.rhena.common.IRhenaEngine;
 
 //@Creatable
 //@Singleton
+@SuppressWarnings("restriction")
 public class OldPlatformService implements IPlatformService {
 
 	@Inject

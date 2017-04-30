@@ -12,9 +12,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import com.unnsvc.erhena.common.IRhenaProject;
+import com.unnsvc.erhena.itests.AbstractServiceTest;
 import com.unnsvc.erhena.wizards.service.old.OldProjectCreationService;
 
-public abstract class AbstractProjectCreationTest extends AbstractTest {
+public abstract class AbstractProjectCreationTest extends AbstractServiceTest {
 
 	@Inject
 	private OldProjectCreationService projectCreationService;

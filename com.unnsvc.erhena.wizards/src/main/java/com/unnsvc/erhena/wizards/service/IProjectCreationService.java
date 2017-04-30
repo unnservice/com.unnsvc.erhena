@@ -16,4 +16,6 @@ public interface IProjectCreationService {
 
 	public void deleteProject(IProject project, IProgressMonitor monitor) throws ErhenaException;
 
+	public IProject createRhenaProject(String component, String module, IProgressMonitor monitor) throws ErhenaException;
+
 }
