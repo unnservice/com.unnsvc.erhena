@@ -690,6 +690,10 @@ Public License instead of this License.  But first, please read
 &lt;http://www.gnu.org/philosophy/why-not-lgpl.html&gt;.
    </license>
 
+   <includes
+         id="com.unnsvc.erhena.feature.rhena"
+         version="0.0.0"/>
+
    <plugin
          id="com.unnsvc.erhena.core"
          download-size="0"
@@ -712,34 +716,6 @@ Public License instead of this License.  But first, please read
 
    <plugin
          id="com.unnsvc.erhena.common"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="com.unnsvc.rhena.agent"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="com.unnsvc.rhena.common"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="com.unnsvc.rhena.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="com.unnsvc.rhena.lifecycle"
          download-size="0"
          install-size="0"
          version="0.0.0"

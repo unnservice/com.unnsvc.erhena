@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/com.unnsvc.erhena.feature_0.2.0.201701191114.jar" id="com.unnsvc.erhena.feature" version="0.2.0.201701191114"/>
+   <feature url="features/com.unnsvc.erhena.feature_0.2.0.qualifier.jar" id="com.unnsvc.erhena.feature" version="0.2.0.qualifier">
+      <category name="com.unnsvc.erhena.category"/>
+   </feature>
+   <feature url="features/com.unnsvc.erhena.feature.rhena_0.2.0.qualifier.jar" id="com.unnsvc.erhena.feature.rhena" version="0.2.0.qualifier">
+      <category name="com.unnsvc.erhena.category"/>
+   </feature>
    <category-def name="com.unnsvc.erhena.category" label="Rhena integration for Eclipse"/>
 </site>
