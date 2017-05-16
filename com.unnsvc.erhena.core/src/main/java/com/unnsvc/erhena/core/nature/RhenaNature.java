@@ -42,10 +42,12 @@ public class RhenaNature implements IProjectNature {
 	@Override
 	public void configure() throws CoreException {
 
+		System.err.println("Configure rhena nature");
 		IProjectDescription desc = project.getDescription();
 		List<ICommand> commands = new ArrayList<ICommand>(Arrays.asList(desc.getBuildSpec()));
 
 		if (commands.contains(RhenaBuilder.BUILDER_ID)) {
+			
 			return;
 		} else {
 

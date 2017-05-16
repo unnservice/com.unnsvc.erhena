@@ -17,8 +17,8 @@ import com.unnsvc.erhena.common.exceptions.ErhenaException;
 import com.unnsvc.erhena.core.nature.RhenaNature;
 import com.unnsvc.rhena.common.RhenaConstants;
 
-@Component(name = "projectCreationService", service = IProjectCreationService.class)
-public class ProjectCreationService extends AbstractProjectCreationService implements IProjectCreationService {
+@Component(name = "projectService", service = IProjectService.class)
+public class ProjectService extends AbstractProjectCreationService implements IProjectService {
 
 	@Override
 	public IProject createProject(String projectName, IProgressMonitor monitor) throws ErhenaException {
@@ -34,7 +34,9 @@ public class ProjectCreationService extends AbstractProjectCreationService imple
 	@Override
 	public IProject createRhenaProject(String component, String module, IProgressMonitor monitor) throws ErhenaException {
 
-		IProject project = createProject(component + "." + module, monitor);
+		String projectName = component + "." + module;
+
+		IProject project = createProject(projectName, monitor);
 		try {
 			// create default descriptor
 			IFile moduleDescriptor = project.getFile(RhenaConstants.MODULE_DESCRIPTOR_FILENAME);

@@ -23,5 +23,6 @@ Require-Bundle: org.eclipse.core.runtime,
  com.unnsvc.rhena.repository
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Export-Package: com.unnsvc.erhena.platform.service
+Export-Package: com.unnsvc.erhena.platform.service,
+ com.unnsvc.erhena.platform.service.transactions
 Service-Component: OSGI-INF/platformService.xml

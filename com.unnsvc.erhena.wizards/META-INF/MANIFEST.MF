@@ -23,9 +23,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.e4.core.di.annotations,
  org.eclipse.e4.core.di.extensions,
  org.eclipse.e4.core.contexts,
- org.eclipse.e4.core.di
+ org.eclipse.e4.core.di,
+ org.eclipse.e4.ui.di
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: com.unnsvc.erhena.wizards.service,
  com.unnsvc.erhena.wizards.service.old
-Service-Component: OSGI-INF/projectCreationService.xml
+Service-Component: OSGI-INF/projectService.xml

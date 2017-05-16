@@ -20,5 +20,6 @@ Require-Bundle: org.eclipse.ui,
  com.unnsvc.rhena.common
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Activator: com.unnsvc.erhena.core.Activator
-Export-Package: com.unnsvc.erhena.core.nature
+Export-Package: com.unnsvc.erhena.core.builder,
+ com.unnsvc.erhena.core.nature
 Bundle-ActivationPolicy: lazy

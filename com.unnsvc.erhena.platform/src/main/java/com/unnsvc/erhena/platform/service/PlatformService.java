@@ -6,6 +6,7 @@ import java.net.URI;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.osgi.service.component.annotations.Component;
 
@@ -28,6 +29,7 @@ import com.unnsvc.rhena.repository.RhenaResolver;
 @Component(name = "platformService", service = IPlatformService.class)
 public class PlatformService implements IPlatformService {
 
+	private IRhenaContext context;
 	private IRhenaEngine engine;
 
 	@PostConstruct
@@ -39,7 +41,7 @@ public class PlatformService implements IPlatformService {
 		IRhenaCache cache = new RhenaCache();
 		IRhenaResolver resolver = new RhenaResolver();
 		IRhenaFactories factories = new RhenaFactories();
-		IRhenaContext context = new RhenaContext(config, cache, resolver, factories);
+		this.context = new RhenaContext(config, cache, resolver, factories);
 		this.engine = new RhenaEngine(context);
 	}
 
@@ -54,5 +56,12 @@ public class PlatformService implements IPlatformService {
 	@PreDestroy
 	public void preDestroy() {
 
+		
+	}
+
+	@Override
+	public IRhenaContext buildProject(IProject project) {
+
+		return context;
 	}
 }

@@ -8,7 +8,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import com.unnsvc.erhena.common.exceptions.ErhenaException;
 
-public interface IProjectCreationService {
+public interface IProjectService {
 
 	public IProject createProject(String projectName, URI projectLocation, IProgressMonitor monitor) throws ErhenaException;
 
