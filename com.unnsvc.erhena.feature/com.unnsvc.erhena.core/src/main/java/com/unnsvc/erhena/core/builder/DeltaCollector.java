@@ -3,9 +3,11 @@ package com.unnsvc.erhena.core.builder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -19,12 +21,12 @@ import com.unnsvc.erhena.core.nature.RhenaNature;
 
 public class DeltaCollector implements IResourceDeltaVisitor, Iterable<IPath> {
 
-	private Map<IProject, List<IPath>> projectpaths;
+	private Map<IProject, Set<IPath>> projectpaths;
 	private List<IPath> paths;
 
 	public DeltaCollector(IResourceChangeEvent event) throws CoreException {
 
-		this.projectpaths = new HashMap<IProject, List<IPath>>();
+		this.projectpaths = new HashMap<IProject, Set<IPath>>();
 		this.paths = new ArrayList<IPath>();
 		if (event.getDelta() != null) {
 			event.getDelta().accept(this);
@@ -42,9 +44,9 @@ public class DeltaCollector implements IResourceDeltaVisitor, Iterable<IPath> {
 				IPath path = resource.getFullPath().makeRelativeTo(project.getFullPath());
 				paths.add(path);
 
-				List<IPath> projectpath = projectpaths.get(project);
+				Set<IPath> projectpath = projectpaths.get(project);
 				if (projectpath == null) {
-					projectpath = new ArrayList<IPath>();
+					projectpath = new HashSet<IPath>();
 					projectpaths.put(project, projectpath);
 				}
 				projectpath.add(path);
@@ -65,7 +67,7 @@ public class DeltaCollector implements IResourceDeltaVisitor, Iterable<IPath> {
 		return paths.iterator();
 	}
 
-	public Map<IProject, List<IPath>> getProjectpaths() {
+	public Map<IProject, Set<IPath>> getProjectpaths() {
 
 		return projectpaths;
 	}
