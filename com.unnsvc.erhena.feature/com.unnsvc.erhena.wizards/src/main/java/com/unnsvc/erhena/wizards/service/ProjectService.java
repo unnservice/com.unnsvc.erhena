@@ -32,7 +32,7 @@ public class ProjectService extends AbstractProjectCreationService implements IP
 	}
 
 	@Override
-	public IProject createRhenaProject(String component, String module, IProgressMonitor monitor) throws ErhenaException {
+	public IProject createRhenaProject(String component, String module, URI location, IProgressMonitor monitor) throws ErhenaException {
 
 		String projectName = component + "." + module;
 
@@ -57,6 +57,12 @@ public class ProjectService extends AbstractProjectCreationService implements IP
 		}
 
 		return project;
+	}
+
+	@Override
+	public IProject createRhenaProject(String component, String module, IProgressMonitor monitor) throws ErhenaException {
+
+		return this.createRhenaProject(component, module, null, monitor);
 	}
 
 	/**
@@ -102,4 +108,5 @@ public class ProjectService extends AbstractProjectCreationService implements IP
 			throw new ErhenaException(coreException);
 		}
 	}
+
 }

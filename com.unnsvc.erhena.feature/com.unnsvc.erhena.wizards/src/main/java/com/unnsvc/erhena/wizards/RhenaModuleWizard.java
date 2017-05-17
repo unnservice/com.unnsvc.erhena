@@ -5,28 +5,26 @@ import java.net.URI;
 
 import javax.inject.Inject;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSet;
 
-import com.unnsvc.erhena.common.IRhenaProject;
 import com.unnsvc.erhena.common.InjectionHelper;
-import com.unnsvc.erhena.wizards.service.old.OldProjectCreationService;
+import com.unnsvc.erhena.common.exceptions.ErhenaException;
+import com.unnsvc.erhena.wizards.service.IProjectService;
 
 public class RhenaModuleWizard extends Wizard implements INewWizard {
 
 	private RhenaModuleWizardPage page;
 	@Inject
-	private OldProjectCreationService projectCreation;
+	protected IProjectService projectCreationService;
 
 	public RhenaModuleWizard() {
 
@@ -50,41 +48,90 @@ public class RhenaModuleWizard extends Wizard implements INewWizard {
 	@Override
 	public boolean performFinish() {
 
+		// WorkspaceJob createProject = new WorkspaceJob("Create project " +
+		// page.getGroupName() + "." + page.getProjectName()) {
+		//
+		// @Override
+		// public IStatus runInWorkspace(IProgressMonitor monitor) throws
+		// CoreException {
+		//
+		// try {
+		// String componentName = page.getGroupName();
+		// String projectName = page.getProjectName();
+		// URI location = page.getProjectLocationURI();
+		//
+		// IProject project =
+		// projectCreationService.createRhenaProject(componentName, projectName,
+		// location, monitor);
+		//
+		// } catch (ErhenaException ee) {
+		//
+		// return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+		// ee.getMessage(), ee);
+		// }
+		// return Status.OK_STATUS;
+		// }
+		// };
+		// createProject.schedule();
+
 		try {
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IWorkspaceRunnable operation = new IWorkspaceRunnable() {
+			String componentName = page.getGroupName();
+			String projectName = page.getProjectName();
+			URI location = page.getProjectLocationURI();
 
-				public void run(IProgressMonitor monitor) throws CoreException {
+			IProject project = projectCreationService.createRhenaProject(componentName, projectName, location, new NullProgressMonitor());
+			IJavaProject jProject = JavaCore.create(project);
+			/*
+			 * Add to working set
+			 */
+			for (IWorkingSet workingSet : page.getWorkingSets()) {
 
-					String componentName = page.getGroupName();
-					String projectName = page.getProjectName();
-					URI location = page.getProjectLocationURI();
+				IAdaptable[] existing = workingSet.getElements();
+				IAdaptable[] newExisting = new IAdaptable[existing.length + 1];
+				System.arraycopy(existing, 0, newExisting, 0, existing.length);
+				newExisting[existing.length] = jProject;
+				workingSet.setElements(newExisting);
+			}
 
-					IRhenaProject created = projectCreation.createProject(componentName, projectName, location, monitor);
+		} catch (
 
-					for (IWorkingSet workingSet : page.getWorkingSets()) {
+		ErhenaException ee) {
 
-						IAdaptable[] existing = workingSet.getElements();
-						IAdaptable[] newExisting = new IAdaptable[existing.length + 1];
-						System.arraycopy(existing, 0, newExisting, 0, existing.length);
-						newExisting[existing.length] = created.getJavaProject();
-						workingSet.setElements(newExisting);
-					}
-
-					// IWorkingSetManager workingSetManager =
-					// PlatformUI.getWorkbench().getWorkingSetManager();
-					// workingSetManager.createWorkingSet("my working set",
-					// elements);
-				}
-			};
-			workspace.run(operation, new NullProgressMonitor());
-
-			return true;
-		} catch (CoreException ce) {
-			ce.printStackTrace();
+			return false;
 		}
 
-		return false;
+		return true;
+
+		// IRhenaProject created =
+		// projectCreationService.createProject(componentName,
+		// projectName, location, monitor);
+		//
+		// for (IWorkingSet workingSet : page.getWorkingSets()) {
+		//
+		// IAdaptable[] existing = workingSet.getElements();
+		// IAdaptable[] newExisting = new IAdaptable[existing.length +
+		// 1];
+		// System.arraycopy(existing, 0, newExisting, 0,
+		// existing.length);
+		// newExisting[existing.length] = created.getJavaProject();
+		// workingSet.setElements(newExisting);
+		// }
+
+		// IWorkingSetManager workingSetManager =
+		// PlatformUI.getWorkbench().getWorkingSetManager();
+		// workingSetManager.createWorkingSet("my working set",
+		// elements);
+		// }
+		// };
+		//
+		// try {
+		// workspace.run(operation, new NullProgressMonitor());
+		// return true;
+		// } catch (CoreException ce) {
+		// ce.printStackTrace();
+		// return false;
+		// }
+
 	}
 
 }
