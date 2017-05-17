@@ -1,8 +1,6 @@
 
 package com.unnsvc.erhena.itests.tests;
 
-import java.util.Arrays;
-
 import javax.inject.Inject;
 
 import org.eclipse.core.internal.runtime.Activator;
@@ -63,8 +61,33 @@ public class TestProjectCreationAndBuild extends AbstractServiceTest {
 			Assert.assertTrue(project.getFile("/" + RhenaConstants.MODULE_DESCRIPTOR_FILENAME).exists());
 			Assert.assertTrue(project.hasNature(RhenaNature.NATURE_ID));
 
-			
 			assertBuilderPresent(project, RhenaBuilder.BUILDER_ID);
+
+			
+//			/**
+//			 * Run
+//			 */
+//			RhenaBuilderMonitorContext progress = new RhenaBuilderMonitorContext();
+//			
+//			//
+//			project.build(IncrementalProjectBuilder.FULL_BUILD, progress);
+
+			/**
+			 * Assert that relevavnt projects have classpath
+			 */
+			
+			
+			WorkspaceJob job2 = new WorkspaceJob("1") {
+
+				@Override
+				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+
+					System.err.println("Called here");
+					return Status.OK_STATUS;
+				}
+			};
+			job2.schedule();
+			job2.join();
 
 		} finally {
 			if (project != null) {

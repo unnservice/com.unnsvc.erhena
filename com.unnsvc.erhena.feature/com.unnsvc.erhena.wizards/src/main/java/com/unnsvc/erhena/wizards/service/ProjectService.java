@@ -17,7 +17,7 @@ import com.unnsvc.erhena.common.exceptions.ErhenaException;
 import com.unnsvc.erhena.core.nature.RhenaNature;
 import com.unnsvc.rhena.common.RhenaConstants;
 
-@Component(name = "projectService", service = IProjectService.class)
+@Component(service = IProjectService.class)
 public class ProjectService extends AbstractProjectCreationService implements IProjectService {
 
 	@Override

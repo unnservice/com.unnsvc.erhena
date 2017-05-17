@@ -29,4 +29,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: com.unnsvc.erhena.wizards.service,
  com.unnsvc.erhena.wizards.service.old
-Service-Component: OSGI-INF/projectService.xml
+Service-Component: OSGI-INF/com.unnsvc.erhena.wizards.service.ProjectService.xml

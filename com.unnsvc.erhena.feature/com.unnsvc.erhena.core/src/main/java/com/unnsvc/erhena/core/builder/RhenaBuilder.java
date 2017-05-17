@@ -40,7 +40,7 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 
 		System.err.println("Executing build on project with monitor: " + monitor.hashCode());
-
+		
 		// IProject project = getProject();
 		// IJavaProject javaProject = JavaCore.create(project);
 		//

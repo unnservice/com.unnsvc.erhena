@@ -23,3 +23,4 @@ Bundle-Activator: com.unnsvc.erhena.core.Activator
 Export-Package: com.unnsvc.erhena.core.builder,
  com.unnsvc.erhena.core.nature
 Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/com.unnsvc.erhena.core.registry.ChangeRegistryService.xml

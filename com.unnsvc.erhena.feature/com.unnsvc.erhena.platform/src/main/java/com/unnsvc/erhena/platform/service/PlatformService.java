@@ -26,7 +26,7 @@ import com.unnsvc.rhena.core.RhenaEngine;
 import com.unnsvc.rhena.core.RhenaFactories;
 import com.unnsvc.rhena.repository.RhenaResolver;
 
-@Component(name = "platformService", service = IPlatformService.class)
+@Component(service = IPlatformService.class)
 public class PlatformService implements IPlatformService {
 
 	private IRhenaContext context;
