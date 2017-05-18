@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.osgi.service.component.annotations.Component;
 
 import com.unnsvc.erhena.common.exceptions.ErhenaException;
+import com.unnsvc.erhena.common.services.IProjectService;
 import com.unnsvc.erhena.core.nature.RhenaNature;
 import com.unnsvc.rhena.common.RhenaConstants;
 

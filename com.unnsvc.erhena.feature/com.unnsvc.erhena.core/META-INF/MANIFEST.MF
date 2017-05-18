@@ -6,7 +6,6 @@ Bundle-Version: 0.2.0.qualifier
 Bundle-Vendor: UNNSVC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- com.unnsvc.erhena.common,
  org.eclipse.core.resources,
  org.eclipse.ui.ide,
  org.eclipse.e4.core.services,
@@ -17,7 +16,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.launching,
  org.eclipse.jdt.core,
  org.eclipse.core.expressions,
- com.unnsvc.rhena.common
+ com.unnsvc.rhena.common,
+ com.unnsvc.erhena.common
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Activator: com.unnsvc.erhena.core.Activator
 Export-Package: com.unnsvc.erhena.core.builder,

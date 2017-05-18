@@ -1,5 +1,5 @@
 
-package com.unnsvc.erhena.wizards.service;
+package com.unnsvc.erhena.common.services;
 
 import java.net.URI;
 

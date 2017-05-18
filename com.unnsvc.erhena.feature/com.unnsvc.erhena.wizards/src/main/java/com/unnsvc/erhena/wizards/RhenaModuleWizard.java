@@ -18,7 +18,7 @@ import org.eclipse.ui.IWorkingSet;
 
 import com.unnsvc.erhena.common.InjectionHelper;
 import com.unnsvc.erhena.common.exceptions.ErhenaException;
-import com.unnsvc.erhena.wizards.service.IProjectService;
+import com.unnsvc.erhena.common.services.IProjectService;
 
 public class RhenaModuleWizard extends Wizard implements INewWizard {
 

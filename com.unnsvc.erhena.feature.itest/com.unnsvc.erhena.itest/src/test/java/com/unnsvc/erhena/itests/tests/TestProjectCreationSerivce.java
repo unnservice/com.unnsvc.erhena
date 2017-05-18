@@ -7,11 +7,11 @@ import org.eclipse.core.resources.IProject;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.unnsvc.erhena.common.services.IPlatformService;
+import com.unnsvc.erhena.common.services.IProjectService;
 import com.unnsvc.erhena.core.builder.RhenaBuilder;
 import com.unnsvc.erhena.core.nature.RhenaNature;
 import com.unnsvc.erhena.itests.AbstractServiceTest;
-import com.unnsvc.erhena.platform.service.IPlatformService;
-import com.unnsvc.erhena.wizards.service.IProjectService;
 import com.unnsvc.rhena.common.RhenaConstants;
 
 public class TestProjectCreationSerivce extends AbstractServiceTest {
