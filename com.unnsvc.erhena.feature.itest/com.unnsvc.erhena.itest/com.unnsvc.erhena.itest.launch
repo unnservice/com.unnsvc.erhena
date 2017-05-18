@@ -37,9 +37,9 @@
 <stringAttribute key="product" value="org.eclipse.sdk.ide"/>
 <booleanAttribute key="run_in_ui_thread" value="true"/>
 <setAttribute key="selected_features">
+<setEntry value="com.unnsvc.erhena.feature.ide:default"/>
 <setEntry value="com.unnsvc.erhena.feature.itest:default"/>
 <setEntry value="com.unnsvc.erhena.feature.rhena:default"/>
-<setEntry value="com.unnsvc.erhena.feature:default"/>
 <setEntry value="org.eclipse.cvs.source:default"/>
 <setEntry value="org.eclipse.cvs:default"/>
 <setEntry value="org.eclipse.e4.rcp.source:default"/>
