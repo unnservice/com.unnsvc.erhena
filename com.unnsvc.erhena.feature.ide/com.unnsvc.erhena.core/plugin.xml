@@ -167,5 +167,32 @@
             class="com.unnsvc.erhena.core.PlatformStartup">
       </startup>
    </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="com.unnsvc.erhena.core.properties.ErhenaProjectProperties"
+            id="com.unnsvc.erhena.core.properties.samplePropertyPage"
+            name="ERhena"
+            nameFilter="*.*">
+         <enabledWhen>
+            <reference
+                  definitionId="com.unnsvc.erhena.core.expression.hasNature">
+            </reference>
+         </enabledWhen>
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="com.unnsvc.erhena.core.expression.hasNature">
+         <adapt
+               type="org.eclipse.core.resources.IProject">
+            <test
+                  property="org.eclipse.core.resources.projectNature"
+                  value="com.unnsvc.erhena.core.nature">
+            </test>
+         </adapt>
+      </definition>
+   </extension>
 
 </plugin>

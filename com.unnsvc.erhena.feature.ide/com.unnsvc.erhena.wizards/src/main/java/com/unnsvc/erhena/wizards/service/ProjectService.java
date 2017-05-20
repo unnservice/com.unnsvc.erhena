@@ -20,6 +20,13 @@ import com.unnsvc.erhena.common.services.IProjectService;
 import com.unnsvc.erhena.core.nature.RhenaNature;
 import com.unnsvc.rhena.common.RhenaConstants;
 
+/**
+ * @see http://www.vogella.com/tutorials/EclipseProjectNatures/article.html Add
+ *      the org.eclipse.ui.handlers extension point and add a handler for the
+ *      com.example.product.examplenature.command convert command to convert a project.
+ * @author noname
+ *
+ */
 @Component(service = IProjectService.class)
 public class ProjectService extends AbstractProjectCreationService implements IProjectService {
 
@@ -51,7 +58,7 @@ public class ProjectService extends AbstractProjectCreationService implements IP
 				 * Configure nature
 				 */
 				IProjectDescription description = project.getDescription();
-				
+
 				// validate the natures
 				String[] natures = new String[] { JavaCore.NATURE_ID, RhenaNature.NATURE_ID };
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -59,8 +66,8 @@ public class ProjectService extends AbstractProjectCreationService implements IP
 
 				// only apply new nature, if the status is ok
 				if (status.getCode() == IStatus.OK) {
-				    description.setNatureIds(natures);
-				    project.setDescription(description, monitor);
+					description.setNatureIds(natures);
+					project.setDescription(description, monitor);
 				} else {
 					throw new ErhenaException(status.getMessage(), status.getException());
 				}
