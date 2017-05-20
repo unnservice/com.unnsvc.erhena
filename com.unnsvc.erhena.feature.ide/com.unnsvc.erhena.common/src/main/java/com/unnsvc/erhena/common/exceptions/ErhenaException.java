@@ -23,4 +23,8 @@ public class ErhenaException extends RhenaException {
 		super(throwable);
 	}
 
+	public ErhenaException(String message, Throwable throwable) {
+
+		super(message, throwable);
+	}
 }

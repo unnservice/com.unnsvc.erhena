@@ -30,6 +30,7 @@ import com.unnsvc.rhena.repository.RhenaResolver;
 @Component(service = IPlatformService.class)
 public class PlatformService implements IPlatformService {
 
+	private IRhenaConfiguration config;
 	private IRhenaContext context;
 	private IRhenaEngine engine;
 
@@ -37,7 +38,7 @@ public class PlatformService implements IPlatformService {
 	public void postConstruct() {
 
 		// Configure a platform from eclipse settings?
-		IRhenaConfiguration config = new RhenaConfiguration();
+		config = new RhenaConfiguration();
 		configureRepositories(config);
 		IRhenaCache cache = new RhenaCache();
 		IRhenaResolver resolver = new RhenaResolver();
@@ -57,11 +58,28 @@ public class PlatformService implements IPlatformService {
 	@PreDestroy
 	public void preDestroy() {
 
-		
 	}
 
 	@Override
 	public IRhenaContext buildProject(IProject project) {
+
+		return context;
+	}
+
+	@Override
+	public IRhenaConfiguration getConfig() {
+
+		return config;
+	}
+
+	@Override
+	public IRhenaEngine getEngine() {
+
+		return engine;
+	}
+
+	@Override
+	public IRhenaContext getContext() {
 
 		return context;
 	}

@@ -7,9 +7,11 @@ import java.net.URISyntaxException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaCore;
 import org.osgi.service.component.annotations.Component;
 
@@ -49,8 +51,19 @@ public class ProjectService extends AbstractProjectCreationService implements IP
 				 * Configure nature
 				 */
 				IProjectDescription description = project.getDescription();
-				description.setNatureIds(new String[] { JavaCore.NATURE_ID, RhenaNature.NATURE_ID });
-				project.setDescription(description, monitor);
+				
+				// validate the natures
+				String[] natures = new String[] { JavaCore.NATURE_ID, RhenaNature.NATURE_ID };
+				IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				IStatus status = workspace.validateNatureSet(natures);
+
+				// only apply new nature, if the status is ok
+				if (status.getCode() == IStatus.OK) {
+				    description.setNatureIds(natures);
+				    project.setDescription(description, monitor);
+				} else {
+					throw new ErhenaException(status.getMessage(), status.getException());
+				}
 			}
 		} catch (CoreException ce) {
 

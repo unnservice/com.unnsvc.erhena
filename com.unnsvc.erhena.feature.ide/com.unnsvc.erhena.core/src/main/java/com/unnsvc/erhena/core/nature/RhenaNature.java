@@ -41,6 +41,7 @@ public class RhenaNature implements IProjectNature {
 
 	@Override
 	public void configure() throws CoreException {
+        // only called once the nature has been set
 
 		System.err.println("Configure rhena nature");
 		IProjectDescription desc = project.getDescription();
@@ -72,6 +73,7 @@ public class RhenaNature implements IProjectNature {
 
 	@Override
 	public void deconfigure() throws CoreException {
+        // only called once the nature has been unset
 
 		IProjectDescription description = getProject().getDescription();
 		ICommand[] commands = description.getBuildSpec();

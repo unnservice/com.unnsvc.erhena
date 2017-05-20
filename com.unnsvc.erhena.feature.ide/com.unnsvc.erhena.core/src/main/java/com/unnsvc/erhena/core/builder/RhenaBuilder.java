@@ -18,6 +18,7 @@ import org.osgi.framework.FrameworkUtil;
 import com.unnsvc.erhena.common.services.IPlatformService;
 import com.unnsvc.erhena.common.services.IProjectService;
 import com.unnsvc.erhena.core.Activator;
+import com.unnsvc.rhena.common.IRhenaEngine;
 
 public class RhenaBuilder extends IncrementalProjectBuilder {
 
@@ -43,6 +44,11 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 		System.err.println("Executing build on project with monitor: " + monitor.hashCode());
 		System.err.println("Project" + projectService + " platform " + platformService);
 		// find roots
+		
+		
+		IRhenaEngine engine = platformService.getEngine();
+
+		
 
 		return null;
 	}
