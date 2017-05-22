@@ -6,9 +6,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.prefs.BackingStoreException;
@@ -19,26 +16,21 @@ import com.unnsvc.erhena.common.services.IWorkspacesService;
 import com.unnsvc.erhena.workspaces.Activator;
 import com.unnsvc.erhena.workspaces.Constants;
 
-@Component(service = IWorkspacesService.class)
+@Component(service = IWorkspacesService.class, immediate = true)
 public class WorkspacesService implements IWorkspacesService {
 
 	private List<URI> workspaces;
 
-	public WorkspacesService() {
+	/**
+	 * As normal OSGi services probably don't have @PostConstruct, we have to do
+	 * the loading in constructor instead of in @PostConstruct
+	 * 
+	 * @throws ErhenaException
+	 */
+	public WorkspacesService() throws ErhenaException {
 
 		workspaces = new ArrayList<URI>();
-	}
-
-	@PostConstruct
-	public void postConstruct() throws ErhenaException {
-
 		loadPreferences();
-	}
-
-	@PreDestroy
-	public void preDestroy() throws ErhenaException {
-
-		savePreferences();
 	}
 
 	private void loadPreferences() throws ErhenaException {
@@ -62,8 +54,7 @@ public class WorkspacesService implements IWorkspacesService {
 			try {
 				StringBuilder sb = new StringBuilder();
 				for (URI workspace : workspaces) {
-					sb.append(workspace.toString());
-					sb.append(";");
+					sb.append(workspace.toString()).append(";");
 				}
 				String workspacesStr = sb.toString().substring(0, sb.toString().length() - 1);
 
