@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Workspaces
+Bundle-SymbolicName: com.unnsvc.erhena.workspaces
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: com.unnsvc.erhena.workspaces.Activator
+Bundle-Vendor: UNNSVC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ com.unnsvc.erhena.common
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
