@@ -7,14 +7,16 @@ Bundle-Activator: com.unnsvc.erhena.workspaces.Activator
 Bundle-Vendor: UNNSVC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- com.unnsvc.erhena.common,
  org.eclipse.core.resources,
  org.eclipse.e4.core.di.annotations,
  org.eclipse.osgi.services,
  org.eclipse.e4.ui.workbench,
  org.eclipse.e4.ui.di,
  org.eclipse.e4.ui.services,
- com.unnsvc.erhena.branding
+ com.unnsvc.erhena.platform,
+ com.unnsvc.erhena.branding,
+ com.unnsvc.erhena.common
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/com.unnsvc.erhena.workspaces.service.WorkspacesService.xml
+Import-Package: com.unnsvc.erhena.common.exceptions
