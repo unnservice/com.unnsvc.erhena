@@ -61,10 +61,10 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 			ModuleIdentifier identifier = ModelHelper.locationToModuleIdentifier(projectPath);
 			IRhenaModule module = engine.resolveModule(identifier);
 		} catch (RhenaException e) {
-			
+
 			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e));
 		}
-		
+
 		return null;
 	}
 

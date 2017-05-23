@@ -22,6 +22,5 @@ Require-Bundle: org.eclipse.core.runtime,
  com.unnsvc.rhena.model;visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Export-Package: com.unnsvc.erhena.platform.service,
- com.unnsvc.erhena.platform.service.transactions
+Export-Package: com.unnsvc.erhena.platform.service
 Service-Component: OSGI-INF/com.unnsvc.erhena.platform.service.PlatformService.xml
