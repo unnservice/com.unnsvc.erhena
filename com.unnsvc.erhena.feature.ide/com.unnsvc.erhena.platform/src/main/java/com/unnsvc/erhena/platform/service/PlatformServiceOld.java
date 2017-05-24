@@ -3,13 +3,10 @@ package com.unnsvc.erhena.platform.service;
 
 import java.net.URI;
 
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.osgi.service.component.annotations.Component;
 
-import com.unnsvc.erhena.common.services.IPlatformService;
 import com.unnsvc.erhena.common.services.IWorkspacesService;
 import com.unnsvc.rhena.common.IRhenaCache;
 import com.unnsvc.rhena.common.IRhenaContext;
@@ -27,33 +24,26 @@ import com.unnsvc.rhena.core.RhenaEngine;
 import com.unnsvc.rhena.core.RhenaFactories;
 import com.unnsvc.rhena.repository.RhenaResolver;
 
-@Component(service = IPlatformService.class)
-public class PlatformService implements IPlatformService {
+public class PlatformServiceOld {
 
 	@Inject
 	private IWorkspacesService workspacesService;
 
-	private IRhenaCache cache;
+	private IRhenaConfiguration config;
+	private IRhenaContext context;
+	private IRhenaEngine engine;
 
-	public PlatformService() {
-
-		this.cache = new RhenaCache();
-	}
-
-	@Override
-	public IRhenaEngine createEngine() {
+	public void postConstruct() {
 
 		// Configure a platform from eclipse settings?
-		IRhenaConfiguration config = new RhenaConfiguration();
-
+		config = new RhenaConfiguration();
 		configureRepositories(config);
 
+		IRhenaCache cache = new RhenaCache();
 		IRhenaResolver resolver = new RhenaResolver();
 		IRhenaFactories factories = new RhenaFactories();
-		IRhenaContext context = new RhenaContext(config, cache, resolver, factories);
-		IRhenaEngine engine = new RhenaEngine(context);
-
-		return engine;
+		this.context = new RhenaContext(config, cache, resolver, factories);
+		this.engine = new RhenaEngine(context);
 	}
 
 	private void configureRepositories(IRhenaConfiguration config) {
@@ -64,8 +54,18 @@ public class PlatformService implements IPlatformService {
 		config.getRepositoryConfiguration().addWorkspaceRepositories(repository);
 	}
 
-	@PreDestroy
-	public void preDestroy() {
+	public IRhenaConfiguration getConfig() {
 
+		return config;
+	}
+
+	public IRhenaEngine getEngine() {
+
+		return engine;
+	}
+
+	public IRhenaContext getContext() {
+
+		return context;
 	}
 }

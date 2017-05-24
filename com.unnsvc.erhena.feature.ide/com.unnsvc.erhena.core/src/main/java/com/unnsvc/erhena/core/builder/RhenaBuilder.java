@@ -25,6 +25,7 @@ import com.unnsvc.erhena.core.Activator;
 import com.unnsvc.rhena.common.IRhenaEngine;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.identity.ModuleIdentifier;
+import com.unnsvc.rhena.common.model.EExecutionType;
 import com.unnsvc.rhena.common.model.IRhenaModule;
 import com.unnsvc.rhena.model.ModelHelper;
 
@@ -53,13 +54,14 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 		System.err.println("Project" + projectService + " platform " + platformService);
 		// find roots
 
-		IRhenaEngine engine = platformService.getEngine();
+		IRhenaEngine engine = platformService.createEngine();
 		URI projectLocation = getProject().getLocationURI();
 		File projectPath = new File(projectLocation.getPath());
 
 		try {
 			ModuleIdentifier identifier = ModelHelper.locationToModuleIdentifier(projectPath);
 			IRhenaModule module = engine.resolveModule(identifier);
+			engine.resolveExecution(EExecutionType.ITEST, module);
 		} catch (RhenaException e) {
 
 			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e));
