@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Common
-Bundle-SymbolicName: com.unnsvc.erhena.common
+Bundle-SymbolicName: com.unnsvc.erhena.common;singleton:=true
 Bundle-Version: 0.2.0.qualifier
 Bundle-Vendor: UNNSVC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
@@ -17,6 +17,13 @@ Require-Bundle: org.eclipse.e4.core.di,
  org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.jdt.core,
- com.unnsvc.rhena.common,
- org.eclipse.e4.core.contexts
-Import-Package: com.unnsvc.rhena.common.exceptions
+ org.eclipse.e4.core.contexts,
+ com.unnsvc.rhena.agent;bundle-version="1.0.0",
+ com.unnsvc.rhena.common;bundle-version="1.0.0";visibility:=reexport,
+ com.unnsvc.rhena.config;bundle-version="1.0.0";visibility:=reexport,
+ com.unnsvc.rhena.core;bundle-version="1.0.0";visibility:=reexport,
+ com.unnsvc.rhena.execution;bundle-version="1.0.0";visibility:=reexport,
+ com.unnsvc.rhena.lifecycle;bundle-version="1.0.0";visibility:=reexport,
+ com.unnsvc.rhena.model;bundle-version="1.0.0";visibility:=reexport,
+ com.unnsvc.rhena.objectserver;bundle-version="1.0.0";visibility:=reexport,
+ com.unnsvc.rhena.repository;bundle-version="1.0.0";visibility:=reexport
