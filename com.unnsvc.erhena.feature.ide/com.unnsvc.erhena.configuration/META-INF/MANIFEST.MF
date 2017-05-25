@@ -12,6 +12,4 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/com.unnsvc.erhena.configuration.ConfigurationService.xml
 Bundle-ActivationPolicy: lazy
-Import-Package: com.unnsvc.rhena.common.config,
- com.unnsvc.rhena.config
 
