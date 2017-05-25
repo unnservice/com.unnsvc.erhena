@@ -19,7 +19,7 @@ Require-Bundle: org.eclipse.core.runtime,
  com.unnsvc.rhena.config,
  com.unnsvc.rhena.repository,
  com.unnsvc.rhena.core,
- com.unnsvc.rhena.model;visibility:=reexport
+ com.unnsvc.rhena.model
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: com.unnsvc.erhena.platform.service

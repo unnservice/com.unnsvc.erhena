@@ -44,10 +44,11 @@ public class TestProjectCreationAndBuild extends AbstractServiceTest {
 					try {
 						project = projectCreationService.createRhenaProject("com.test", "project", monitor);
 
-						IRhenaContext context = platformService.buildProject(project);
-						System.err.println("Context is " + context);
+						throw new UnsupportedOperationException("Not implemented");
+//						IRhenaContext context = platformService.buildProject(project);
+//						System.err.println("Context is " + context);
 
-						return Status.OK_STATUS;
+//						return Status.OK_STATUS;
 					} catch (ErhenaException ee) {
 						return new Status(Status.ERROR, Activator.PLUGIN_ID, ee.getMessage(), ee);
 					}

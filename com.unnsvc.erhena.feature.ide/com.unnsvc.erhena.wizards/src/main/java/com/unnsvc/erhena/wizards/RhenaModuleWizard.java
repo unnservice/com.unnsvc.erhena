@@ -93,9 +93,7 @@ public class RhenaModuleWizard extends Wizard implements INewWizard {
 				workingSet.setElements(newExisting);
 			}
 
-		} catch (
-
-		ErhenaException ee) {
+		} catch (ErhenaException ee) {
 
 			return false;
 		}

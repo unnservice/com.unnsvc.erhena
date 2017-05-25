@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Settings
+Bundle-SymbolicName: com.unnsvc.erhena.configuration;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: com.unnsvc.erhena.configuration.Activator
+Bundle-Vendor: UNNSVC
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ com.unnsvc.erhena.common,
+ com.unnsvc.erhena.platform
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Service-Component: OSGI-INF/com.unnsvc.erhena.configuration.ConfigurationService.xml
+Bundle-ActivationPolicy: lazy
+Import-Package: com.unnsvc.rhena.common.config,
+ com.unnsvc.rhena.config
+

@@ -9,16 +9,16 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.junit,
  org.eclipse.e4.core.di,
- org.eclipse.e4.core.contexts,
  com.unnsvc.erhena.common,
- com.unnsvc.erhena.wizards,
  com.unnsvc.erhena.platform,
+ org.eclipse.e4.core.contexts,
+ com.unnsvc.erhena.wizards,
  com.unnsvc.erhena.core,
+ com.unnsvc.erhena.workspaces,
  org.eclipse.jdt.core,
  org.eclipse.equinox.util,
  org.eclipse.equinox.ds,
  org.eclipse.osgi.services,
- org.eclipse.e4.ui.di,
- com.unnsvc.erhena.workspaces
+ org.eclipse.e4.ui.di
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
