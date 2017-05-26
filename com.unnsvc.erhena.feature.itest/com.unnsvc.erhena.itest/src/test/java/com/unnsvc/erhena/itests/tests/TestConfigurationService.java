@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import com.unnsvc.erhena.common.services.IConfigurationService;
 import com.unnsvc.erhena.itests.AbstractServiceTest;
-import com.unnsvc.rhena.common.config.IRhenaConfiguration;
 
 public class TestConfigurationService extends AbstractServiceTest {
 
