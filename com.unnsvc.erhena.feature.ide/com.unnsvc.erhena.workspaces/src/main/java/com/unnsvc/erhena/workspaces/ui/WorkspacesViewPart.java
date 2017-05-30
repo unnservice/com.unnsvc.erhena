@@ -72,6 +72,7 @@ public class WorkspacesViewPart {
 
 						DirectoryDialog dialog = new DirectoryDialog(parent.getShell(), SWT.OPEN | SWT.SINGLE);
 						String selectedPath = dialog.open();
+						
 						if(selectedPath != null) {
 							onSelection(selectedPath);
 						}

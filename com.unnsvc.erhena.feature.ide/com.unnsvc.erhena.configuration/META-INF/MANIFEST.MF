@@ -7,6 +7,8 @@ Bundle-Activator: com.unnsvc.erhena.configuration.Activator
 Bundle-Vendor: UNNSVC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
+ org.eclipse.e4.ui.workbench,
+ com.unnsvc.erhena.branding,
  com.unnsvc.erhena.common,
  com.unnsvc.erhena.platform
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
