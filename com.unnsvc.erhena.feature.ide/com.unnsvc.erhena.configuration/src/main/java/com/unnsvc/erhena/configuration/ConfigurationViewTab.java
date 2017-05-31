@@ -1,20 +1,34 @@
 
 package com.unnsvc.erhena.configuration;
 
+import java.io.File;
+import java.net.URI;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.ui.progress.UIJob;
 
+import com.unnsvc.erhena.common.exceptions.ErhenaException;
+import com.unnsvc.rhena.common.config.IRhenaConfiguration;
 import com.unnsvc.rhena.common.repository.ERepositoryType;
+import com.unnsvc.rhena.common.repository.RepositoryIdentifier;
+import com.unnsvc.rhena.config.RepositoryDefinition;
 
-public class ConfigurationViewTab extends AbstractConfigurationViewPart {
+public abstract class ConfigurationViewTab extends AbstractConfigurationViewPart {
 
-	public ConfigurationViewTab(TabFolder tabFolder, ERepositoryType repoType) {
+	private IRhenaConfiguration config;
+
+	public ConfigurationViewTab(IRhenaConfiguration config, TabFolder tabFolder, ERepositoryType repoType) {
 
 		super(tabFolder, repoType);
+		this.config = config;
 	}
 
 	@Override
@@ -30,15 +44,67 @@ public class ConfigurationViewTab extends AbstractConfigurationViewPart {
 					String selectedPath = dialog.open();
 
 					if (selectedPath != null) {
-						onLocationSelection(selectedPath);
+						UIJob job = new UIJob("Adding a repository") {
+
+							@Override
+							public IStatus runInUIThread(IProgressMonitor monitor) {
+
+								try {
+									
+									onLocationSelection(selectedPath);
+									onPersistRepositories();
+
+									return Status.OK_STATUS;
+								} catch (ErhenaException ee) {
+
+									return new Status(IStatus.ERROR, Activator.PLUGIN_ID, ee.getMessage(), ee);
+								}
+							}
+						};
+						job.schedule();
 					}
 				}
 			}
 		});
 	}
 
-	@Override
-	public void onLocationSelection(String selectedPath) {
+	public void onLocationSelection(String selectedPath) throws ErhenaException {
+
+		File location = new File(selectedPath);
+		URI locationUri = location.toURI();
+
+		RepositoryIdentifier identifier = new RepositoryIdentifier(location.toString());
+		RepositoryDefinition def = new RepositoryDefinition(repoType, identifier, locationUri);
+
+		switch (repoType) {
+			case CACHE:
+				config.getRepositoryConfiguration().setCacheRepository(def);
+				break;
+			case REMOTE:
+				config.getRepositoryConfiguration().addRemoteRepository(def);
+				break;
+			case WORKSPACE:
+				config.getRepositoryConfiguration().addWorkspaceRepositories(def);
+				break;
+		}
+
+		updateTable();
+	}
+
+	public void updateTable() throws ErhenaException {
+
+		switch (repoType) {
+			case CACHE:
+				viewer.setInput(new Object[] { config.getRepositoryConfiguration().getCacheRepository() });
+				break;
+			case WORKSPACE:
+				viewer.setInput(config.getRepositoryConfiguration().getWorkspaceRepositories());
+				break;
+			case REMOTE:
+				viewer.setInput(config.getRepositoryConfiguration().getRemoteRepositories());
+				break;
+		}
 
 	}
+
 }

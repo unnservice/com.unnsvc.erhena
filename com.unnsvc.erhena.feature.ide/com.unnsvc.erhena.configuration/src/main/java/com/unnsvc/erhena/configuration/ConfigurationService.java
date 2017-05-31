@@ -23,31 +23,32 @@ public class ConfigurationService implements IConfigurationService {
 
 	public ConfigurationService() throws RhenaException {
 
-		config = new RhenaConfiguration();
-		loadConfiguration();
 	}
 
-	private void loadConfiguration() throws RhenaException {
+	@Override
+	public void loadConfiguration() throws RhenaException {
 
-		File settingsFile = new File(System.getProperty("user.home") + File.separator + ".rhena/settings.xml");
-		if (settingsFile.isFile()) {
+		config = new RhenaConfiguration();
+
+		File settingsFile = new File(System.getProperty("user.home") + File.separator + ".rhena" + File.separator + "settings.xml");
+		if (settingsFile.exists() && settingsFile.isFile()) {
 			RhenaSettingsParser parser = new RhenaSettingsParser(config.getRepositoryConfiguration());
 			parser.parseSettings(settingsFile);
 		}
 	}
-	
+
 	@Override
 	public void persistConfiguration() throws ErhenaException {
-		
-		File settingsFile = new File(System.getProperty("user.home") + File.separator + ".rhena/settings.xml");
+
+		File settingsFile = new File(System.getProperty("user.home") + File.separator + ".rhena" + File.separator + "settings.xml");
 		settingsFile.getParentFile().mkdirs();
-		
+
 		RhenaSettingsSerialiser serialiser = new RhenaSettingsSerialiser(config);
 		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(settingsFile))) {
 			bos.write(serialiser.serialise().getBytes());
 			bos.flush();
 		} catch (IOException e) {
-			
+
 			throw new ErhenaException(e);
 		}
 	}

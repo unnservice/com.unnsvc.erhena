@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
+import com.unnsvc.erhena.common.exceptions.ErhenaException;
 import com.unnsvc.rhena.common.repository.ERepositoryType;
 import com.unnsvc.rhena.common.repository.IRepositoryDefinition;
 
@@ -23,11 +24,13 @@ public abstract class AbstractConfigurationViewPart {
 	protected Button del;
 	protected Button up;
 	protected Button down;
+	protected ERepositoryType repoType;
 
 	public AbstractConfigurationViewPart(TabFolder tabFolder, ERepositoryType repoType) {
 
 		TabItem item = new TabItem(tabFolder, SWT.NONE);
 		item.setText(repoType.toString());
+		this.repoType = repoType;
 
 		Composite container = new Composite(tabFolder, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -47,6 +50,20 @@ public abstract class AbstractConfigurationViewPart {
 		viewer = new TableViewer(container);
 		viewer.setContentProvider(new ArrayContentProvider());
 
+		TableViewerColumn protocolColumn = new TableViewerColumn(viewer, SWT.NONE);
+		protocolColumn.getColumn().setWidth(100);
+		protocolColumn.getColumn().setText("Protocol");
+		protocolColumn.setLabelProvider(new ColumnLabelProvider() {
+			
+			@Override
+			public String getText(Object element) {
+			
+				
+				IRepositoryDefinition repoDef = (IRepositoryDefinition) element;
+				return repoDef.getLocation().getScheme();
+			}
+		});
+		
 		TableViewerColumn locationColumn = new TableViewerColumn(viewer, SWT.NONE);
 		locationColumn.getColumn().setWidth(100);
 		locationColumn.getColumn().setText("Location");
@@ -59,6 +76,7 @@ public abstract class AbstractConfigurationViewPart {
 				return repoDef.getLocation().toString();
 			}
 		});
+		
 
 		// configure table
 
@@ -99,5 +117,5 @@ public abstract class AbstractConfigurationViewPart {
 		return viewer;
 	}
 	
-	public abstract void onLocationSelection(String selectedPath);
+	public abstract void onPersistRepositories() throws ErhenaException;
 }

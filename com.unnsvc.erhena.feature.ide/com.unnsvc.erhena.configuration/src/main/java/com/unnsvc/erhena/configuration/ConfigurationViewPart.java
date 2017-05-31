@@ -9,8 +9,10 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 
+import com.unnsvc.erhena.common.exceptions.ErhenaException;
 import com.unnsvc.erhena.common.services.IConfigurationService;
-import com.unnsvc.rhena.common.config.IRepositoryConfiguration;
+import com.unnsvc.rhena.common.config.IRhenaConfiguration;
+import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.repository.ERepositoryType;
 
 public class ConfigurationViewPart {
@@ -19,21 +21,45 @@ public class ConfigurationViewPart {
 	private IConfigurationService configService;
 
 	@PostConstruct
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent) throws RhenaException {
+		
+		configService.loadConfiguration();
 
-		IRepositoryConfiguration repoConfig = configService.getConfig().getRepositoryConfiguration();
+//		IRepositoryConfiguration repoConfig = configService.getConfig().getRepositoryConfiguration();
+		IRhenaConfiguration config = configService.getConfig();
 
 		parent.setLayout(new FillLayout());
 		TabFolder tabFolder = new TabFolder(parent, SWT.BORDER | SWT.BOTTOM);
 
-		ConfigurationViewTab workspacesTab = new ConfigurationViewTab(tabFolder, ERepositoryType.WORKSPACE);
-		workspacesTab.getViewer().setInput(repoConfig.getWorkspaceRepositories());
+		ConfigurationViewTab workspacesTab = new ConfigurationViewTab(config, tabFolder, ERepositoryType.WORKSPACE) {
 
-		ConfigurationViewTab cachesTab = new ConfigurationViewTab(tabFolder, ERepositoryType.CACHE);
-		cachesTab.getViewer().setInput(repoConfig.getCacheRepository());
+			@Override
+			public void onPersistRepositories() throws ErhenaException {
 
-		ConfigurationViewTab remotesTab = new ConfigurationViewTab(tabFolder, ERepositoryType.REMOTE);
-		remotesTab.getViewer().setInput(repoConfig.getRemoteRepositories());
+				configService.persistConfiguration();
+			}
+		};
+		workspacesTab.updateTable();
+
+		ConfigurationViewTab cachesTab = new ConfigurationViewTab(config, tabFolder, ERepositoryType.CACHE) {
+
+			@Override
+			public void onPersistRepositories() throws ErhenaException {
+
+				configService.persistConfiguration();
+			}
+		};
+		cachesTab.updateTable();
+
+		ConfigurationViewTab remotesTab = new ConfigurationViewTab(config, tabFolder, ERepositoryType.REMOTE) {
+
+			@Override
+			public void onPersistRepositories() throws ErhenaException {
+
+				configService.persistConfiguration();
+			}
+		};
+		remotesTab.updateTable();
 
 	}
 }
