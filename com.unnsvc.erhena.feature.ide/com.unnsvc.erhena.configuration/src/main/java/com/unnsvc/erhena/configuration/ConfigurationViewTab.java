@@ -7,6 +7,7 @@ import java.net.URI;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -50,7 +51,7 @@ public abstract class ConfigurationViewTab extends AbstractConfigurationViewPart
 							public IStatus runInUIThread(IProgressMonitor monitor) {
 
 								try {
-									
+
 									onLocationSelection(selectedPath);
 									onPersistRepositories();
 
@@ -63,6 +64,51 @@ public abstract class ConfigurationViewTab extends AbstractConfigurationViewPart
 						};
 						job.schedule();
 					}
+				}
+			}
+		});
+
+		del.addListener(SWT.Selection, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+
+				if (event.type == SWT.Selection) {
+
+					new UIJob("Remove repository") {
+
+						@Override
+						public IStatus runInUIThread(IProgressMonitor monitor) {
+
+							try {
+								IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+								selection.iterator().forEachRemaining(tableItemObject -> {
+
+									RepositoryDefinition def = (RepositoryDefinition) tableItemObject;
+
+									switch (repoType) {
+										case CACHE:
+											// config.getRepositoryConfiguration().setCacheRepository(null);
+											break;
+										case REMOTE:
+											config.getRepositoryConfiguration().getRemoteRepositories().remove(def);
+											break;
+										case WORKSPACE:
+											config.getRepositoryConfiguration().getWorkspaceRepositories().remove(def);
+											break;
+									}
+								});
+
+								updateTable();
+
+								onPersistRepositories();
+								
+								return Status.OK_STATUS;
+							} catch (ErhenaException ee) {
+								return new Status(IStatus.ERROR, Activator.PLUGIN_ID, ee.getMessage(), ee);
+							}
+						}
+					}.schedule();
 				}
 			}
 		});
@@ -91,7 +137,7 @@ public abstract class ConfigurationViewTab extends AbstractConfigurationViewPart
 		updateTable();
 	}
 
-	public void updateTable() throws ErhenaException {
+	public void updateTable() {
 
 		switch (repoType) {
 			case CACHE:
