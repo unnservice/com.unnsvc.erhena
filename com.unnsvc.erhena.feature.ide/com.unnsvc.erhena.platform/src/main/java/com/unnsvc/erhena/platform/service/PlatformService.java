@@ -4,13 +4,11 @@ package com.unnsvc.erhena.platform.service;
 import java.net.URI;
 
 import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.osgi.service.component.annotations.Component;
 
 import com.unnsvc.erhena.common.services.IPlatformService;
-import com.unnsvc.erhena.common.services.IWorkspacesService;
 import com.unnsvc.rhena.common.IRhenaCache;
 import com.unnsvc.rhena.common.IRhenaContext;
 import com.unnsvc.rhena.common.IRhenaEngine;
@@ -29,9 +27,6 @@ import com.unnsvc.rhena.repository.RhenaResolver;
 
 @Component(service = IPlatformService.class)
 public class PlatformService implements IPlatformService {
-
-	@Inject
-	private IWorkspacesService workspacesService;
 
 	private IRhenaCache cache;
 
