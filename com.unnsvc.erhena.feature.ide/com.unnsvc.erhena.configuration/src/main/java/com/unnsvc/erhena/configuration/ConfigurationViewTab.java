@@ -88,7 +88,7 @@ public abstract class ConfigurationViewTab extends AbstractConfigurationViewPart
 
 									switch (repoType) {
 										case CACHE:
-											// config.getRepositoryConfiguration().setCacheRepository(null);
+											config.getRepositoryConfiguration().getCacheRepositories().remove(def);
 											break;
 										case REMOTE:
 											config.getRepositoryConfiguration().getRemoteRepositories().remove(def);
@@ -124,7 +124,7 @@ public abstract class ConfigurationViewTab extends AbstractConfigurationViewPart
 
 		switch (repoType) {
 			case CACHE:
-				config.getRepositoryConfiguration().setCacheRepository(def);
+				config.getRepositoryConfiguration().addCacheRepository(def);
 				break;
 			case REMOTE:
 				config.getRepositoryConfiguration().addRemoteRepository(def);
@@ -141,7 +141,7 @@ public abstract class ConfigurationViewTab extends AbstractConfigurationViewPart
 
 		switch (repoType) {
 			case CACHE:
-				viewer.setInput(new Object[] { config.getRepositoryConfiguration().getCacheRepository() });
+				viewer.setInput(config.getRepositoryConfiguration().getCacheRepositories());
 				break;
 			case WORKSPACE:
 				viewer.setInput(config.getRepositoryConfiguration().getWorkspaceRepositories());
