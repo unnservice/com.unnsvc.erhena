@@ -19,6 +19,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
+import com.unnsvc.erhena.common.InjectionHelper;
 import com.unnsvc.erhena.common.services.IPlatformService;
 import com.unnsvc.erhena.common.services.IProjectService;
 import com.unnsvc.erhena.core.Activator;
@@ -41,10 +42,8 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 	private IProjectService projectService;
 
 	public RhenaBuilder() {
-
-		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
-		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
-		ContextInjectionFactory.inject(this, eclipseContext);
+		
+		InjectionHelper.inject(Activator.class, this);
 	}
 
 	@Override
