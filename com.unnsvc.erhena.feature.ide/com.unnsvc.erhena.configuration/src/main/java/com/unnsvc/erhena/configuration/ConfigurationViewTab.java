@@ -1,66 +1,44 @@
 
 package com.unnsvc.erhena.configuration;
 
-
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 
-public class ConfigurationViewTab {
+import com.unnsvc.rhena.common.repository.ERepositoryType;
 
-	public ConfigurationViewTab(TabFolder tabFolder, String title) {
+public class ConfigurationViewTab extends AbstractConfigurationViewPart {
 
-		TabItem item = new TabItem(tabFolder, SWT.NONE);
-		item.setText(title);
-		
-		Composite container = new Composite(tabFolder, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		container.setLayout(layout);
-		item.setControl(container);
-		
-		createControls(container);
-		createTableViewer(container);
+	public ConfigurationViewTab(TabFolder tabFolder, ERepositoryType repoType) {
+
+		super(tabFolder, repoType);
 	}
 
-	private void createControls(Composite container) {
+	@Override
+	public void createUiLogic(Composite parent) {
 
-		TableViewer viewer = new TableViewer(container);
-		
-		//  configure table
-		
-		GridData data = new GridData(GridData.FILL_BOTH);
-		viewer.getTable().setLayoutData(data);
+		add.addListener(SWT.Selection, new Listener() {
+
+			public void handleEvent(Event e) {
+
+				if (e.type == SWT.Selection) {
+
+					DirectoryDialog dialog = new DirectoryDialog(parent.getShell(), SWT.OPEN | SWT.SINGLE);
+					String selectedPath = dialog.open();
+
+					if (selectedPath != null) {
+						onLocationSelection(selectedPath);
+					}
+				}
+			}
+		});
 	}
 
-	private void createTableViewer(Composite container) {
+	@Override
+	public void onLocationSelection(String selectedPath) {
 
-		Composite buttons = new Composite(container, SWT.NONE);
-		GridData buttonsData = new GridData(GridData.FILL_VERTICAL);
-		buttons.setLayoutData(buttonsData);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		buttons.setLayout(layout);
-		
-		Button add = new Button(buttons, SWT.PUSH);
-		add.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		add.setText("Add");
-		
-		Button del = new Button(buttons, SWT.PUSH);
-		del.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		del.setText("Remove");
-		
-		Button up = new Button(buttons, SWT.PUSH);
-		up.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		up.setText("Up");
-		
-		Button down = new Button(buttons, SWT.PUSH);
-		down.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		down.setText("Down");
 	}
 }
