@@ -1,5 +1,5 @@
 
-package com.unnsvc.erhena.configuration;
+package com.unnsvc.erhena.workspaces;
 
 import java.io.File;
 import java.net.URI;
@@ -22,11 +22,11 @@ import com.unnsvc.rhena.common.repository.ERepositoryType;
 import com.unnsvc.rhena.common.repository.RepositoryIdentifier;
 import com.unnsvc.rhena.config.RepositoryDefinition;
 
-public abstract class ConfigurationViewTab extends AbstractConfigurationViewPart {
+public abstract class WorkspacesViewTab extends AbstractConfigurationViewPart {
 
 	private IRhenaConfiguration config;
 
-	public ConfigurationViewTab(IRhenaConfiguration config, TabFolder tabFolder, ERepositoryType repoType) {
+	public WorkspacesViewTab(IRhenaConfiguration config, TabFolder tabFolder, ERepositoryType repoType) {
 
 		super(tabFolder, repoType);
 		this.config = config;

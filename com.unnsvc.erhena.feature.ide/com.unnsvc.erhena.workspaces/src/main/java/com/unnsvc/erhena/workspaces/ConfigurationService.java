@@ -1,5 +1,5 @@
 
-package com.unnsvc.erhena.configuration;
+package com.unnsvc.erhena.workspaces;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
