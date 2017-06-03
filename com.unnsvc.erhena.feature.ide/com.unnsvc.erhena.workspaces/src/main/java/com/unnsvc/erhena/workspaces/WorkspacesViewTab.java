@@ -77,6 +77,7 @@ public abstract class WorkspacesViewTab extends AbstractConfigurationViewPart {
 
 					new UIJob("Remove repository") {
 
+						@SuppressWarnings("unchecked")
 						@Override
 						public IStatus runInUIThread(IProgressMonitor monitor) {
 
