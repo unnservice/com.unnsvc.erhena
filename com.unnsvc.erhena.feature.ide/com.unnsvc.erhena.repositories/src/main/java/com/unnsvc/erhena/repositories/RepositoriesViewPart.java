@@ -1,5 +1,5 @@
 
-package com.unnsvc.erhena.workspaces;
+package com.unnsvc.erhena.repositories;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -15,7 +15,7 @@ import com.unnsvc.rhena.common.config.IRhenaConfiguration;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.common.repository.ERepositoryType;
 
-public class WorkspacesViewPart {
+public class RepositoriesViewPart {
 
 	@Inject
 	private IConfigurationService configService;
@@ -31,7 +31,7 @@ public class WorkspacesViewPart {
 		parent.setLayout(new FillLayout());
 		TabFolder tabFolder = new TabFolder(parent, SWT.BORDER | SWT.BOTTOM);
 
-		WorkspacesViewTab workspacesTab = new WorkspacesViewTab(config, tabFolder, ERepositoryType.WORKSPACE) {
+		RepositoriesViewTab workspacesTab = new RepositoriesViewTab(config, tabFolder, ERepositoryType.WORKSPACE) {
 
 			@Override
 			public void onPersistRepositories() throws ErhenaException {
@@ -41,7 +41,7 @@ public class WorkspacesViewPart {
 		};
 		workspacesTab.updateTable();
 
-		WorkspacesViewTab cachesTab = new WorkspacesViewTab(config, tabFolder, ERepositoryType.CACHE) {
+		RepositoriesViewTab cachesTab = new RepositoriesViewTab(config, tabFolder, ERepositoryType.CACHE) {
 
 			@Override
 			public void onPersistRepositories() throws ErhenaException {
@@ -51,7 +51,7 @@ public class WorkspacesViewPart {
 		};
 		cachesTab.updateTable();
 
-		WorkspacesViewTab remotesTab = new WorkspacesViewTab(config, tabFolder, ERepositoryType.REMOTE) {
+		RepositoriesViewTab remotesTab = new RepositoriesViewTab(config, tabFolder, ERepositoryType.REMOTE) {
 
 			@Override
 			public void onPersistRepositories() throws ErhenaException {

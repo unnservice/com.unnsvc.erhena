@@ -736,14 +736,14 @@ Public License instead of this License.  But first, please read
          unpack="false"/>
 
    <plugin
-         id="com.unnsvc.erhena.workspaces"
+         id="com.unnsvc.erhena.agent"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="com.unnsvc.erhena.agent"
+         id="com.unnsvc.erhena.repositories"
          download-size="0"
          install-size="0"
          version="0.0.0"

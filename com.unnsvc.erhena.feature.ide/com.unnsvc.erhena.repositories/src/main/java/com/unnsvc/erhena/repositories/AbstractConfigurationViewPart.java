@@ -1,5 +1,5 @@
 
-package com.unnsvc.erhena.workspaces;
+package com.unnsvc.erhena.repositories;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;

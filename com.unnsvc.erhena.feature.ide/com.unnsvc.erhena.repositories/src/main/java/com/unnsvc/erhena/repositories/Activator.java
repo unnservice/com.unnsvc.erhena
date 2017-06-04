@@ -1,4 +1,4 @@
-package com.unnsvc.erhena.workspaces;
+package com.unnsvc.erhena.repositories;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
