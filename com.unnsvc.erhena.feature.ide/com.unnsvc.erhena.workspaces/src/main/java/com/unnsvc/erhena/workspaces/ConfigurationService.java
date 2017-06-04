@@ -14,7 +14,8 @@ import com.unnsvc.erhena.common.services.IConfigurationService;
 import com.unnsvc.rhena.common.config.IRhenaConfiguration;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.config.RhenaConfiguration;
-import com.unnsvc.rhena.config.settings.ConfigSerialisationHelper;
+import com.unnsvc.rhena.config.settings.ConfigParser;
+import com.unnsvc.rhena.config.settings.ConfigSerialiser;
 
 @Component(service = IConfigurationService.class)
 public class ConfigurationService implements IConfigurationService {
@@ -32,7 +33,7 @@ public class ConfigurationService implements IConfigurationService {
 		if (settingsFile.exists() && settingsFile.isFile()) {
 
 			try {
-				config = ConfigSerialisationHelper.parseConfig(settingsFile.toURI());
+				config = ConfigParser.parseConfig(settingsFile.toURI());
 			} catch (RhenaException ioe) {
 
 				config = new RhenaConfiguration();
@@ -50,8 +51,8 @@ public class ConfigurationService implements IConfigurationService {
 		settingsFile.getParentFile().mkdirs();
 
 		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(settingsFile)))) {
-			ConfigSerialisationHelper.serialiseConfig(config, (indent, line) -> {
-				writer.write(ConfigSerialisationHelper.indents(indent) + line + System.getProperty("line.separator"));
+			ConfigSerialiser.serialiseConfig(config, (indent, line) -> {
+				writer.write(ConfigSerialiser.indents(indent) + line + System.getProperty("line.separator"));
 			});
 		} catch (IOException ioe) {
 			throw new ErhenaException(ioe);
