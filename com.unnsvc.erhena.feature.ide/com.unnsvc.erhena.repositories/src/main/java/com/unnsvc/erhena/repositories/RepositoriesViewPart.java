@@ -36,7 +36,7 @@ public class RepositoriesViewPart {
 			@Override
 			public void onPersistRepositories() throws ErhenaException {
 
-				configService.persistConfiguration();
+				configService.persistRepositories();
 			}
 		};
 		workspacesTab.updateTable();
@@ -46,7 +46,7 @@ public class RepositoriesViewPart {
 			@Override
 			public void onPersistRepositories() throws ErhenaException {
 
-				configService.persistConfiguration();
+				configService.persistRepositories();
 			}
 		};
 		cachesTab.updateTable();
@@ -56,7 +56,7 @@ public class RepositoriesViewPart {
 			@Override
 			public void onPersistRepositories() throws ErhenaException {
 
-				configService.persistConfiguration();
+				configService.persistRepositories();
 			}
 		};
 		remotesTab.updateTable();

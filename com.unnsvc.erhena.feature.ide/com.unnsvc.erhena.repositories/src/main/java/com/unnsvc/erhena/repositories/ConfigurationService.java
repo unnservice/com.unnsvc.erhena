@@ -1,11 +1,7 @@
 
 package com.unnsvc.erhena.repositories;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -14,8 +10,7 @@ import com.unnsvc.erhena.common.services.IConfigurationService;
 import com.unnsvc.rhena.common.config.IRhenaConfiguration;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.config.RhenaConfiguration;
-import com.unnsvc.rhena.config.settings.ConfigParser;
-import com.unnsvc.rhena.config.settings.ConfigSerialiser;
+import com.unnsvc.rhena.config.userconf.UserConfigFactory;
 
 @Component(service = IConfigurationService.class)
 public class ConfigurationService implements IConfigurationService {
@@ -33,11 +28,14 @@ public class ConfigurationService implements IConfigurationService {
 		if (settingsFile.exists() && settingsFile.isFile()) {
 
 			try {
-				config = ConfigParser.parseConfig(settingsFile.toURI());
-			} catch (RhenaException ioe) {
-
-				config = new RhenaConfiguration();
-				throw new ErhenaException(ioe);
+				config = UserConfigFactory.fromUserConfig();
+			} catch (RhenaException re) {
+				/**
+				 * @TODO this is redundant because erhena exception is a subtype
+				 *       of rhenaException but eclipse PDE refuses to see the
+				 *       RhenaException indirectly
+				 */
+				throw new ErhenaException(re);
 			}
 		} else {
 			config = new RhenaConfiguration();
@@ -45,17 +43,15 @@ public class ConfigurationService implements IConfigurationService {
 	}
 
 	@Override
-	public void persistConfiguration() throws ErhenaException {
+	public void persistRepositories() throws ErhenaException {
 
-		File settingsFile = new File(System.getProperty("user.home") + File.separator + ".rhena" + File.separator + "settings.xml");
-		settingsFile.getParentFile().mkdirs();
-
-		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(settingsFile)))) {
-			ConfigSerialiser.serialiseConfig(config, (indent, line) -> {
-				writer.write(ConfigSerialiser.indents(indent) + line + System.getProperty("line.separator"));
-			});
-		} catch (IOException ioe) {
-			throw new ErhenaException(ioe);
+		try {
+			UserConfigFactory.serialiseRepositories(config.getRepositoryConfiguration());
+		} catch (RhenaException re) {
+			/**
+			 * @TODO see above on redundant exception catching
+			 */
+			throw new ErhenaException(re);
 		}
 	}
 

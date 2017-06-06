@@ -15,8 +15,8 @@ public interface IConfigurationService {
 
 	public IRhenaConfiguration getConfig();
 
-	public void persistConfiguration() throws ErhenaException;
-
 	public void loadConfiguration() throws RhenaException;
+
+	public void persistRepositories() throws ErhenaException;
 
 }
