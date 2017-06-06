@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Logconfig
+Bundle-SymbolicName: com.unnsvc.erhena.logconfig
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: UNNSVC
+Fragment-Host: ch.qos.logback.classic;bundle-version="1.0.7.v20121108-1250"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
