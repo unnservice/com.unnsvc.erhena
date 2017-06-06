@@ -24,21 +24,15 @@ public class ConfigurationService implements IConfigurationService {
 	@Override
 	public void loadConfiguration() throws ErhenaException {
 
-		File settingsFile = new File(System.getProperty("user.home") + File.separator + ".rhena" + File.separator + "settings.xml");
-		if (settingsFile.exists() && settingsFile.isFile()) {
-
-			try {
-				config = UserConfigFactory.fromUserConfig();
-			} catch (RhenaException re) {
-				/**
-				 * @TODO this is redundant because erhena exception is a subtype
-				 *       of rhenaException but eclipse PDE refuses to see the
-				 *       RhenaException indirectly
-				 */
-				throw new ErhenaException(re);
-			}
-		} else {
-			config = new RhenaConfiguration();
+		try {
+			config = UserConfigFactory.fromUserConfig();
+		} catch (RhenaException re) {
+			/**
+			 * @TODO this is redundant because erhena exception is a subtype
+			 *       of rhenaException but eclipse PDE refuses to see the
+			 *       RhenaException indirectly
+			 */
+			throw new ErhenaException(re);
 		}
 	}
 
