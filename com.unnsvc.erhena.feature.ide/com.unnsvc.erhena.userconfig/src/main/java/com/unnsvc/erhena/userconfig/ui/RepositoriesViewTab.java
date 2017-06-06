@@ -1,5 +1,5 @@
 
-package com.unnsvc.erhena.repositories;
+package com.unnsvc.erhena.userconfig.ui;
 
 import java.io.File;
 import java.net.URI;
@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.progress.UIJob;
 
 import com.unnsvc.erhena.common.exceptions.ErhenaException;
+import com.unnsvc.erhena.userconfig.Activator;
 import com.unnsvc.rhena.common.config.IRhenaConfiguration;
 import com.unnsvc.rhena.common.repository.ERepositoryType;
 import com.unnsvc.rhena.common.repository.RepositoryIdentifier;

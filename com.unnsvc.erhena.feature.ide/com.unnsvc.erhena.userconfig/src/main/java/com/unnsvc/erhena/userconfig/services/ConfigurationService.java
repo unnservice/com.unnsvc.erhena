@@ -1,5 +1,5 @@
 
-package com.unnsvc.erhena.repositories;
+package com.unnsvc.erhena.userconfig.services;
 
 import java.io.File;
 
