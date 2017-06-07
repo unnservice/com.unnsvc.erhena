@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:rhena:module" xmlns:prop="urn:rhena:properties" xmlns:dependency="urn:rhena:dependency"
-	xsi:schemaLocation="urn:rhena:module http://schema.unnsvc.com/rhena/module.xsd" extends="com.unnsvc:erhena:0.0.1">
-
-	<meta component="com.unnsvc.erhena" version="0.0.1" lifecycle="pde" />
-
-	<dependency:main module="com.unnsvc.erhena:core:0.0.1" />
-
-</module>
