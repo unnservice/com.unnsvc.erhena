@@ -13,6 +13,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.unnsvc.erhena.common.InjectionHelper;
 import com.unnsvc.erhena.common.services.IPlatformService;
@@ -29,6 +31,7 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 
 	public static final String BUILDER_ID = "com.unnsvc.erhena.core.builder.RhenaBuilder";
 
+	private Logger log = LoggerFactory.getLogger(getClass());
 	// @Inject
 	// private IEventBroker eventBroker;
 	@Inject
@@ -44,8 +47,8 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 
-		System.err.println("Executing build on project with monitor: " + monitor.hashCode());
-		System.err.println("Project" + projectService + " platform " + platformService);
+		log.info("Executing build on project with monitor: " + monitor.hashCode());
+		log.info("Project" + projectService + " platform " + platformService);
 		// find roots
 
 		try {

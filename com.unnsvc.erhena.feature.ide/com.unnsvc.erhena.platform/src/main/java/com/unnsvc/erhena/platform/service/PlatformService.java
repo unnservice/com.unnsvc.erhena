@@ -11,6 +11,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
 
 import com.unnsvc.erhena.common.exceptions.ErhenaException;
+import com.unnsvc.erhena.common.services.IAgentServerService;
 import com.unnsvc.erhena.common.services.IConfigurationService;
 import com.unnsvc.erhena.common.services.IPlatformService;
 import com.unnsvc.rhena.common.IRhenaCache;
@@ -33,6 +34,8 @@ public class PlatformService implements IPlatformService {
 
 	@Reference
 	private IConfigurationService configService;
+	@Reference
+	private IAgentServerService agentServerService;
 
 	private IRhenaCache cache;
 
@@ -44,6 +47,8 @@ public class PlatformService implements IPlatformService {
 	@Override
 	public IRhenaEngine createEngine() throws ErhenaException {
 
+		agentServerService.startupServer();
+		
 		// Configure a platform from eclipse settings?
 		IRhenaConfiguration config = configService.getConfig();
 

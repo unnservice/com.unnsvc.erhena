@@ -3,6 +3,7 @@
    <service scope="singleton">
       <provide interface="com.unnsvc.erhena.common.services.IPlatformService"/>
    </service>
+   <reference cardinality="1..1" field="agentServerService" interface="com.unnsvc.erhena.common.services.IAgentServerService" name="agentServerService"/>
    <reference cardinality="1..1" field="configService" interface="com.unnsvc.erhena.common.services.IConfigurationService" name="configService"/>
    <implementation class="com.unnsvc.erhena.platform.service.PlatformService"/>
 </scr:component>

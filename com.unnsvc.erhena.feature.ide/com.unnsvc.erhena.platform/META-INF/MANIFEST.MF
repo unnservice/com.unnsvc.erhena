@@ -14,9 +14,11 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.e4.core.contexts,
  org.eclipse.e4.core.services,
  org.eclipse.e4.ui.di,
- org.eclipse.e4.core.di.extensions
+ org.eclipse.e4.core.di.extensions,
+ org.slf4j.api
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: com.unnsvc.erhena.platform.service
 Service-Component: OSGI-INF/com.unnsvc.erhena.platform.service.ConfigurationService.xml,
- OSGI-INF/com.unnsvc.erhena.platform.service.PlatformService.xml
+ OSGI-INF/com.unnsvc.erhena.platform.service.PlatformService.xml,
+ OSGI-INF/com.unnsvc.erhena.platform.service.AgentServerService.xml
