@@ -1,5 +1,5 @@
 
-package com.unnsvc.erhena.userconfig.ui;
+package com.unnsvc.erhena.userconfigviews.ui;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;

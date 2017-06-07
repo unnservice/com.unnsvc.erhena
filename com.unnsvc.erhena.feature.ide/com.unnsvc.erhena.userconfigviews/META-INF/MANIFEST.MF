@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Settings
-Bundle-SymbolicName: com.unnsvc.erhena.userconfig;singleton:=true
+Bundle-SymbolicName: com.unnsvc.erhena.userconfigviews;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: com.unnsvc.erhena.userconfig.Activator
+Bundle-Activator: com.unnsvc.erhena.userconfigviews.Activator
 Bundle-Vendor: UNNSVC
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

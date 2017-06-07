@@ -1,4 +1,4 @@
-package com.unnsvc.erhena.userconfig;
+package com.unnsvc.erhena.userconfigviews;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
