@@ -22,10 +22,9 @@ public class RepositoriesViewPart {
 
 	@PostConstruct
 	public void createPartControl(Composite parent) throws RhenaException {
-		
-		configService.loadConfiguration();
 
-//		IRepositoryConfiguration repoConfig = configService.getConfig().getRepositoryConfiguration();
+		// IRepositoryConfiguration repoConfig =
+		// configService.getConfig().getRepositoryConfiguration();
 		IRhenaConfiguration config = configService.getConfig();
 
 		parent.setLayout(new FillLayout());

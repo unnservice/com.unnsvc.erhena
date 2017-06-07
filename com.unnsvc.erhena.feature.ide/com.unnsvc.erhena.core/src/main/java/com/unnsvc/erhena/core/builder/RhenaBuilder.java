@@ -13,11 +13,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
 
 import com.unnsvc.erhena.common.InjectionHelper;
 import com.unnsvc.erhena.common.services.IPlatformService;
@@ -42,7 +37,7 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 	private IProjectService projectService;
 
 	public RhenaBuilder() {
-		
+
 		InjectionHelper.inject(Activator.class, this);
 	}
 
@@ -53,11 +48,12 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 		System.err.println("Project" + projectService + " platform " + platformService);
 		// find roots
 
-		IRhenaEngine engine = platformService.createEngine();
-		URI projectLocation = getProject().getLocationURI();
-		File projectPath = new File(projectLocation.getPath());
-
 		try {
+
+			IRhenaEngine engine = platformService.createEngine();
+			URI projectLocation = getProject().getLocationURI();
+			File projectPath = new File(projectLocation.getPath());
+
 			ModuleIdentifier identifier = ModelHelper.locationToModuleIdentifier(projectPath);
 			IRhenaModule module = engine.resolveModule(identifier);
 			engine.resolveExecution(EExecutionType.ITEST, module);

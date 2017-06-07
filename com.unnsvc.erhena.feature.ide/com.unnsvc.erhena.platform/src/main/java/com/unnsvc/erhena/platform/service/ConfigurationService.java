@@ -1,7 +1,5 @@
 
-package com.unnsvc.erhena.userconfig.services;
-
-import java.io.File;
+package com.unnsvc.erhena.platform.service;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -9,7 +7,6 @@ import com.unnsvc.erhena.common.exceptions.ErhenaException;
 import com.unnsvc.erhena.common.services.IConfigurationService;
 import com.unnsvc.rhena.common.config.IRhenaConfiguration;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
-import com.unnsvc.rhena.config.RhenaConfiguration;
 import com.unnsvc.rhena.config.userconf.UserConfigFactory;
 
 @Component(service = IConfigurationService.class)
@@ -19,21 +16,6 @@ public class ConfigurationService implements IConfigurationService {
 
 	public ConfigurationService() throws RhenaException {
 
-	}
-
-	@Override
-	public void loadConfiguration() throws ErhenaException {
-
-		try {
-			config = UserConfigFactory.fromUserConfig();
-		} catch (RhenaException re) {
-			/**
-			 * @TODO this is redundant because erhena exception is a subtype
-			 *       of rhenaException but eclipse PDE refuses to see the
-			 *       RhenaException indirectly
-			 */
-			throw new ErhenaException(re);
-		}
 	}
 
 	@Override
@@ -50,8 +32,22 @@ public class ConfigurationService implements IConfigurationService {
 	}
 
 	@Override
-	public IRhenaConfiguration getConfig() {
+	public IRhenaConfiguration getConfig() throws ErhenaException {
 
-		return config;
+		if (config == null) {
+			try {
+				config = UserConfigFactory.fromUserConfig();
+				return config;
+			} catch (RhenaException re) {
+				/**
+				 * @TODO this is redundant because erhena exception is a subtype
+				 *       of rhenaException but eclipse PDE refuses to see the
+				 *       RhenaException indirectly
+				 */
+				throw new ErhenaException(re);
+			}
+		} else {
+			return config;
+		}
 	}
 }

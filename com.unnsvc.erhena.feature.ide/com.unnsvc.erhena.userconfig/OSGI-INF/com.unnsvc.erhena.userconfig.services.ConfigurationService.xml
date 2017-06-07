@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="com.unnsvc.erhena.userconfig.services.ConfigurationService">
-   <service>
-      <provide interface="com.unnsvc.erhena.common.services.IConfigurationService"/>
-   </service>
-   <implementation class="com.unnsvc.erhena.userconfig.services.ConfigurationService"/>
-</scr:component>
