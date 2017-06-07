@@ -23,32 +23,36 @@ public class RhenaNature implements IProjectNature {
 	public static final String NATURE_ID = "com.unnsvc.erhena.core.nature";
 	private IProject project;
 
-//	@Inject
-//	private IEventBroker eventBroker;
-//
-//	@Inject
-//	private IEclipseContext eclipseContext;
-//
-//	@Inject
-//	private IPlatformService rhenaPlatformService;
+	// @Inject
+	// private IEventBroker eventBroker;
+	//
+	// @Inject
+	// private IEclipseContext eclipseContext;
+	//
+	// @Inject
+	// private IPlatformService rhenaPlatformService;
 
 	public RhenaNature() {
 
-//		BundleContext bundleContext = FrameworkUtil.getBundle(Activator.class).getBundleContext();
-//		IEclipseContext eclipseContext = EclipseContextFactory.getServiceContext(bundleContext);
-//		ContextInjectionFactory.inject(this, eclipseContext);
+		// BundleContext bundleContext =
+		// FrameworkUtil.getBundle(Activator.class).getBundleContext();
+		// IEclipseContext eclipseContext =
+		// EclipseContextFactory.getServiceContext(bundleContext);
+		// ContextInjectionFactory.inject(this, eclipseContext);
 	}
 
 	@Override
 	public void configure() throws CoreException {
-        // only called once the nature has been set
+		// only called once the nature has been set
 
 		System.err.println("Configure rhena nature");
 		IProjectDescription desc = project.getDescription();
 		List<ICommand> commands = new ArrayList<ICommand>(Arrays.asList(desc.getBuildSpec()));
 
-		if (commands.contains(RhenaBuilder.BUILDER_ID)) {
-			
+		if (commands.parallelStream().anyMatch(cmd -> {
+			return cmd.getBuilderName().equals(RhenaBuilder.BUILDER_ID);
+		})) {
+
 			return;
 		} else {
 
@@ -73,7 +77,7 @@ public class RhenaNature implements IProjectNature {
 
 	@Override
 	public void deconfigure() throws CoreException {
-        // only called once the nature has been unset
+		// only called once the nature has been unset
 
 		IProjectDescription description = getProject().getDescription();
 		ICommand[] commands = description.getBuildSpec();

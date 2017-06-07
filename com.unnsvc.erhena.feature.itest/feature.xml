@@ -18,11 +18,11 @@
    </license>
 
    <includes
-         id="com.unnsvc.erhena.feature"
+         id="org.eclipse.sdk"
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.sdk"
+         id="com.unnsvc.erhena.feature.ide"
          version="0.0.0"/>
 
    <plugin

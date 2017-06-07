@@ -20,9 +20,9 @@ import com.unnsvc.erhena.common.services.IProjectService;
 import com.unnsvc.erhena.core.builder.RhenaBuilder;
 import com.unnsvc.erhena.core.nature.RhenaNature;
 import com.unnsvc.erhena.itests.AbstractServiceTest;
-import com.unnsvc.rhena.common.IRhenaContext;
 import com.unnsvc.rhena.common.RhenaConstants;
 
+@SuppressWarnings("restriction")
 public class TestProjectCreationAndBuild extends AbstractServiceTest {
 
 	@Inject

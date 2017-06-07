@@ -8,7 +8,7 @@ import org.eclipse.ui.console.MessageConsole;
 
 public class ConsoleViewHelper {
 
-	private MessageConsole findConsole(String name) {
+	public MessageConsole findConsole(String name) {
 
 		ConsolePlugin plugin = ConsolePlugin.getDefault();
 		IConsoleManager conMan = plugin.getConsoleManager();
@@ -23,15 +23,14 @@ public class ConsoleViewHelper {
 	}
 }
 
-
-//MessageConsole myConsole = findConsole(CONSOLE_NAME);
-//MessageConsoleStream out = myConsole.newMessageStream();
-//out.println("Hello from Generic console sample action");
+// MessageConsole myConsole = findConsole(CONSOLE_NAME);
+// MessageConsoleStream out = myConsole.newMessageStream();
+// out.println("Hello from Generic console sample action");
 //
-//to revewal the console:
-//	  IConsole myConsole = ...;// your console instance
-//	  IWorkbenchPage page = ...;// obtain the active page
-//	  String id = IConsoleConstants.ID_CONSOLE_VIEW;
-//	  IConsoleView view = (IConsoleView) page.showView(id);
-//	  view.display(myConsole);
-//	  
+// to revewal the console:
+// IConsole myConsole = ...;// your console instance
+// IWorkbenchPage page = ...;// obtain the active page
+// String id = IConsoleConstants.ID_CONSOLE_VIEW;
+// IConsoleView view = (IConsoleView) page.showView(id);
+// view.display(myConsole);
+//

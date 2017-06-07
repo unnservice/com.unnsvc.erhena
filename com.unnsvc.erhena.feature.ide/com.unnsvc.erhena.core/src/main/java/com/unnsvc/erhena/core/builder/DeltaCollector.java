@@ -26,7 +26,7 @@ public class DeltaCollector implements IResourceDeltaVisitor, Iterable<IPath> {
 
 		this.projectpaths = new HashMap<IProject, Set<IPath>>();
 		this.paths = new ArrayList<IPath>();
-		if (event.getDelta() != null) {javascript:;
+		if (event.getDelta() != null) {
 			event.getDelta().accept(this);
 		} else {
 			onResource(event.getResource());
