@@ -162,12 +162,6 @@
       </classpathContainerInitializer>
    </extension>
    <extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="com.unnsvc.erhena.core.PlatformStartup">
-      </startup>
-   </extension>
-   <extension
          point="org.eclipse.ui.propertyPages">
       <page
             class="com.unnsvc.erhena.core.properties.ErhenaProjectProperties"

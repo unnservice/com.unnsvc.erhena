@@ -8,14 +8,11 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import com.unnsvc.erhena.core.builder.ModuleResourceChangeListener;
-
 public class Activator extends AbstractUIPlugin {
 
 	public static final String PLUGIN_ID = "com.unnsvc.erhena.core";
 	private static BundleActivator plugin;
 	private IWorkspace workspace;
-	private ModuleResourceChangeListener listener;
 
 	public Activator() {
 
@@ -26,13 +23,10 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		workspace = ResourcesPlugin.getWorkspace();
-		listener = new ModuleResourceChangeListener();
-		getWorkspace().addResourceChangeListener(listener);
 	}
 
 	public void stop(BundleContext context) throws Exception {
 
-		getWorkspace().removeResourceChangeListener(listener);
 		plugin = null;
 		workspace = null;
 		super.stop(context);
