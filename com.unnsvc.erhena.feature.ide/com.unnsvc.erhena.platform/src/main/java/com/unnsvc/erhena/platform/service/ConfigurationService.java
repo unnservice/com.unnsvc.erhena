@@ -22,17 +22,17 @@ public class ConfigurationService implements IConfigurationService {
 	public ConfigurationService() {
 
 	}
-	
+
 	@Activate
 	public void activate() throws ErhenaException {
-		
+
 		log.info("Activating configuration service, loading config");
 		try {
 			config = UserConfigFactory.fromUserConfig();
 		} catch (RhenaException re) {
 			/**
-			 * @TODO this is redundant because erhena exception is a subtype
-			 *       of rhenaException but eclipse PDE refuses to see the
+			 * @TODO this is redundant because erhena exception is a subtype of
+			 *       rhenaException but eclipse PDE refuses to see the
 			 *       RhenaException indirectly
 			 */
 			throw new ErhenaException(re);
@@ -53,7 +53,7 @@ public class ConfigurationService implements IConfigurationService {
 	}
 
 	@Override
-	public IRhenaConfiguration getConfig() throws ErhenaException {
+	public IRhenaConfiguration getConfig() {
 
 		return config;
 	}

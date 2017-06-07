@@ -12,7 +12,7 @@ import com.unnsvc.rhena.common.config.IRhenaConfiguration;
  */
 public interface IConfigurationService {
 
-	public IRhenaConfiguration getConfig() throws ErhenaException;
+	public IRhenaConfiguration getConfig();
 
 	public void persistRepositories() throws ErhenaException;
 

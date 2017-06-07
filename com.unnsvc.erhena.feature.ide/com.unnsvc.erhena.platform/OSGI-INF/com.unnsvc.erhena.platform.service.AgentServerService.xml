@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" name="com.unnsvc.erhena.platform.service.AgentServerService">
-   <service>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" activate="activate" deactivate="deactivate" name="com.unnsvc.erhena.platform.service.AgentServerService">
+   <service scope="singleton">
       <provide interface="com.unnsvc.erhena.common.services.IAgentServerService"/>
    </service>
+   <reference cardinality="1..1" field="configService" interface="com.unnsvc.erhena.common.services.IConfigurationService" name="configService"/>
    <implementation class="com.unnsvc.erhena.platform.service.AgentServerService"/>
 </scr:component>

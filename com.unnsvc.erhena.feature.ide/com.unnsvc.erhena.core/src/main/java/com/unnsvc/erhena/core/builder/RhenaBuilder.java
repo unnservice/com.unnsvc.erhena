@@ -48,7 +48,7 @@ public class RhenaBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 
 		log.info("Executing build on project with monitor: " + monitor.hashCode());
-		log.info("Project" + projectService + " platform " + platformService);
+		log.info("Project " + projectService + " platform " + platformService);
 		// find roots
 
 		try {
