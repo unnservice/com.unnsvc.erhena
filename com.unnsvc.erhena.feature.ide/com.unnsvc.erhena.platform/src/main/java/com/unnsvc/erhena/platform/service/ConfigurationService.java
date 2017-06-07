@@ -2,6 +2,7 @@
 package com.unnsvc.erhena.platform.service;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ServiceScope;
 
 import com.unnsvc.erhena.common.exceptions.ErhenaException;
 import com.unnsvc.erhena.common.services.IConfigurationService;
@@ -9,12 +10,12 @@ import com.unnsvc.rhena.common.config.IRhenaConfiguration;
 import com.unnsvc.rhena.common.exceptions.RhenaException;
 import com.unnsvc.rhena.config.userconf.UserConfigFactory;
 
-@Component(service = IConfigurationService.class)
+@Component(service = IConfigurationService.class, scope = ServiceScope.SINGLETON)
 public class ConfigurationService implements IConfigurationService {
 
 	private IRhenaConfiguration config;
 
-	public ConfigurationService() throws RhenaException {
+	public ConfigurationService() {
 
 	}
 
